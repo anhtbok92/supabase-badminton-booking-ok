@@ -7,7 +7,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 import type { NewsArticle, NewsTag } from '@/lib/types';
-import { useSupabaseQuery } from '@/supabase';
+import { useSupabaseQuery, useSupabase } from '@/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { UploadCloud, Trash2, Zap, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { uploadFile } from '@/lib/upload';
 import RichTextEditor from '@/components/ui/rich-text-editor';
 
 const newsFormSchema = z.object({
@@ -36,6 +37,7 @@ interface NewsFormProps {
 
 export default function NewsForm({ article, onSubmit, isSubmitting }: NewsFormProps) {
     const { toast } = useToast();
+    const supabase = useSupabase();
     const { data: availableTags, loading: tagsLoading } = useSupabaseQuery<NewsTag>('news_tags');
 
     const [bannerImageUrl, setBannerImageUrl] = useState<string | null>(article?.banner_image_url || null);
@@ -80,32 +82,18 @@ export default function NewsForm({ article, onSubmit, isSubmitting }: NewsFormPr
         },
     });
 
-    const handleImageUpload = (file: File | null) => {
+    const handleImageUpload = async (file: File | null) => {
         if (!file) return;
         setIsUploading(true);
-
-        const cloudName = 'dxmx9b1zi';
-        const uploadPreset = 'toan_badminton';
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', uploadPreset);
-
-        fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if (data.secure_url) {
-                    setBannerImageUrl(data.secure_url);
-                } else {
-                    throw new Error(data.error?.message || 'Upload failed');
-                }
-            })
-            .catch(error => {
-                console.error("Upload failed:", error);
-                toast({ title: "Lỗi tải lên", description: `Không thể tải lên ảnh.`, variant: "destructive" });
-            })
-            .finally(() => {
-                setIsUploading(false);
-            });
+        try {
+            const url = await uploadFile(supabase, 'news', file);
+            setBannerImageUrl(url);
+        } catch (error) {
+            console.error("Upload failed:", error);
+            toast({ title: "Lỗi tải lên", description: `Không thể tải lên ảnh.`, variant: "destructive" });
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     const handleFormSubmit = (values: NewsFormSchema) => {

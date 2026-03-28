@@ -58,6 +58,7 @@ import { Label } from '@/components/ui/label';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
+import { uploadFile } from '@/lib/upload';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
@@ -1617,13 +1618,12 @@ function CourtFormDialog({ isOpen, setIsOpen, clubId, court, userRole, onSuccess
         if (imageUrls.length + files.length > 2) { toast({ title: "Lỗi", description: "Tối đa 2 ảnh.", variant: "destructive" }); return; }
         const currentUploading = Array.from(files).map(file => ({ name: file.name }));
         setUploadingFiles(prev => [...prev, ...currentUploading]);
-        const cloudName = 'dxmx9b1zi'; const uploadPreset = 'toan_badminton';
-        Array.from(files).forEach(file => {
-            const formData = new FormData(); formData.append('file', file); formData.append('upload_preset', uploadPreset);
-            fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formData })
-                .then(r => r.json()).then(data => { if (data.secure_url) setImageUrls(prev => [...prev, data.secure_url]); else throw new Error('Upload failed'); })
-                .catch(() => toast({ title: "Lỗi tải lên", variant: "destructive" }))
-                .finally(() => setUploadingFiles(prev => prev.filter(f => f.name !== file.name)));
+        Array.from(files).forEach(async (file) => {
+            try {
+                const url = await uploadFile(supabase, `courts/${clubId}`, file);
+                setImageUrls(prev => [...prev, url]);
+            } catch { toast({ title: "Lỗi tải lên", variant: "destructive" }); }
+            finally { setUploadingFiles(prev => prev.filter(f => f.name !== file.name)); }
         });
     };
 
@@ -1691,13 +1691,12 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
         if (imageUrls.length + files.length > 10) { toast({ title: "Lỗi", description: "Tối đa 10 ảnh.", variant: "destructive" }); return; }
         const currentUploading = Array.from(files).map(file => ({ name: file.name }));
         setUploadingFiles(prev => [...prev, ...currentUploading]);
-        const cloudName = 'dxmx9b1zi'; const uploadPreset = 'toan_badminton';
-        Array.from(files).forEach(file => {
-            const formData = new FormData(); formData.append('file', file); formData.append('upload_preset', uploadPreset);
-            fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formData })
-                .then(r => r.json()).then(data => { if (data.secure_url) setImageUrls(prev => [...prev, data.secure_url]); })
-                .catch(() => toast({ title: "Lỗi tải lên", variant: "destructive" }))
-                .finally(() => setUploadingFiles(prev => prev.filter(f => f.name !== file.name)));
+        Array.from(files).forEach(async (file) => {
+            try {
+                const url = await uploadFile(supabase, `clubs`, file);
+                setImageUrls(prev => [...prev, url]);
+            } catch { toast({ title: "Lỗi tải lên", variant: "destructive" }); }
+            finally { setUploadingFiles(prev => prev.filter(f => f.name !== file.name)); }
         });
     };
 
@@ -1720,15 +1719,14 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
         toast({ title: 'Thành công', description: `Đã ${isEditMode ? 'cập nhật' : 'tạo'} câu lạc bộ.` }); setIsOpen(false); onSuccess?.();
     };
 
-    const uploadSingleImage = (setter: (url: string) => void, setUploading: (v: boolean) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadSingleImage = (setter: (url: string) => void, setUploading: (v: boolean) => void, folder: string) => async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]; if (!file) return;
         setUploading(true);
-        const cloudName = 'dxmx9b1zi'; const uploadPreset = 'toan_badminton';
-        const formData = new FormData(); formData.append('file', file); formData.append('upload_preset', uploadPreset);
-        fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formData })
-            .then(r => r.json()).then(data => data.secure_url && setter(data.secure_url))
-            .catch(() => toast({ title: "Lỗi", variant: "destructive" }))
-            .finally(() => setUploading(false));
+        try {
+            const url = await uploadFile(supabase, folder, file);
+            setter(url);
+        } catch { toast({ title: "Lỗi", variant: "destructive" }); }
+        finally { setUploading(false); }
     };
 
     return (
@@ -1753,13 +1751,13 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                 <FormField control={form.control} name="priceListHtml" render={({ field }) => (<FormItem><FormLabel>Bảng giá chi tiết (HTML)</FormLabel><FormControl><Textarea {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />
                 <div className="space-y-4 border p-4 rounded-lg bg-muted/20"><FormLabel className="text-base font-bold">Hình ảnh Bảng giá</FormLabel>
                     {priceListImageUrl ? (<div className="relative group w-full max-w-sm aspect-video border-2 border-primary/20 rounded-xl overflow-hidden shadow-md"><Image src={priceListImageUrl} alt="Price List" fill className="object-contain p-2 bg-white" /><Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100" onClick={() => setPriceListImageUrl('')}><Trash2 className="h-4 w-4" /></Button></div>)
-                    : (<label className="flex flex-col items-center justify-center w-full max-w-sm h-32 border-2 border-dashed rounded-xl cursor-pointer hover:bg-secondary/50"><UploadCloud className="w-8 h-8 mb-2 text-primary/60" /><p className="text-sm font-medium">Tải lên ảnh Bảng giá</p><input type="file" className="hidden" accept="image/*" onChange={uploadSingleImage(setPriceListImageUrl, setUploadingPriceListImage)} disabled={uploadingPriceListImage} /></label>)}
+                    : (<label className="flex flex-col items-center justify-center w-full max-w-sm h-32 border-2 border-dashed rounded-xl cursor-pointer hover:bg-secondary/50"><UploadCloud className="w-8 h-8 mb-2 text-primary/60" /><p className="text-sm font-medium">Tải lên ảnh Bảng giá</p><input type="file" className="hidden" accept="image/*" onChange={uploadSingleImage(setPriceListImageUrl, setUploadingPriceListImage, 'price-list')} disabled={uploadingPriceListImage} /></label>)}
                     {uploadingPriceListImage && <p className="text-xs text-primary animate-pulse">Đang tải...</p>}
                 </div>
                 <FormField control={form.control} name="mapVideoUrl" render={({ field }) => (<FormItem><FormLabel>Link Video Chỉ đường</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                 <div className="space-y-4 border p-4 rounded-lg bg-muted/20"><FormLabel className="text-base font-bold">Mã QR Thanh toán</FormLabel>
                     {paymentQrUrl ? (<div className="relative group w-48 aspect-square border-2 border-primary/20 rounded-xl overflow-hidden shadow-md"><Image src={paymentQrUrl} alt="QR" fill className="object-contain p-2 bg-white" /><Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100" onClick={() => setPaymentQrUrl('')}><Trash2 className="h-4 w-4" /></Button></div>)
-                    : (<label className="flex flex-col items-center justify-center w-48 h-48 border-2 border-dashed rounded-xl cursor-pointer hover:bg-secondary/50"><UploadCloud className="w-10 h-10 mb-2 text-primary/60" /><p className="text-sm font-medium">Tải lên mã QR</p><input type="file" className="hidden" accept="image/*" onChange={uploadSingleImage(setPaymentQrUrl, setUploadingQr)} disabled={uploadingQr} /></label>)}
+                    : (<label className="flex flex-col items-center justify-center w-48 h-48 border-2 border-dashed rounded-xl cursor-pointer hover:bg-secondary/50"><UploadCloud className="w-10 h-10 mb-2 text-primary/60" /><p className="text-sm font-medium">Tải lên mã QR</p><input type="file" className="hidden" accept="image/*" onChange={uploadSingleImage(setPaymentQrUrl, setUploadingQr, 'qr')} disabled={uploadingQr} /></label>)}
                     {uploadingQr && <p className="text-xs text-primary animate-pulse">Đang xử lý...</p>}
                 </div>
                 <div className="space-y-2"><FormLabel>Hình ảnh Câu lạc bộ (Tối đa 10)</FormLabel>

@@ -9,7 +9,7 @@ export default function FloatingContact() {
         <div className="fixed bottom-24 right-4 z-50 flex flex-col gap-3">
             {/* Facebook Icon */}
             <a
-                href="https://www.facebook.com/1991club.0207"
+                href="https://www.facebook.com/profile.php?id=61587156946212"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1877F2] text-white shadow-[0_4px_15px_rgba(24,119,242,0.4)] transition-all hover:scale-110 hover:rotate-3 active:scale-95 animate-bounce-subtle"
@@ -27,21 +27,24 @@ export default function FloatingContact() {
 
             {/* Zalo Icon */}
             <a
-                href="https://zalo.me/0964669324"
+                href="https://zalo.me/0982949974"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0068ff] text-white shadow-[0_4px_15px_rgba(0,104,255,0.4)] transition-all hover:scale-110 hover:-rotate-3 active:scale-95 animate-bounce-subtle animation-delay-500"
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0068ff] text-white shadow-[0_4px_15px_rgba(0,104,255,0.4)] transition-all hover:scale-110 hover:-rotate-3 active:scale-95 animate-bounce-subtle animation-delay-500 overflow-hidden"
                 title="Nhắn tin Zalo"
             >
-                <div className="text-[10px] font-black italic tracking-tighter flex flex-col items-center justify-center leading-none">
-                    <span className="text-lg -mb-1 not-italic">Z</span>
-                    <span>alo</span>
-                </div>
+                <Image
+                    src="/Icon_of_Zalo.svg.png"
+                    alt="Zalo"
+                    width={48}
+                    height={48}
+                    className="h-full w-full object-cover"
+                />
             </a>
 
             {/* Phone Icon (Call) - Separate for clarity */}
             <a
-                href="tel:0964669324"
+                href="tel:0982949974"
                 className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-white shadow-[0_4px_15px_rgba(34,197,94,0.4)] transition-all hover:scale-110 active:scale-95"
                 title="Gọi điện"
             >
