@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlusCircle, Trash2, Pencil, UploadCloud } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, UploadCloud, Copy } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -24,6 +24,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { clubSchema, type ClubSchema } from './schemas';
 import { CourtManager } from './court-manager';
+import dynamic from 'next/dynamic';
+
+const LocationPicker = dynamic(() => import('./location-picker').then(m => ({ default: m.LocationPicker })), { ssr: false, loading: () => <div className="h-[300px] rounded-lg border flex items-center justify-center text-muted-foreground text-sm">Đang tải bản đồ...</div> });
 
 export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
     const supabase = useSupabase();
@@ -57,6 +60,18 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
         setDeleteAlertOpen(false); setClubToDelete(null);
     };
 
+    const handleDuplicate = async (club: Club) => {
+        const { id, created_at, ...rest } = club as any;
+        const duplicateData = {
+            ...rest,
+            name: `${club.name} (Bản sao)`,
+            is_active: false,
+        };
+        const { error } = await supabase.from('clubs').insert(duplicateData);
+        if (error) { toast({ title: 'Lỗi', description: 'Không thể nhân bản câu lạc bộ.', variant: 'destructive' }); }
+        else { toast({ title: 'Thành công', description: `Đã nhân bản "${club.name}". CLB mới đang ở trạng thái ẩn.` }); refetch(); }
+    };
+
     return (
         <Card>
             <CardHeader><div className="flex justify-between items-center"><div><CardTitle>Danh sách Câu lạc bộ</CardTitle><CardDescription>Thêm, sửa, hoặc xóa câu lạc bộ và quản lý sân/giá.</CardDescription></div>
@@ -73,6 +88,7 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
                                     <div className="flex items-center space-x-2 pr-4">
                                         <Switch checked={club.is_active ?? true} onCheckedChange={() => handleToggleActive(club)} onClick={(e) => e.stopPropagation()} disabled={!isAdmin} />
                                         <Button variant="ghost" size="icon" onClick={() => { setSelectedClub(club); setDialogOpen(true); }}><Pencil className="h-4 w-4" /></Button>
+                                        {isAdmin && <Button variant="ghost" size="icon" onClick={() => handleDuplicate(club)} title="Nhân bản"><Copy className="h-4 w-4" /></Button>}
                                         {isAdmin && <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => { setClubToDelete(club); setDeleteAlertOpen(true); }}><Trash2 className="h-4 w-4" /></Button>}
                                     </div>
                                 </div>
@@ -185,9 +201,20 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                     <FormField control={form.control} name="rating" render={({ field }) => (<FormItem><FormLabel>Đánh giá (0-5)</FormLabel><FormControl><Input type="number" step="0.1" min="0" max="5" {...field} /></FormControl><FormMessage /></FormItem>)} />
                 </div>
                 <FormField control={form.control} name="operatingHours" render={({ field }) => (<FormItem><FormLabel>Giờ hoạt động</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField control={form.control} name="latitude" render={({ field }) => (<FormItem><FormLabel>Vĩ độ</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                    <FormField control={form.control} name="longitude" render={({ field }) => (<FormItem><FormLabel>Kinh độ</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <div className="space-y-2">
+                    <FormLabel>Vị trí trên bản đồ</FormLabel>
+                    <LocationPicker
+                        latitude={form.watch('latitude') || 0}
+                        longitude={form.watch('longitude') || 0}
+                        onLocationChange={(lat, lng) => {
+                            form.setValue('latitude', lat);
+                            form.setValue('longitude', lng);
+                        }}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormField control={form.control} name="latitude" render={({ field }) => (<FormItem><FormLabel>Vĩ độ</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="longitude" render={({ field }) => (<FormItem><FormLabel>Kinh độ</FormLabel><FormControl><Input type="number" step="any" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                    </div>
                 </div>
                 <FormField control={form.control} name="isActive" render={({ field }) => (<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4"><div className="space-y-0.5"><FormLabel>Hiển thị Câu lạc bộ</FormLabel><FormDescriptionComponent>Nếu tắt, câu lạc bộ sẽ bị ẩn.</FormDescriptionComponent></div><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} disabled={!canEdit} /></FormControl></FormItem>)} />
                 <FormField control={form.control} name="servicesHtml" render={({ field }) => (<FormItem><FormLabel>Dịch vụ (HTML)</FormLabel><FormControl><Textarea {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />

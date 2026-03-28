@@ -10,7 +10,6 @@ import { Textarea } from '@/components/ui/textarea';
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -73,6 +72,23 @@ export default function RegisterClubPage() {
 
             const { error } = await supabase.from('clubs').insert(clubData);
             if (error) throw error;
+
+            // Gửi email thông báo cho admin
+            try {
+                const emailResponse = await fetch('/api/notify-registration', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(values),
+                });
+                const emailResult = await emailResponse.json();
+                console.log('Email notification result:', emailResult);
+                
+                if (!emailResponse.ok) {
+                    console.error('Email notification failed:', emailResult);
+                }
+            } catch (emailError) {
+                console.error('Email notification error:', emailError);
+            }
 
             toast({
                 title: "Gửi yêu cầu thành công!",
