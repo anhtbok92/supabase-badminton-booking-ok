@@ -56,6 +56,15 @@ export default function RegisterClubPage() {
         setIsSubmitting(true);
 
         try {
+            const defaultPricing = {
+                weekday: [
+                    { timeRange: ['05:00', '24:00'], price: 40000 }
+                ],
+                weekend: [
+                    { timeRange: ['05:00', '24:00'], price: 40000 }
+                ]
+            };
+
             const clubData = {
                 name: values.clubName,
                 address: values.address,
@@ -68,6 +77,7 @@ export default function RegisterClubPage() {
                 number_of_courts: values.courtCount,
                 description: values.note || null,
                 owner_id: user?.id || null,
+                pricing: defaultPricing,
             };
 
             const { error } = await supabase.from('clubs').insert(clubData);

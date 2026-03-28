@@ -106,12 +106,24 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
 
 function PricingManager({ club }: { club: Club }) {
     const { pricing } = club;
+    
+    if (!pricing || !pricing.weekday || !pricing.weekend) {
+        return (
+            <Card>
+                <CardHeader><CardTitle>Thông tin giá</CardTitle></CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">Chưa có thông tin giá. Vui lòng cập nhật trong form chỉnh sửa.</p>
+                </CardContent>
+            </Card>
+        );
+    }
+    
     return (
         <Card>
             <CardHeader><CardTitle>Thông tin giá</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-                <div><h4 className="font-semibold mb-2">Ngày thường</h4><Table><TableHeader><TableRow><TableHead>Khung thời gian</TableHead><TableHead className="text-right">Đơn giá/30 phút</TableHead></TableRow></TableHeader><TableBody>{pricing?.weekday.map((tier, i) => (<TableRow key={i}><TableCell>{tier.timeRange.join(' - ')}</TableCell><TableCell className="text-right">{new Intl.NumberFormat('vi-VN').format(tier.price)} VND</TableCell></TableRow>))}</TableBody></Table></div>
-                <div><h4 className="font-semibold mb-2">Cuối tuần</h4><Table><TableHeader><TableRow><TableHead>Khung thời gian</TableHead><TableHead className="text-right">Đơn giá/30 phút</TableHead></TableRow></TableHeader><TableBody>{pricing?.weekend.map((tier, i) => (<TableRow key={i}><TableCell>{tier.timeRange.join(' - ')}</TableCell><TableCell className="text-right">{new Intl.NumberFormat('vi-VN').format(tier.price)} VND</TableCell></TableRow>))}</TableBody></Table></div>
+                <div><h4 className="font-semibold mb-2">Ngày thường</h4><Table><TableHeader><TableRow><TableHead>Khung thời gian</TableHead><TableHead className="text-right">Đơn giá/30 phút</TableHead></TableRow></TableHeader><TableBody>{pricing.weekday.map((tier, i) => (<TableRow key={i}><TableCell>{tier.timeRange.join(' - ')}</TableCell><TableCell className="text-right">{new Intl.NumberFormat('vi-VN').format(tier.price)} VND</TableCell></TableRow>))}</TableBody></Table></div>
+                <div><h4 className="font-semibold mb-2">Cuối tuần</h4><Table><TableHeader><TableRow><TableHead>Khung thời gian</TableHead><TableHead className="text-right">Đơn giá/30 phút</TableHead></TableRow></TableHeader><TableBody>{pricing.weekend.map((tier, i) => (<TableRow key={i}><TableCell>{tier.timeRange.join(' - ')}</TableCell><TableCell className="text-right">{new Intl.NumberFormat('vi-VN').format(tier.price)} VND</TableCell></TableRow>))}</TableBody></Table></div>
             </CardContent>
         </Card>
     );
