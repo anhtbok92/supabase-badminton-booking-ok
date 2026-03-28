@@ -147,6 +147,18 @@ export default function AdminPage() {
         return <AdminLoginPage />;
     }
 
+    // User exists but profile not yet loaded — keep showing loading
+    if (user && !userProfile) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-background">
+                <div className="flex flex-col items-center gap-4">
+                    <Feather className="h-12 w-12 text-primary animate-pulse" />
+                    <p className="text-muted-foreground">Đang tải trang quản trị...</p>
+                </div>
+            </div>
+        );
+    }
+
     if (user && userProfile) {
         if (userProfile.is_locked) {
             return <AdminAccountLocked />;
