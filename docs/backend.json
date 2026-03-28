@@ -1,0 +1,393 @@
+{
+  "entities": {
+    "Club": {
+      "title": "Club",
+      "description": "Represents a badminton club.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the club."
+        },
+        "address": {
+          "type": "string",
+          "description": "The address of the club."
+        },
+        "phone": {
+          "type": "string",
+          "description": "The contact phone number for the club."
+        },
+        "rating": {
+          "type": "number",
+          "description": "The rating of the club (from 0 to 5), set by the admin."
+        },
+        "imageUrls": {
+          "type": "array",
+          "description": "URLs of images of the club.",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "pricing": {
+          "type": "object",
+          "description": "Pricing structure for the club.",
+          "properties": {
+            "weekday": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timeRange": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "price": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "timeRange",
+                  "price"
+                ]
+              }
+            },
+            "weekend": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timeRange": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "price": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "timeRange",
+                  "price"
+                ]
+              }
+            }
+          },
+          "required": [
+            "weekday",
+            "weekend"
+          ]
+        },
+        "operatingHours": {
+          "type": "string",
+          "description": "Text description of the club's operating hours (e.g., 'Mon-Fri: 8am-10pm')."
+        },
+        "servicesHtml": {
+          "type": "string",
+          "description": "HTML content for the services tab."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The latitude for the club's location on the map."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude for the club's location on the map."
+        },
+        "clubType": {
+          "type": "string",
+          "description": "The type of the club (e.g., 'Cầu lông', 'Bóng đá')."
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "If true, the club is visible to users. If false, it is hidden."
+        }
+      },
+      "required": [
+        "name",
+        "address",
+        "phone",
+        "pricing",
+        "clubType"
+      ]
+    },
+    "Court": {
+      "title": "Court",
+      "description": "Represents a badminton court within a club.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the court."
+        },
+        "clubId": {
+          "type": "string",
+          "description": "The ID of the club this court belongs to."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the court."
+        },
+        "imageUrls": {
+          "type": "array",
+          "description": "URLs of images of the court (up to 2).",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "order": {
+          "type": "number",
+          "description": "The display order of the court."
+        }
+      },
+      "required": [
+        "name",
+        "clubId"
+      ]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Represents a booking made by a user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who made the booking, if they were logged in."
+        },
+        "clubId": {
+          "type": "string",
+          "description": "The ID of the club for the booking."
+        },
+        "clubName": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "courtId": {
+                "type": "string"
+              },
+              "courtName": {
+                "type": "string",
+                "description": "The name of the court for this slot."
+              },
+              "time": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "courtId",
+              "time"
+            ]
+          }
+        },
+        "totalPrice": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Chờ xác nhận",
+            "Đã xác nhận",
+            "Đã hủy"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "paymentProofImageUrls": {
+          "type": "array",
+          "description": "URLs of payment proof images.",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Timestamp of when the booking was created. Managed by the server."
+        }
+      },
+      "required": [
+        "clubId",
+        "date",
+        "slots",
+        "totalPrice",
+        "status",
+        "name",
+        "phone"
+      ]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user profile information, roles, and permissions.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The user's phone number."
+        },
+        "role": {
+          "type": "string",
+          "description": "The role of the user.",
+          "enum": ["admin", "club_owner", "customer"]
+        },
+        "managedClubIds": {
+            "type": "array",
+            "description": "A list of club IDs managed by a club owner.",
+            "items": {
+                "type": "string"
+            }
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "role"
+      ]
+    },
+    "NewsArticle": {
+      "title": "News Article",
+      "description": "Represents a news article or blog post.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the news article."
+        },
+        "shortDescription": {
+          "type": "string",
+          "description": "A brief summary of the article."
+        },
+        "contentHtml": {
+          "type": "string",
+          "description": "The full content of the article in HTML format."
+        },
+        "bannerImageUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL for the article's banner image."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Timestamp of when the article was created. Managed by the server."
+        },
+        "tags": {
+          "type": "array",
+          "description": "A list of tags for the article.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "shortDescription",
+        "contentHtml",
+        "bannerImageUrl",
+        "createdAt"
+      ]
+    },
+    "NewsTag": {
+      "title": "News Tag",
+      "description": "Represents a tag for categorizing news articles.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the tag (e.g., 'Giải đấu')."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "ClubType": {
+      "title": "Club Type",
+      "description": "Represents a type of sport club.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the club type (e.g., 'Cầu lông')."
+        },
+        "order": {
+          "type": "number",
+          "description": "Display order for the filter chips."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "Email"
+    ]
+  },
+  "firestore": {
+    "/clubs/{clubId}": {
+      "schema": {
+        "$ref": "#/entities/Club"
+      },
+      "description": "Stores information about each badminton club."
+    },
+    "/clubs/{clubId}/courts/{courtId}": {
+      "schema": {
+        "$ref": "#/entities/Court"
+      },
+      "description": "Subcollection for courts within a club."
+    },
+    "/bookings/{bookingId}": {
+      "schema": {
+        "$ref": "#/entities/Booking"
+      },
+      "description": "Stores all bookings."
+    },
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores user profile data, roles and permissions."
+    },
+    "/news/{newsId}": {
+      "schema": {
+        "$ref": "#/entities/NewsArticle"
+      },
+      "description": "Stores all news articles."
+    },
+    "/newsTags/{tagId}": {
+      "schema": {
+        "$ref": "#/entities/NewsTag"
+      },
+      "description": "Stores all available news tags."
+    },
+    "/clubTypes/{typeId}": {
+      "schema": {
+        "$ref": "#/entities/ClubType"
+      },
+      "description": "Stores all available club types."
+    }
+  }
+}

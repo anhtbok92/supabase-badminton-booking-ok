@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Dashboard - Sidebar Expanded</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#137fec",
+                "background-light": "#f6f7f8",
+                "background-dark": "#101922",
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#111418] dark:text-gray-100">
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar Component (Expanded) -->
+<aside class="w-64 flex-shrink-0 flex flex-col border-r border-[#e5e7eb] dark:border-gray-800 bg-white dark:bg-gray-900 transition-all duration-300">
+<div class="flex flex-col h-full justify-between p-4">
+<div class="flex flex-col gap-8">
+<!-- Logo Section -->
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary size-10 rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-[#111418] dark:text-white text-base font-bold leading-normal">AdminDash</h1>
+<p class="text-[#617589] dark:text-gray-400 text-xs font-normal">Enterprise Suite</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+<span class="text-sm font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#111418] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">group</span>
+<span class="text-sm font-medium">Users</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#111418] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#111418] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Sidebar Actions -->
+<div class="flex flex-col gap-4">
+<button class="flex items-center gap-3 px-3 py-2 text-[#617589] dark:text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">help_outline</span>
+<span class="text-sm font-medium">Help Center</span>
+</button>
+<button class="flex w-full items-center justify-center gap-2 rounded-lg h-10 px-4 bg-gray-100 dark:bg-gray-800 text-[#111418] dark:text-white text-sm font-bold transition-all hover:bg-gray-200 dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-[20px]">keyboard_double_arrow_left</span>
+<span class="truncate">Collapse</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex flex-col flex-1 overflow-y-auto">
+<!-- TopNavBar Component -->
+<header class="flex h-16 items-center justify-between border-b border-[#e5e7eb] dark:border-gray-800 bg-white dark:bg-gray-900 px-8 sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<h2 class="text-[#111418] dark:text-white text-lg font-bold tracking-tight">Dashboard Overview</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3 pr-4 border-r border-gray-200 dark:border-gray-800">
+<div class="flex flex-col items-end">
+<span class="text-sm font-bold text-[#111418] dark:text-white leading-tight">Admin User</span>
+<span class="text-xs text-[#617589] dark:text-gray-400">admin@company.com</span>
+</div>
+<div class="size-10 rounded-full bg-cover bg-center border-2 border-primary/20" data-alt="Professional male user profile avatar portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1YOvIm_DUj4IX1zu4Cndzg-75oYYaAKxKrBKRlJ3-4jIypiPX448PNVYJ-uStuvEX0IV_IHn3-ieeQIYroOicpDdu82AdPJwq1yQMWCUMDhZzFqb5dwuO065lcLL5G-5QW82sV1Guif0hWG2ZDHQjfO204da5oQqPHgMIG5nQ50d_c4zeT390yESrSf8qHd9e7lQayVBHxIAO-UrneTSMYeRxRgmbO0LJ7-DLPfFMwulFN26d71qco_hl6lz3x-E2A5aY5CMEw9eC")'>
+</div>
+</div>
+<button class="flex items-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>Logout</span>
+</button>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-8">
+<!-- Breadcrumbs Component -->
+<nav class="flex items-center gap-2 text-sm mb-6 text-[#617589] dark:text-gray-400">
+<a class="hover:text-primary transition-colors flex items-center" href="#">
+<span class="material-symbols-outlined text-[18px]">home</span>
+</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="font-medium text-[#111418] dark:text-white">Overview</span>
+</nav>
+<!-- EmptyState Component -->
+<div class="flex flex-col h-[calc(100vh-250px)] justify-center">
+<div class="flex flex-col items-center gap-6 rounded-xl border-2 border-dashed border-[#dbe0e6] dark:border-gray-700 bg-white dark:bg-gray-900/50 px-6 py-20 transition-all">
+<div class="size-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
+<span class="material-symbols-outlined text-4xl">rocket_launch</span>
+</div>
+<div class="flex max-w-[480px] flex-col items-center gap-3">
+<p class="text-[#111418] dark:text-white text-2xl font-bold text-center">Welcome back, Admin</p>
+<p class="text-[#617589] dark:text-gray-400 text-base font-normal text-center leading-relaxed">
+                                Your dashboard is ready. Start by selecting a module from the sidebar on the left or view your current platform statistics.
+                            </p>
+</div>
+<div class="flex gap-3">
+<button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-11 px-6 bg-primary text-white text-sm font-bold transition-all hover:shadow-lg hover:shadow-primary/20">
+<span class="truncate">Quick Stats</span>
+</button>
+<button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-11 px-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-[#111418] dark:text-white text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+<span class="truncate">Dismiss</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="mt-auto px-8 py-8 border-t border-[#e5e7eb] dark:border-gray-800 bg-white dark:bg-gray-900">
+<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+<p class="text-[#617589] dark:text-gray-400 text-sm font-normal">
+                        © 2023 AdminDash Inc. All rights reserved.
+                    </p>
+<div class="flex items-center gap-8">
+<a class="text-[#617589] dark:text-gray-400 text-sm font-medium hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-[#617589] dark:text-gray-400 text-sm font-medium hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-[#617589] dark:text-gray-400 text-sm font-medium hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

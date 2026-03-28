@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Màn hình Tin tức - Badminton App</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#0d1b12] dark:text-white transition-colors duration-300">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden border-x border-gray-100 dark:border-gray-800">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="flex items-center p-4 pb-2 justify-between">
+<div class="text-[#0d1b12] dark:text-white flex size-12 shrink-0 items-center cursor-pointer" data-icon="ArrowLeft">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Tin tức</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-[#0d1b12] dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Chips / Categories -->
+<div class="flex gap-3 p-4 overflow-x-auto no-scrollbar">
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary px-5 shadow-sm">
+<p class="text-white text-sm font-semibold leading-normal">Tất cả</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-5">
+<p class="text-[#0d1b12] dark:text-gray-300 text-sm font-medium leading-normal">Giải đấu</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-5">
+<p class="text-[#0d1b12] dark:text-gray-300 text-sm font-medium leading-normal">Vợt &amp; Phụ kiện</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-5">
+<p class="text-[#0d1b12] dark:text-gray-300 text-sm font-medium leading-normal">Kỹ thuật</p>
+</div>
+</div>
+<!-- SectionHeader: Featured -->
+<div class="flex items-center justify-between px-4 pt-4 pb-2">
+<h3 class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Tin nổi bật</h3>
+<span class="text-primary text-sm font-medium">Xem tất cả</span>
+</div>
+<!-- Featured Carousel -->
+<div class="flex overflow-x-auto no-scrollbar scroll-smooth">
+<div class="flex items-stretch p-4 gap-4">
+<div class="flex h-full flex-1 flex-col gap-3 rounded-xl min-w-[280px] bg-white dark:bg-gray-900 p-2 shadow-sm">
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex flex-col" data-alt="Exciting badminton tournament action in District 7" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDbMWKG_s1FkOGBZjj9mynm3yJQVFZnhivD_5aIl8xKh6A_5jSuxgc71BAiTsBTFUldlLxvFqgX2XJnuqLvggJUxiTe4CbLx0QVSaasiWwPHKqRSVigpvevb7pAtx0ItbNaRZEu0j3bYXkavT-Ky0rDNKMfZVmDYN5G0PQR-jEDNCpgIqTD9Olm9ULysi5Jkm_nQddu3hmOEa7oP0RDx_-jMm_EqNDHgJ-85IT5f2ceR3cBN0QrllVw2rTU8HjBkQOnj1KFHG06doe8");'>
+<div class="m-2 px-2 py-1 bg-primary text-white text-[10px] font-bold uppercase rounded self-start">Hot</div>
+</div>
+<div class="px-2 pb-2">
+<p class="text-[#0d1b12] dark:text-white text-base font-bold leading-tight">Giải mở rộng Quận 7: Quy tụ 200 vận động viên</p>
+<p class="text-[#4c9a66] dark:text-primary text-xs font-medium mt-1">Lịch thi đấu chính thức • 2 giờ trước</p>
+</div>
+</div>
+<div class="flex h-full flex-1 flex-col gap-3 rounded-xl min-w-[280px] bg-white dark:bg-gray-900 p-2 shadow-sm">
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex flex-col" data-alt="Review of a premium Yonex badminton racket" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD9jndAkWoUHN8T-FFGkS636T3noanrUQcsCRo7riGDtVnz78j7y5y6gMqxPK66bb2iMYLZhs-QZ0KqJgTPvnyA8uU7P7TcoAqqzRd-p7BLzpPHvVQILVpa7nFZH7dJQB3lLPEEK8QwURbStduGGaN4-RjuqZqfpphsGAgOKJLVO1lqG6wlZcet52rfK826YtpaBZ4-Bwy0dALStSc1r9bSpdEb7ldOyma50Xwl9ueyLfvKYTC9BGE7ouIfQeze_gtGfmF_IOtYb1AE");'>
+<div class="m-2 px-2 py-1 bg-blue-500 text-white text-[10px] font-bold uppercase rounded self-start">Review</div>
+</div>
+<div class="px-2 pb-2">
+<p class="text-[#0d1b12] dark:text-white text-base font-bold leading-tight">Review Yonex Astrox 88D: Sức mạnh tấn công</p>
+<p class="text-[#4c9a66] dark:text-primary text-xs font-medium mt-1">Trang bị chuyên nghiệp • 5 giờ trước</p>
+</div>
+</div>
+</div>
+</div>
+<!-- SectionHeader: Latest -->
+<h3 class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Mới nhất</h3>
+<!-- Vertical List - Horizontal Cards -->
+<div class="flex flex-col gap-4 p-4 pt-0">
+<!-- News Item 1 -->
+<div class="flex gap-4 bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm border border-gray-50 dark:border-gray-800">
+<div class="w-24 h-24 shrink-0 bg-center bg-cover rounded-lg" data-alt="Grand opening of a new badminton club" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBadh1C0kPAg6nj6NtfeEXp5uI9-eTFgyeFT3MYpt5nlSq5fBxJZLScqZB4ckihKt-75lrr0qWZwmVnkjUmJ7RkNgwStYXWW1MLdhpT0I8qSva-sD1-A1v6p6fGmCJl1tlSDUWcyCoS3vpYbAuTdyfGwadjcroxp_LJD1-yj7lBhRgsz_D4uTqtcw_C51mqWDVEosO7dqvacFgcGcG7kGLTZzA5G3M0ZUOP6iSZlsiMi2of6q2hVlytAQRwAb22IhLX5McjIV0PV52O");'>
+</div>
+<div class="flex flex-col justify-center gap-1">
+<span class="text-primary text-[10px] font-bold uppercase">Sự kiện CLB</span>
+<h4 class="text-[#0d1b12] dark:text-white text-sm font-bold leading-snug line-clamp-2">Khai trương sân mới tại Bình Thạnh - Ưu đãi 50%</h4>
+<p class="text-gray-500 dark:text-gray-400 text-xs line-clamp-1 italic">Hệ thống 10 sân thảm mới nhất...</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[14px] text-gray-400">schedule</span>
+<span class="text-gray-400 text-[10px]">1 ngày trước</span>
+</div>
+</div>
+</div>
+<!-- News Item 2 -->
+<div class="flex gap-4 bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm border border-gray-50 dark:border-gray-800">
+<div class="w-24 h-24 shrink-0 bg-center bg-cover rounded-lg" data-alt="Badminton player practicing backhand technique" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDp52aLKa1DpBrweHlLPa4sCW9DumhtnXU2Tffdk2GfnrYy6CerUeI8j0sSZDv1yRRo6X8IOcNeT5yg6T3LuKIBMTqGhEcEqUUB03jBGAdQsyUoUhHLDQohrA_f09I-Es_UdPV4v2TRUe_Ac_RcsYJ3vpeqSuLQHXsGAuC4WGZi7bgq-OZMWTSiM5E8JVTixJuqVQlbTXHSpfU4CaHUfnR61K0KxHR5u_dLNEl2YvG5Hkc4fnEoWINn9V1ErhM-nE6YhUC4NJDpkVap");'>
+</div>
+<div class="flex flex-col justify-center gap-1">
+<span class="text-orange-500 text-[10px] font-bold uppercase">Kỹ thuật</span>
+<h4 class="text-[#0d1b12] dark:text-white text-sm font-bold leading-snug line-clamp-2">Làm sao để có cú trái tay uy lực như Lee Zii Jia?</h4>
+<p class="text-gray-500 dark:text-gray-400 text-xs line-clamp-1 italic">Bí quyết nằm ở sự phối hợp cổ tay...</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[14px] text-gray-400">schedule</span>
+<span class="text-gray-400 text-[10px]">2 ngày trước</span>
+</div>
+</div>
+</div>
+<!-- News Item 3 -->
+<div class="flex gap-4 bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm border border-gray-50 dark:border-gray-800">
+<div class="w-24 h-24 shrink-0 bg-center bg-cover rounded-lg" data-alt="Close up of badminton shuttlecocks" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAyveovKdMYZd1mBMwNpA5pNeQuyPs4Pf9NoNntJA1X7HOYX4ddVHeA19LQj5K8mfO-KSZpfTjG38UaauI57koGesHVpBFN-IRR47IHbJxTS8KyQlczCFHYjYkGkwz_ndYB0gr1FxYBn4NhgiOJE1lJOswHpocjQu25hSYdX7VZNnV-chjcHD8hSnnGagxFu8GGqidgdJ9H0DjMr5EgbHkANOm1piEaPeDTJvU8U1_igoFYMRGoqhvxWkGnmts8hJR-HFegou5GnSQQ");'>
+</div>
+<div class="flex flex-col justify-center gap-1">
+<span class="text-blue-500 text-[10px] font-bold uppercase">Phụ kiện</span>
+<h4 class="text-[#0d1b12] dark:text-white text-sm font-bold leading-snug line-clamp-2">Cách chọn quả cầu lông bền bỉ cho ngày nắng nóng</h4>
+<p class="text-gray-500 dark:text-gray-400 text-xs line-clamp-1 italic">So sánh cầu nhựa và cầu lông vũ...</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[14px] text-gray-400">schedule</span>
+<span class="text-gray-400 text-[10px]">3 ngày trước</span>
+</div>
+</div>
+</div>
+<!-- News Item 4 -->
+<div class="flex gap-4 bg-white dark:bg-gray-900 rounded-xl p-3 shadow-sm border border-gray-50 dark:border-gray-800">
+<div class="w-24 h-24 shrink-0 bg-center bg-cover rounded-lg" data-alt="Badminton court perspective" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCt7nIvM6vxY3QBkfvJh28pG_0tyE6rv7vxqKT5d0fIlizUBe6nlRrrHZPB1CYsv7OZ2RLLKUmDf2J8LotYXimGOToCcRBKzsPTmocf26GT3KL1HBYyEBycJgQjU52hHUNTqWSAOHh-0Wzj20GKyTwtVgEqZWSKqbhRGGKiWbcmxK1P0m-qqm-YONCzccPHN0lfK2OehvW0HVtKUUHtbPSay_PWcC7pKAxx3j0VmV0qIq-U757ECIT7zURiBEpMWqRp25DnNXUJKsrJ");'>
+</div>
+<div class="flex flex-col justify-center gap-1">
+<span class="text-primary text-[10px] font-bold uppercase">Sự kiện CLB</span>
+<h4 class="text-[#0d1b12] dark:text-white text-sm font-bold leading-snug line-clamp-2">Giải giao lưu nội bộ CLB Smash Master - Đăng ký ngay</h4>
+<p class="text-gray-500 dark:text-gray-400 text-xs line-clamp-1 italic">Cơ hội cọ xát cho mọi cấp độ...</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[14px] text-gray-400">schedule</span>
+<span class="text-gray-400 text-[10px]">4 ngày trước</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Padding for TabBar -->
+<div class="h-20 bg-transparent"></div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 flex justify-around items-center py-3 px-2 z-50">
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px]">Khám phá</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">event_available</span>
+<span class="text-[10px]">Đặt sân</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">article</span>
+<span class="text-[10px] font-bold">Tin tức</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px]">Cá nhân</span>
+</button>
+</nav>
+</div>
+</body></html>

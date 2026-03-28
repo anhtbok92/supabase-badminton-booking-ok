@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .light-trail-green {
+            background: linear-gradient(90deg, transparent, #0df259, transparent);
+            filter: blur(40px);
+            opacity: 0.4;
+            transform: rotate(-45deg);
+        }
+        .light-trail-blue {
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            filter: blur(50px);
+            opacity: 0.3;
+            transform: rotate(-35deg);
+        }
+        .light-trail-yellow {
+            background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+            filter: blur(45px);
+            opacity: 0.3;
+            transform: rotate(-55deg);
+        }
+        .shield-texture {
+            background-image: radial-gradient(circle at 2px 2px, rgba(13, 242, 89, 0.1) 1px, transparent 0);
+            background-size: 8px 8px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased overflow-hidden">
+<!-- Main Splash Screen Container -->
+<div class="relative flex h-screen w-full flex-col items-center justify-between overflow-hidden bg-background-light dark:bg-background-dark p-8">
+<!-- Abstract Dynamic Action Lines (Background Decor) -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden">
+<div class="light-trail-green absolute -top-20 -left-40 w-[600px] h-24"></div>
+<div class="light-trail-blue absolute top-1/2 -right-40 w-[500px] h-32"></div>
+<div class="light-trail-yellow absolute bottom-20 -left-20 w-[450px] h-20"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent via-background-dark/20 to-background-dark"></div>
+</div>
+<!-- Top spacing for iOS Safe Area -->
+<div class="h-12 w-full"></div>
+<!-- Central Branding & Loading Area -->
+<div class="relative flex flex-col items-center justify-center flex-1">
+<!-- Pulsing Ring Background -->
+<div class="absolute size-64 rounded-full border-2 border-primary/30 opacity-50"></div>
+<div class="absolute size-80 rounded-full border border-primary/10 opacity-30"></div>
+<!-- Shield Logo Component -->
+<div class="relative z-10 flex size-48 items-center justify-center rounded-xl bg-gradient-to-br from-zinc-800 to-zinc-900 shadow-2xl shadow-primary/20 border border-zinc-700/50">
+<!-- Inner Texture (Net Pattern) -->
+<div class="absolute inset-4 rounded-lg shield-texture border border-zinc-600/30"></div>
+<!-- Main Iconography -->
+<div class="relative flex flex-col items-center">
+<span class="material-symbols-outlined text-primary !text-6xl drop-shadow-[0_0_15px_rgba(13,242,89,0.5)]">
+                        sports_tennis
+                    </span>
+<div class="flex gap-2 mt-2">
+<span class="material-symbols-outlined text-white/40 !text-xl">sports_soccer</span>
+<span class="material-symbols-outlined text-white/40 !text-xl">sports_volleyball</span>
+</div>
+</div>
+</div>
+<!-- Loading Info (Reused/Modified ProgressBar Logic) -->
+<div class="mt-16 flex flex-col items-center gap-4 w-64">
+<div class="flex flex-col gap-2 w-full">
+<div class="rounded-full bg-primary/20 h-1.5 w-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 65%;"></div>
+</div>
+<p class="text-primary/70 text-[10px] uppercase tracking-[0.2em] font-bold text-center">System Initializing</p>
+</div>
+</div>
+</div>
+<!-- Headline and Meta Text Section -->
+<div class="relative z-10 w-full max-w-sm flex flex-col gap-2 pb-12">
+<!-- HeadlineText Replacement -->
+<h2 class="text-white tracking-tight text-3xl font-bold leading-tight text-center">
+                Đặt sân <span class="text-primary">mọi môn</span> thể thao
+            </h2>
+<!-- MetaText Replacement -->
+<p class="text-zinc-400 text-sm font-normal leading-relaxed text-center opacity-80">
+                Dynamic Sports Hub • Version 2.0.4
+            </p>
+</div>
+<!-- Subtle Bottom Branding -->
+<div class="absolute bottom-6 flex items-center gap-2 opacity-40">
+<div class="h-px w-8 bg-zinc-600"></div>
+<span class="text-[10px] text-zinc-500 font-medium tracking-widest uppercase">Premium Court Access</span>
+<div class="h-px w-8 bg-zinc-600"></div>
+</div>
+</div>
+</body></html>

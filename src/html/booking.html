@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Màn hình Chọn sân &amp; Giờ (Variant 1)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d452",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .sticky-column { position: sticky; left: 0; z-index: 10; }
+        .sticky-header { position: sticky; top: 0; z-index: 20; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#0d1b12] dark:text-white transition-colors duration-300">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md mx-auto bg-white dark:bg-background-dark shadow-2xl">
+<!-- TopAppBar -->
+<div class="flex items-center bg-white dark:bg-background-dark p-4 pb-2 justify-between border-b border-gray-100 dark:border-gray-800">
+<div class="text-[#0d1b12] dark:text-white flex size-12 shrink-0 items-center cursor-pointer" data-icon="ArrowBack">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Chọn sân &amp; Giờ</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-[#0d1b12] dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</div>
+<!-- Horizontal Calendar -->
+<div class="bg-white dark:bg-background-dark py-4">
+<div class="flex overflow-x-auto no-scrollbar px-4 gap-3">
+<!-- Selected Date -->
+<div class="flex flex-col items-center justify-center min-w-[60px] h-20 rounded-xl bg-primary text-[#0d1b12] shadow-lg shadow-primary/20">
+<span class="text-xs font-medium opacity-80">T2</span>
+<span class="text-xl font-bold">23</span>
+</div>
+<!-- Other Dates -->
+<div class="flex flex-col items-center justify-center min-w-[60px] h-20 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+<span class="text-xs font-medium text-gray-500">T3</span>
+<span class="text-xl font-bold text-gray-800 dark:text-gray-200">24</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[60px] h-20 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+<span class="text-xs font-medium text-gray-500">T4</span>
+<span class="text-xl font-bold text-gray-800 dark:text-gray-200">25</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[60px] h-20 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+<span class="text-xs font-medium text-gray-500">T5</span>
+<span class="text-xl font-bold text-gray-800 dark:text-gray-200">26</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[60px] h-20 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+<span class="text-xs font-medium text-gray-500">T6</span>
+<span class="text-xl font-bold text-gray-800 dark:text-gray-200">27</span>
+</div>
+<div class="flex flex-col items-center justify-center min-w-[60px] h-20 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+<span class="text-xs font-medium text-gray-500">T7</span>
+<span class="text-xl font-bold text-gray-800 dark:text-gray-200">28</span>
+</div>
+</div>
+</div>
+<!-- SingleButton CTA -->
+<div class="flex px-4 py-2">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 flex-1 bg-primary text-[#0d1b12] text-base font-bold leading-normal tracking-[0.015em] shadow-md shadow-primary/20">
+<span class="material-symbols-outlined mr-2">search</span>
+<span class="truncate">Xem sân và giá</span>
+</button>
+</div>
+<!-- SectionHeader -->
+<div class="flex items-center justify-between px-4 pt-4 pb-2">
+<h3 class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Lịch sân cầu lông</h3>
+<span class="text-xs text-gray-500">Múi giờ: GMT+7</span>
+</div>
+<!-- Grid Container -->
+<div class="flex-1 overflow-auto relative">
+<table class="w-full border-collapse">
+<!-- X-Axis Header (Times) -->
+<thead>
+<tr class="bg-gray-50 dark:bg-gray-900">
+<th class="sticky-column bg-gray-50 dark:bg-gray-900 p-2 text-xs font-bold text-gray-400 text-left border-r border-gray-100 dark:border-gray-800 min-w-[80px]">Court</th>
+<th class="p-2 text-xs font-bold text-gray-500 border-b border-gray-100 dark:border-gray-800 min-w-[60px]">05:00</th>
+<th class="p-2 text-xs font-bold text-gray-500 border-b border-gray-100 dark:border-gray-800 min-w-[60px]">05:30</th>
+<th class="p-2 text-xs font-bold text-gray-500 border-b border-gray-100 dark:border-gray-800 min-w-[60px]">06:00</th>
+<th class="p-2 text-xs font-bold text-gray-500 border-b border-gray-100 dark:border-gray-800 min-w-[60px]">06:30</th>
+<th class="p-2 text-xs font-bold text-gray-500 border-b border-gray-100 dark:border-gray-800 min-w-[60px]">07:00</th>
+<th class="p-2 text-xs font-bold text-gray-500 border-b border-gray-100 dark:border-gray-800 min-w-[60px]">07:30</th>
+<th class="p-2 text-xs font-bold text-gray-500 border-b border-gray-100 dark:border-gray-800 min-w-[60px]">08:00</th>
+</tr>
+</thead>
+<tbody>
+<!-- Row 1 -->
+<tr>
+<td class="sticky-column bg-white dark:bg-background-dark p-4 text-sm font-bold border-r border-gray-100 dark:border-gray-800">Sân 1</td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-yellow-400 border border-yellow-500 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-yellow-400 border border-yellow-500 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-red-500 border border-red-600 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+</tr>
+<!-- Row 2 -->
+<tr>
+<td class="sticky-column bg-white dark:bg-background-dark p-4 text-sm font-bold border-r border-gray-100 dark:border-gray-800">Sân 2</td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-purple-500 border border-purple-600 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-purple-500 border border-purple-600 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+</tr>
+<!-- Row 3 -->
+<tr>
+<td class="sticky-column bg-white dark:bg-background-dark p-4 text-sm font-bold border-r border-gray-100 dark:border-gray-800">Sân 3</td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-[#8B4513] border border-orange-900 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-[#8B4513] border border-orange-900 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-red-500 border border-red-600 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-red-500 border border-red-600 shadow-sm"></div></td>
+</tr>
+<!-- Row 4 -->
+<tr>
+<td class="sticky-column bg-white dark:bg-background-dark p-4 text-sm font-bold border-r border-gray-100 dark:border-gray-800">Sân 4</td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+</tr>
+<!-- Row 5 -->
+<tr>
+<td class="sticky-column bg-white dark:bg-background-dark p-4 text-sm font-bold border-r border-gray-100 dark:border-gray-800">Sân 5</td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-red-500 border border-red-600 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+<td class="p-1 border-b border-gray-50 dark:border-gray-800"><div class="h-10 w-full rounded-md bg-white border border-gray-200 shadow-sm"></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Color Legend -->
+<div class="bg-gray-50 dark:bg-gray-900 px-4 py-4 border-t border-gray-100 dark:border-gray-800">
+<div class="grid grid-cols-3 gap-y-3 gap-x-2">
+<div class="flex items-center gap-2">
+<div class="size-4 rounded-sm bg-white border border-gray-300"></div>
+<span class="text-xs text-gray-600 dark:text-gray-400">Sân trống</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-4 rounded-sm bg-yellow-400"></div>
+<span class="text-xs text-gray-600 dark:text-gray-400">Đang chọn</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-4 rounded-sm bg-red-500"></div>
+<span class="text-xs text-gray-600 dark:text-gray-400">Đã đặt</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-4 rounded-sm bg-[#8B4513]"></div>
+<span class="text-xs text-gray-600 dark:text-gray-400">Khóa</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-4 rounded-sm bg-purple-500"></div>
+<span class="text-xs text-gray-600 dark:text-gray-400">Sự kiện</span>
+</div>
+</div>
+</div>
+<!-- Summary Footer -->
+<div class="p-4 bg-white dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-4">
+<div class="flex flex-col">
+<span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Tạm tính</span>
+<span class="text-lg font-bold text-primary">120.000đ</span>
+<span class="text-[10px] text-gray-400 italic">2 slots (05:30 - 06:30)</span>
+</div>
+<button class="flex-1 bg-primary text-[#0d1b12] h-14 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/30">
+                Tiếp tục
+                <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Màn hình Lịch đặt</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d1b12] dark:text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full max-w-[430px] mx-auto flex-col bg-background-light dark:bg-background-dark shadow-2xl overflow-x-hidden">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between border-b border-gray-100 dark:border-gray-800">
+<div class="text-[#0d1b12] dark:text-white flex size-12 shrink-0 items-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Lịch đặt của tôi</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-[#0d1b12] dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<!-- SegmentedButtons -->
+<div class="flex px-4 py-3">
+<div class="flex h-12 flex-1 items-center justify-center rounded-xl bg-gray-200/50 dark:bg-gray-800/50 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm has-[:checked]:text-[#0d1b12] dark:has-[:checked]:text-white text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal transition-all">
+<span class="truncate">Sắp tới</span>
+<input checked="" class="invisible w-0" name="booking-tabs" type="radio" value="upcoming"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm has-[:checked]:text-[#0d1b12] dark:has-[:checked]:text-white text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal transition-all">
+<span class="truncate">Lịch sử</span>
+<input class="invisible w-0" name="booking-tabs" type="radio" value="history"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-gray-700 has-[:checked]:shadow-sm has-[:checked]:text-[#0d1b12] dark:has-[:checked]:text-white text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal transition-all">
+<span class="truncate">Đã hủy</span>
+<input class="invisible w-0" name="booking-tabs" type="radio" value="cancelled"/>
+</label>
+</div>
+</div>
+<div class="flex flex-col gap-2 pb-8">
+<!-- SectionHeader -->
+<h3 class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Tháng 10, 2023</h3>
+<!-- Card: Confirmed -->
+<div class="px-4 py-2">
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-gray-900 p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-primary font-medium text-xs uppercase tracking-wider">
+<span class="material-symbols-outlined !text-sm">sports_tennis</span>
+<span>Sân số 3</span>
+</div>
+<p class="text-[#0d1b12] dark:text-white text-base font-bold leading-tight">Sân Cầu Lông Bình Minh</p>
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined !text-sm">calendar_today</span>
+<span>Thứ 2, 25 Th10 | 18:00 - 20:00</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<p class="text-lg font-bold text-[#0d1b12] dark:text-white">150.000đ</p>
+<div class="flex items-center justify-center rounded-full px-3 py-1 bg-primary/20 text-[#0d1b12] dark:text-primary gap-1 text-xs font-bold leading-normal border border-primary/30">
+<span class="material-symbols-outlined !text-sm">check_circle</span>
+<span class="truncate">Đã xác nhận</span>
+</div>
+</div>
+</div>
+<div class="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg shrink-0 overflow-hidden" data-alt="Interior view of a modern indoor badminton court with green floor" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCrarGqvs7sPncKjoVL1Pyx1PVAfZCSAHC5_kt6L-GuaUqGuyGZiOmWnzHEhr7qdl5L7sXxpxhAq9sxrhXrKCjYuKOLCvYTfrkODjVuOuZGIGRxo4iwTJXBXLxxZZXpRdRQJnIZW9TSLv94v_zCznJwxuOC0CdiaMWRC1sqc4VNh3J0fS8DDtTxmvaJuGyLiZ4OB-Uou1WWz82sEq40805Afjk-xfI3TRdkrc6De-gCwEFQeSxbLOmWEBetl1ie-S0XLegS0sht7Po1");'>
+</div>
+</div>
+</div>
+<!-- Card: Confirmed 2 -->
+<div class="px-4 py-2">
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-gray-900 p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-primary font-medium text-xs uppercase tracking-wider">
+<span class="material-symbols-outlined !text-sm">sports_tennis</span>
+<span>Sân số 1</span>
+</div>
+<p class="text-[#0d1b12] dark:text-white text-base font-bold leading-tight">CLB Cầu Lông Sunrise</p>
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined !text-sm">calendar_today</span>
+<span>Thứ 4, 27 Th10 | 05:00 - 07:00</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<p class="text-lg font-bold text-[#0d1b12] dark:text-white">120.000đ</p>
+<div class="flex items-center justify-center rounded-full px-3 py-1 bg-primary/20 text-[#0d1b12] dark:text-primary gap-1 text-xs font-bold leading-normal border border-primary/30">
+<span class="material-symbols-outlined !text-sm">check_circle</span>
+<span class="truncate">Đã xác nhận</span>
+</div>
+</div>
+</div>
+<div class="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg shrink-0 overflow-hidden" data-alt="Close up of a shuttlecock on a badminton court floor" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCDdjsFLq_pgWSdv_qYyKlegjJsQ_C1pcDGUkf4_kOeuFvuS6HGEM2lX7lYEE5vFI6t_lP4aJSE-lFCRzbaSk47X2QNexxIPG1bBidnwW7pdua6E5XKIMRLB7Ed0ibp-msplfQfyUeirGROx-Y5syjjyM5uXF2XCTEoUpoiUY5PWmzbVZD6votLCbedO_uwOwMQaulhhz2uG_1XOYiBo8ANOzux3N_yNuBKJ0otHd1eRUPeWJ62F3qz1KGk_fPbX4Sc142Ragfnd3vH");'>
+</div>
+</div>
+</div>
+<!-- SectionHeader History -->
+<h3 class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-6">Lịch sử đặt sân</h3>
+<!-- Card: Completed -->
+<div class="px-4 py-2">
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-gray-900 p-4 shadow-sm border border-gray-100 dark:border-gray-800 opacity-80">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-gray-400 font-medium text-xs uppercase tracking-wider">
+<span class="material-symbols-outlined !text-sm">sports_tennis</span>
+<span>Sân số 2</span>
+</div>
+<p class="text-[#0d1b12] dark:text-white text-base font-bold leading-tight">Sân Cầu Lông Ngôi Sao</p>
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined !text-sm">calendar_today</span>
+<span>Chủ Nhật, 22 Th10 | 14:00 - 16:00</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<p class="text-lg font-bold text-[#0d1b12] dark:text-white">200.000đ</p>
+<div class="flex items-center justify-center rounded-full px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 gap-1 text-xs font-bold leading-normal">
+<span class="material-symbols-outlined !text-sm">verified</span>
+<span class="truncate">Hoàn thành</span>
+</div>
+</div>
+</div>
+<div class="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg shrink-0 overflow-hidden grayscale" data-alt="Action shot of players in a badminton match" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCB-OtL1vvy9254f86UgVnG1Xu4-zXrL6JAVm-NtVArCgpK8pDNQewq4hjs7WO71-mpGoGBWmLUXZOe26zxKMbdL1tZAcoweWphb_uRNdk5aqN_1OTAiFxOybMCkTluGqcZgtsGsLxQiFp4NzQZIJ2yEnrBG5KE-dihjlqO5iIyNJHQ1fDBK-Fl_LKlV11eskaGGwtwkc8Ig38pKs_UUV2IN9DsxnX00ehDs4cmnCCjCMltpT9HyOnA8_UDtJMQICXOApLplIv0u2_8");'>
+</div>
+</div>
+</div>
+<!-- Card: Cancelled -->
+<div class="px-4 py-2">
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-gray-900 p-4 shadow-sm border border-gray-100 dark:border-gray-800 opacity-80">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-gray-400 font-medium text-xs uppercase tracking-wider">
+<span class="material-symbols-outlined !text-sm">sports_tennis</span>
+<span>Sân số 5</span>
+</div>
+<p class="text-[#0d1b12] dark:text-white text-base font-bold leading-tight">CLB Cầu Lông Tân Phú</p>
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined !text-sm">calendar_today</span>
+<span>Thứ 7, 21 Th10 | 19:00 - 21:00</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<p class="text-lg font-bold text-[#0d1b12] dark:text-white">180.000đ</p>
+<div class="flex items-center justify-center rounded-full px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 gap-1 text-xs font-bold leading-normal border border-red-200 dark:border-red-900/50">
+<span class="material-symbols-outlined !text-sm">cancel</span>
+<span class="truncate">Đã hủy</span>
+</div>
+</div>
+</div>
+<div class="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-lg shrink-0 overflow-hidden grayscale" data-alt="Badminton court net and rackets background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDcWhg-OLFWhZJYl7YPq94WkJwdFPz7Toj28diyb3XuOvOoIYgW8Y5biazUgxQDVzbXVxwS1yLNosHwi_UaGpiHJr058JvVC-NDseK4ICxouh8KH2eO246AjmmUiVuWeWKnU_3x_834AGn2GUR1ULebeY_RonvfTcW4bcsc_mvqKQyOFfmx1sakjKzLzWZm3I0X_8Vxdr1reKpwldJWXXQUfzhfFu2fslwX1D_IsU0r_ZgNr83V9kB4RyoSNemgpiNqysQhydGzkPXI");'>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button (Optional for UX) -->
+<div class="fixed bottom-6 right-6 z-50">
+<button class="flex items-center justify-center w-14 h-14 bg-primary text-[#0d1b12] rounded-full shadow-lg hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined !text-3xl">add</span>
+</button>
+</div>
+<!-- Bottom Tab Bar Placeholder (Mobile UI Standard) -->
+<div class="mt-auto flex border-t border-gray-100 dark:border-gray-800 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg px-6 py-3 justify-between">
+<div class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px]">Trang chủ</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined fill-1">calendar_month</span>
+<span class="text-[10px] font-bold">Lịch đặt</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">newspaper</span>
+<span class="text-[10px]">Tin tức</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px]">Tài khoản</span>
+</div>
+</div>
+</div>
+</body></html>

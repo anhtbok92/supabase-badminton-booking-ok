@@ -1,0 +1,6 @@
+/* 
+  This file is intentionally left blank.
+  The 'react-quill' library and its styles were removed due to an incompatibility 
+  with React 19, which caused the 'npm install' command to fail.
+  The rich text editor has been temporarily replaced with a standard textarea.
+*/

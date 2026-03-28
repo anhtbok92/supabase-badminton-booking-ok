@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Màn hình Đặt sân</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-tab {
+            color: #13ec5b;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#0d1b12] dark:text-[#f8fcf9] min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person</span>
+</div>
+<h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center">Sân Cầu Lông</h1>
+<div class="flex w-10 items-center justify-end">
+<button class="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto pb-24">
+<!-- Greeting Section (Logged In) -->
+<div class="px-4 pt-6 pb-2">
+<p class="text-sm text-[#4c9a66] dark:text-[#88b598] font-medium uppercase tracking-wider">Chào mừng trở lại</p>
+<h2 class="text-2xl font-bold leading-tight">Xin chào, 0987654321</h2>
+</div>
+<!-- Search Bar Component -->
+<div class="px-4 py-4">
+<label class="flex flex-col min-w-40 h-14 w-full group">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full shadow-sm group-focus-within:ring-2 ring-primary/50 transition-all">
+<div class="text-[#4c9a66] flex border-none bg-white dark:bg-gray-900 items-center justify-center pl-4 rounded-l-xl" data-icon="MagnifyingGlass">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-[#0d1b12] dark:text-white focus:outline-0 focus:ring-0 border-none bg-white dark:bg-gray-900 focus:border-none h-full placeholder:text-[#4c9a66]/60 px-4 pl-2 text-base font-normal leading-normal" placeholder="Tìm kiếm sân hoặc câu lạc bộ..." value=""/>
+</div>
+</label>
+</div>
+<!-- Category Chips -->
+<div class="flex gap-3 px-4 py-2 overflow-x-auto no-scrollbar">
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-primary px-4 shadow-md shadow-primary/20">
+<span class="material-symbols-outlined text-white text-[18px]">near_me</span>
+<p class="text-white text-sm font-semibold">Gần đây</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-gray-900 px-4 border border-gray-100 dark:border-gray-800">
+<p class="text-[#0d1b12] dark:text-white text-sm font-medium">Giá rẻ</p>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-gray-900 px-4 border border-gray-100 dark:border-gray-800">
+<p class="text-[#0d1b12] dark:text-white text-sm font-medium">Đánh giá cao</p>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-white dark:bg-gray-900 px-4 border border-gray-100 dark:border-gray-800">
+<p class="text-[#0d1b12] dark:text-white text-sm font-medium">Trong nhà</p>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+<!-- Court List -->
+<div class="px-4 pt-6 space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold">Gợi ý sân cho bạn</h3>
+<button class="text-primary text-sm font-semibold">Xem tất cả</button>
+</div>
+<!-- Card 1 -->
+<div class="@container">
+<div class="flex flex-col items-stretch justify-start rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 cursor-pointer">
+<div class="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover" data-alt="Interior view of modern professional badminton courts with green floor" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAgKD6bmUN99jfEask_0iecVGg12YhOau41uCl6vkRr1Uiq-oyQ9ugd5f7-121Zk5zF0EacDtX_mk-9ZAJELJ__4yLxwu73AtaAXoAlgTt8AR5Pm7xIf-Lt0MqO130DRdmAjYRYCLqRKm_7tQJTMfA3G5t5ZuQq1kmOhQqqa0Jtdf56tTYE6AUhSaUrsJidZY7GLgTCGJbrD9funmnBOIoT1VA6GgMPOwjKYZmdif-ZnPCgoAP0JFyZJJ6ngBEzGzwxOesYpTWEq-Is");'>
+<div class="absolute top-3 left-3 bg-primary text-[#0d1b12] px-2 py-1 rounded text-xs font-bold uppercase">Phổ biến</div>
+<div class="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+<div class="flex w-full flex-col gap-2 p-4">
+<div class="flex justify-between items-start">
+<p class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight">Sân Cầu Lông ABC Premium</p>
+<div class="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="text-xs font-bold text-primary">4.8</span>
+</div>
+</div>
+<div class="flex items-end gap-3 justify-between">
+<div class="flex flex-col gap-1">
+<p class="text-[#4c9a66] dark:text-[#88b598] text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                                    Quận 1, TP. Hồ Chí Minh
+                                </p>
+<p class="text-lg font-bold text-primary">100k - 200k <span class="text-[10px] text-gray-400 font-normal">VND/giờ</span></p>
+</div>
+<button class="flex min-w-[100px] items-center justify-center rounded-xl h-10 px-4 bg-primary text-[#0d1b12] text-sm font-bold shadow-lg shadow-primary/30 active:scale-95 transition-transform">
+<span>Đặt ngay</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="@container">
+<div class="flex flex-col items-stretch justify-start rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 cursor-pointer">
+<div class="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover" data-alt="Close up of badminton racket and shuttlecock on professional court" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD-sMMsG7Qg2njypx1PkKfm_P1DcjQM_RAKg-1zT9oJA5Y82MCV24CUeDb9l2yC1CSQCpBQwxH9ho1AWNn6N6pPPTh-_a_rmVFHwibERU7zkQgqdB-iVg66d6On_eg4YcGQauYn1pi2VfQaGvwDHfxWloBssZkeG5lNABzPRP4k_jrSJ8cr4w7kSfVMy4DcBEb6XJjR7NwOeqTEi66hjQH5I7sL6OvA2aUJ6oOCj1CuAdi5sq8heiMIJP_Vl_gsvl2imYWwt3ISFxzL");'>
+<div class="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+<div class="flex w-full flex-col gap-2 p-4">
+<div class="flex justify-between items-start">
+<p class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight">CLB Cầu Lông Ngôi Sao</p>
+<div class="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="text-xs font-bold text-primary">4.5</span>
+</div>
+</div>
+<div class="flex items-end gap-3 justify-between">
+<div class="flex flex-col gap-1">
+<p class="text-[#4c9a66] dark:text-[#88b598] text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                                    Quận Bình Thạnh, TP. HCM
+                                </p>
+<p class="text-lg font-bold text-primary">80k - 150k <span class="text-[10px] text-gray-400 font-normal">VND/giờ</span></p>
+</div>
+<button class="flex min-w-[100px] items-center justify-center rounded-xl h-10 px-4 bg-primary text-[#0d1b12] text-sm font-bold shadow-lg shadow-primary/30 active:scale-95 transition-transform">
+<span>Đặt ngay</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="@container">
+<div class="flex flex-col items-stretch justify-start rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 cursor-pointer">
+<div class="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover" data-alt="Wide angle shot of multiple indoor badminton courts with people playing" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAYNKZTMbCo2hQO0X3ulr5nDG4ElnoGL2G6oz8bx68QCc5pEDcsBOw638p3PO5a4TfzCmn_Zd1jqGimm7rph5tJbkuRpp9h0EZyZm6CtD-OcKVnPaUxORfzHmFikEW46yHynUiGXMbQmAnyWGRR6jUmR6HtwihvHwC9BkNMOs-bPxGUrIMSrSLDBtrmckXIgRFMcVTSlYYLyK6N4g10sWxnAOK4LI9I4331biuTV2UAXZzSHr-uuOpNSfEtPoc6x2NdxA7OdU_yKrIT");'>
+<div class="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+<div class="flex w-full flex-col gap-2 p-4">
+<div class="flex justify-between items-start">
+<p class="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight">Sân Smash Zone</p>
+<div class="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="text-xs font-bold text-primary">4.9</span>
+</div>
+</div>
+<div class="flex items-end gap-3 justify-between">
+<div class="flex flex-col gap-1">
+<p class="text-[#4c9a66] dark:text-[#88b598] text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                                    Quận 7, TP. Hồ Chí Minh
+                                </p>
+<p class="text-lg font-bold text-primary">120k - 250k <span class="text-[10px] text-gray-400 font-normal">VND/giờ</span></p>
+</div>
+<button class="flex min-w-[100px] items-center justify-center rounded-xl h-10 px-4 bg-primary text-[#0d1b12] text-sm font-bold shadow-lg shadow-primary/30 active:scale-95 transition-transform">
+<span>Đặt ngay</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (iOS Style) -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-background-dark/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 pb-safe">
+<div class="flex justify-around items-center max-w-md mx-auto py-3">
+<button class="flex flex-col items-center gap-1 active-tab">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">stadium</span>
+<span class="text-[10px] font-medium">Đặt sân</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500">
+<span class="material-symbols-outlined">newspaper</span>
+<span class="text-[10px] font-medium">Tin tức</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[10px] font-medium">Lịch đặt</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium">Cài đặt</span>
+</button>
+</div>
+</nav>
+<!-- Floating Filter Button (Optional but handy for mobile) -->
+<button class="fixed bottom-24 right-6 size-14 rounded-full bg-primary text-[#0d1b12] shadow-xl shadow-primary/40 flex items-center justify-center z-40 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</body></html>
