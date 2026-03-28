@@ -207,6 +207,27 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
         try {
             const promises = bookingIds.map(id => supabase.from('bookings').update({ status }).eq('id', id));
             await Promise.all(promises);
+            
+            // If cancelling bookings, decrement the booking count
+            if (status === 'Đã hủy') {
+                // Get the club_id from the first booking to decrement counter
+                const bookingsToCancel = allBookings?.filter(b => bookingIds.includes(b.id));
+                if (bookingsToCancel && bookingsToCancel.length > 0) {
+                    const clubId = bookingsToCancel[0].club_id;
+                    try {
+                        const { error: quotaError } = await supabase.rpc('decrement_booking_count', { 
+                            p_club_id: clubId 
+                        });
+                        if (quotaError) {
+                            console.error('Failed to decrement booking count:', quotaError);
+                            // Don't fail the cancellation if quota tracking fails
+                        }
+                    } catch (quotaErr) {
+                        console.error('Quota tracking error:', quotaErr);
+                    }
+                }
+            }
+            
             toast({ title: 'Cập nhật thành công!', description: `Đã đổi trạng thái cho các lịch đặt thành "${status}".` });
             refetchBookings();
         } catch (error) {

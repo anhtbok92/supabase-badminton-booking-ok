@@ -80,8 +80,67 @@ export default function RegisterClubPage() {
                 pricing: defaultPricing,
             };
 
-            const { error } = await supabase.from('clubs').insert(clubData);
-            if (error) throw error;
+            const { data: newClub, error: clubError } = await supabase
+                .from('clubs')
+                .insert(clubData)
+                .select()
+                .single();
+            
+            if (clubError) throw clubError;
+
+            // Auto-assign FREE plan with 3-month trial
+            try {
+                // Get FREE plan
+                const { data: freePlan, error: planError } = await supabase
+                    .from('subscription_plans')
+                    .select('*')
+                    .eq('name', 'FREE')
+                    .single();
+
+                if (planError) {
+                    console.error('Failed to fetch FREE plan:', planError);
+                } else if (freePlan) {
+                    // Calculate end date (3 months from now)
+                    const startDate = new Date();
+                    const endDate = new Date();
+                    endDate.setMonth(endDate.getMonth() + 3);
+
+                    // Create subscription
+                    const { data: subscription, error: subscriptionError } = await supabase
+                        .from('club_subscriptions')
+                        .insert({
+                            club_id: newClub.id,
+                            plan_id: freePlan.id,
+                            billing_cycle: 'monthly',
+                            start_date: startDate.toISOString().split('T')[0],
+                            end_date: endDate.toISOString().split('T')[0],
+                            is_active: true,
+                            auto_renew: false,
+                        })
+                        .select()
+                        .single();
+
+                    if (subscriptionError) {
+                        console.error('Failed to create subscription:', subscriptionError);
+                    } else if (subscription) {
+                        // Update club with subscription reference
+                        const { error: updateError } = await supabase
+                            .from('clubs')
+                            .update({
+                                current_subscription_id: subscription.id,
+                                subscription_status: 'active',
+                            })
+                            .eq('id', newClub.id);
+
+                        if (updateError) {
+                            console.error('Failed to update club with subscription:', updateError);
+                        }
+                    }
+                }
+            } catch (subscriptionError) {
+                console.error('Error assigning FREE plan:', subscriptionError);
+                // Don't fail the registration if subscription assignment fails
+            }
 
             // Gửi email thông báo cho admin
             try {

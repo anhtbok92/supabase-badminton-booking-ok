@@ -33,6 +33,8 @@ export type Club = {
   description?: string;
   owner_id?: string;
   created_at?: string;
+  current_subscription_id?: string;
+  subscription_status?: 'active' | 'expiring_soon' | 'expired';
 };
 
 export type Court = {
@@ -108,6 +110,71 @@ export type ClubType = {
   id: string;
   name: string;
   order?: number;
+};
+
+// ============================================================
+// Subscription Management Types
+// ============================================================
+
+export type SubscriptionPlanFeatures = {
+  trial_months?: number;
+  support: 'email' | 'priority';
+  analytics?: boolean;
+  custom_features?: boolean;
+};
+
+export type SubscriptionPlan = {
+  id: string;
+  name: 'FREE' | 'BASIC' | 'PRO';
+  display_name: string;
+  max_courts: number;
+  max_bookings_per_month: number;
+  monthly_price: number;
+  yearly_price: number;
+  overage_fee_per_booking: number;
+  is_active: boolean;
+  features: SubscriptionPlanFeatures;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ClubSubscription = {
+  id: string;
+  club_id: string;
+  plan_id: string;
+  billing_cycle: 'monthly' | 'yearly';
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+  auto_renew: boolean;
+  created_at: string;
+  updated_at: string;
+  plan?: SubscriptionPlan;
+};
+
+export type BookingUsageTracking = {
+  id: string;
+  club_id: string;
+  month: string;
+  booking_count: number;
+  overage_count: number;
+  overage_fee: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CourtLimitCheck = {
+  current_count: number;
+  max_allowed: number;
+  can_create: boolean;
+};
+
+export type BookingQuotaCheck = {
+  current_count: number;
+  max_allowed: number;
+  overage_count: number;
+  overage_fee: number;
+  usage_percentage: number;
 };
 
 // ============================================================

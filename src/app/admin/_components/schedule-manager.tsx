@@ -333,6 +333,68 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
 
                 await supabase.from('bookings').insert(bookingData);
 
+                // Increment booking count for quota tracking
+                try {
+                    const { error: quotaError } = await supabase.rpc('increment_booking_count', { 
+                        p_club_id: selectedClubId 
+                    });
+                    if (quotaError) {
+                        console.error('Failed to increment booking count:', quotaError);
+                    }
+
+                    // Check quota and send notifications if thresholds are reached
+                    const { data: quotaData, error: quotaCheckError } = await supabase.rpc('check_booking_quota', {
+                        p_club_id: selectedClubId
+                    });
+
+                    if (!quotaCheckError && quotaData && quotaData.length > 0) {
+                        const quota = quotaData[0];
+                        const usagePercentage = quota.usage_percentage;
+
+                        // Send notification if we've crossed a threshold (80%, 90%, or 100%)
+                        if (usagePercentage >= 80) {
+                            // Get club owner email for notification
+                            const { data: clubData } = await supabase
+                                .from('clubs')
+                                .select('name, owner_id')
+                                .eq('id', selectedClubId)
+                                .single();
+
+                            if (clubData && clubData.owner_id) {
+                                // Get owner profile
+                                const { data: ownerProfile } = await supabase
+                                    .from('profiles')
+                                    .select('email')
+                                    .eq('id', clubData.owner_id)
+                                    .single();
+
+                                if (ownerProfile?.email) {
+                                    // Call notification API endpoint
+                                    try {
+                                        await fetch('/api/notifications/quota-warning', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                club_name: clubData.name,
+                                                club_owner_email: ownerProfile.email,
+                                                current_count: quota.current_count,
+                                                max_allowed: quota.max_allowed,
+                                                usage_percentage: usagePercentage,
+                                                overage_count: quota.overage_count,
+                                                overage_fee: quota.overage_fee,
+                                            }),
+                                        });
+                                    } catch (notifError) {
+                                        console.error('Failed to send quota notification:', notifError);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (quotaErr) {
+                    console.error('Quota tracking error:', quotaErr);
+                }
+
             } else {
                 const bookingData = {
                     club_id: selectedClubId,

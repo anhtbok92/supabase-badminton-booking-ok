@@ -14,7 +14,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { GripVertical } from 'lucide-react';
 import { useSupabase, useSupabaseQuery } from '@/supabase';
-import type { Club, Court, UserProfile } from '@/lib/types';
+import type { Club, Court, UserProfile, CourtLimitCheck } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -70,6 +70,22 @@ function CourtFormDialog({ isOpen, setIsOpen, clubId, court, userRole, onSuccess
             const { error } = await supabase.from('courts').update(courtData).eq('id', court.id);
             if (error) { toast({ title: 'Lỗi', variant: 'destructive' }); return; }
         } else {
+            // Check court limit before creating
+            const { data: limitData, error: limitError } = await supabase.rpc('check_court_limit', { p_club_id: clubId });
+            if (limitError) {
+                toast({ title: 'Lỗi', description: 'Không thể kiểm tra giới hạn sân.', variant: 'destructive' });
+                return;
+            }
+            
+            if (limitData && limitData.length > 0 && !limitData[0].can_create) {
+                toast({
+                    title: 'Đã đạt giới hạn',
+                    description: `Gói hiện tại chỉ cho phép ${limitData[0].max_allowed} sân. Vui lòng nâng cấp gói để tạo thêm sân.`,
+                    variant: 'destructive'
+                });
+                return;
+            }
+            
             const { error } = await supabase.from('courts').insert(courtData);
             if (error) { toast({ title: 'Lỗi', variant: 'destructive' }); return; }
         }
@@ -104,7 +120,29 @@ export function CourtManager({ club, userRole }: { club: Club, userRole: UserPro
     const [selectedCourt, setSelectedCourt] = useState<Court | undefined>(undefined);
     const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
     const [courtToDelete, setCourtToDelete] = useState<Court | null>(null);
+    const [courtLimit, setCourtLimit] = useState<CourtLimitCheck | null>(null);
+    const [checkingLimit, setCheckingLimit] = useState(false);
     const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+
+    // Check court limit on mount and when courts change
+    useEffect(() => {
+        const checkLimit = async () => {
+            setCheckingLimit(true);
+            try {
+                const { data, error } = await supabase.rpc('check_court_limit', { p_club_id: club.id });
+                if (error) {
+                    console.error('Error checking court limit:', error);
+                } else if (data && data.length > 0) {
+                    setCourtLimit(data[0]);
+                }
+            } catch (error) {
+                console.error('Error checking court limit:', error);
+            } finally {
+                setCheckingLimit(false);
+            }
+        };
+        checkLimit();
+    }, [club.id, courts, supabase]);
 
     const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
@@ -128,9 +166,42 @@ export function CourtManager({ club, userRole }: { club: Club, userRole: UserPro
         setDeleteAlertOpen(false); setCourtToDelete(null);
     };
 
+    const handleAddCourt = () => {
+        // Check if limit is reached
+        if (courtLimit && !courtLimit.can_create) {
+            toast({
+                title: "Đã đạt giới hạn",
+                description: `Gói hiện tại chỉ cho phép ${courtLimit.max_allowed} sân. Vui lòng nâng cấp gói để tạo thêm sân.`,
+                variant: "destructive"
+            });
+            return;
+        }
+        setSelectedCourt(undefined);
+        setDialogOpen(true);
+    };
+
     return (
         <Card>
-            <CardHeader><div className="flex justify-between items-center"><CardTitle>Sân</CardTitle><Button variant="outline" size="sm" onClick={() => { setSelectedCourt(undefined); setDialogOpen(true); }}><PlusCircle className="mr-2 h-4 w-4" /> Thêm sân</Button></div></CardHeader>
+            <CardHeader>
+                <div className="flex justify-between items-center">
+                    <div className="flex flex-col gap-1">
+                        <CardTitle>Sân</CardTitle>
+                        {courtLimit && !checkingLimit && (
+                            <p className="text-sm text-muted-foreground">
+                                Đang sử dụng: {courtLimit.current_count}/{courtLimit.max_allowed} sân
+                            </p>
+                        )}
+                    </div>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleAddCourt}
+                        disabled={courtLimit ? !courtLimit.can_create : false}
+                    >
+                        <PlusCircle className="mr-2 h-4 w-4" /> Thêm sân
+                    </Button>
+                </div>
+            </CardHeader>
             <CardContent>
                 {loading && <div className="space-y-2">{Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}</div>}
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToVerticalAxis]}>

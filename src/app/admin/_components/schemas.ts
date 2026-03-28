@@ -101,3 +101,54 @@ export const clubTypeSchema = z.object({
     order: z.coerce.number().default(0),
 });
 export type ClubTypeSchema = z.infer<typeof clubTypeSchema>;
+
+// ============================================================
+// Subscription Management Schemas
+// ============================================================
+
+// Subscription Plan Features
+export const subscriptionPlanFeaturesSchema = z.object({
+    trial_months: z.number().optional(),
+    support: z.enum(['email', 'priority']),
+    analytics: z.boolean().optional(),
+    custom_features: z.boolean().optional(),
+});
+export type SubscriptionPlanFeaturesSchema = z.infer<typeof subscriptionPlanFeaturesSchema>;
+
+// Subscription Plan
+export const subscriptionPlanSchema = z.object({
+    name: z.enum(['FREE', 'BASIC', 'PRO'], { 
+        errorMap: () => ({ message: 'Tên gói phải là FREE, BASIC hoặc PRO' }) 
+    }),
+    display_name: z.string().min(1, 'Tên hiển thị không được để trống'),
+    max_courts: z.coerce.number().int().min(1, 'Số sân tối đa phải lớn hơn 0'),
+    max_bookings_per_month: z.coerce.number().int().min(0, 'Số booking tối đa phải lớn hơn hoặc bằng 0'),
+    monthly_price: z.coerce.number().int().min(0, 'Giá tháng phải lớn hơn hoặc bằng 0'),
+    yearly_price: z.coerce.number().int().min(0, 'Giá năm phải lớn hơn hoặc bằng 0'),
+    overage_fee_per_booking: z.coerce.number().int().min(0, 'Phí vượt mức phải lớn hơn hoặc bằng 0'),
+    is_active: z.boolean().default(true),
+    features: subscriptionPlanFeaturesSchema.optional(),
+});
+export type SubscriptionPlanSchema = z.infer<typeof subscriptionPlanSchema>;
+
+// Club Subscription
+export const clubSubscriptionSchema = z.object({
+    club_id: z.string().uuid('Club ID không hợp lệ'),
+    plan_id: z.string().uuid('Plan ID không hợp lệ'),
+    billing_cycle: z.enum(['monthly', 'yearly'], {
+        errorMap: () => ({ message: 'Chu kỳ thanh toán phải là monthly hoặc yearly' })
+    }),
+    start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Ngày bắt đầu phải có định dạng YYYY-MM-DD'),
+    auto_renew: z.boolean().default(false),
+});
+export type ClubSubscriptionSchema = z.infer<typeof clubSubscriptionSchema>;
+
+// Club Subscription Update
+export const clubSubscriptionUpdateSchema = z.object({
+    plan_id: z.string().uuid('Plan ID không hợp lệ').optional(),
+    billing_cycle: z.enum(['monthly', 'yearly']).optional(),
+    end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Ngày kết thúc phải có định dạng YYYY-MM-DD').optional(),
+    is_active: z.boolean().optional(),
+    auto_renew: z.boolean().optional(),
+});
+export type ClubSubscriptionUpdateSchema = z.infer<typeof clubSubscriptionUpdateSchema>;

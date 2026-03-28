@@ -6,7 +6,7 @@ import { useSupabase } from '@/supabase';
 import type { UserProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { LayoutDashboard, CalendarDays, Building, Newspaper, Tags, Users, Shapes, LogOut, Feather, CalendarClock } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, Building, Newspaper, Tags, Users, Shapes, LogOut, Feather, CalendarClock, CreditCard } from 'lucide-react';
 import {
     SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarTrigger, SidebarInset,
     SidebarMenu, SidebarMenuItem, SidebarMenuButton,
@@ -23,6 +23,9 @@ import { NewsManager } from './news-manager';
 import { TagManager } from './tag-manager';
 import { ClubOwnerManager } from './club-owner-manager';
 import { StatisticsManager } from './statistics-manager';
+import { SubscriptionPlanManager } from './subscription-plan-manager';
+import { ClubSubscriptionManager } from './club-subscription-manager';
+import { SubscriptionDashboard } from './subscription-dashboard';
 
 export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
     const supabase = useSupabase();
@@ -39,6 +42,9 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         { id: 'bookings', label: 'Quản lý Lịch đặt', icon: CalendarDays, roles: ['admin', 'club_owner', 'staff'] },
         { id: 'clubs', label: 'Quản lý Câu lạc bộ', icon: Building, roles: ['admin', 'club_owner'] },
         { id: 'staff', label: 'Quản lý Nhân viên', icon: Users, roles: ['admin', 'club_owner'] },
+        { id: 'subscriptionDashboard', label: 'Thống kê Gói đăng ký', icon: CreditCard, roles: ['admin'] },
+        { id: 'subscriptions', label: 'Quản lý Gói đăng ký', icon: CreditCard, roles: ['admin'] },
+        { id: 'clubSubscriptions', label: 'Gói đăng ký CLB', icon: CreditCard, roles: ['admin'] },
         { id: 'clubTypes', label: 'Loại CLB', icon: Shapes, roles: ['admin'] },
         { id: 'news', label: 'Quản lý Tin tức', icon: Newspaper, roles: ['admin'] },
         { id: 'tags', label: 'Quản lý Tags', icon: Tags, roles: ['admin'] },
@@ -160,6 +166,9 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                                 )}
                                 {activeView === 'clubs' && <ClubManager userProfile={userProfile} />}
                                 {activeView === 'staff' && (isAdmin || isClubOwner) && <StaffManager userProfile={userProfile} />}
+                                {isAdmin && activeView === 'subscriptionDashboard' && <SubscriptionDashboard />}
+                                {isAdmin && activeView === 'subscriptions' && <SubscriptionPlanManager />}
+                                {isAdmin && activeView === 'clubSubscriptions' && <ClubSubscriptionManager />}
                                 {isAdmin && activeView === 'clubTypes' && <ClubTypeManager />}
                                 {isAdmin && activeView === 'news' && <NewsManager />}
                                 {isAdmin && activeView === 'tags' && <TagManager />}

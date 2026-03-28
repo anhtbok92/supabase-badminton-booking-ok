@@ -24,6 +24,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { clubSchema, type ClubSchema } from './schemas';
 import { CourtManager } from './court-manager';
+import { BookingQuotaDisplay } from './booking-quota-display';
 import dynamic from 'next/dynamic';
 
 const LocationPicker = dynamic(() => import('./location-picker').then(m => ({ default: m.LocationPicker })), { ssr: false, loading: () => <div className="h-[300px] rounded-lg border flex items-center justify-center text-muted-foreground text-sm">Đang tải bản đồ...</div> });
@@ -92,7 +93,13 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
                                         {isAdmin && <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => { setClubToDelete(club); setDeleteAlertOpen(true); }}><Trash2 className="h-4 w-4" /></Button>}
                                     </div>
                                 </div>
-                                <AccordionContent><div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-2"><CourtManager club={club} userRole={userProfile.role} /><PricingManager club={club} /></div></AccordionContent>
+                                <AccordionContent>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-2">
+                                        <CourtManager club={club} userRole={userProfile.role} />
+                                        <PricingManager club={club} />
+                                        <BookingQuotaDisplay clubId={club.id} />
+                                    </div>
+                                </AccordionContent>
                             </AccordionItem>
                         ))}
                     </Accordion>

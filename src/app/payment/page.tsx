@@ -129,6 +129,39 @@ function PaymentForm() {
     const onSubmit = async (values: z.infer<typeof paymentFormSchema>) => {
         if (!club || isSubmitting) return;
 
+        // Check booking quota before submitting
+        try {
+            const { data: quotaData, error: quotaError } = await supabase.rpc('check_booking_quota', { 
+                p_club_id: clubId 
+            });
+            
+            if (!quotaError && quotaData && quotaData.length > 0) {
+                const quota = quotaData[0];
+                const usagePercentage = quota.usage_percentage || 0;
+                
+                // Show warning at 80% usage
+                if (usagePercentage >= 80 && usagePercentage < 100) {
+                    toast({
+                        title: 'Cảnh báo quota',
+                        description: `Đã sử dụng ${usagePercentage.toFixed(1)}% quota tháng này (${quota.current_count}/${quota.max_allowed} bookings). Cân nhắc nâng cấp gói.`,
+                        variant: 'default',
+                    });
+                }
+                
+                // Show overage notice at 100%+ usage
+                if (usagePercentage >= 100) {
+                    toast({
+                        title: 'Thông báo vượt quota',
+                        description: `Đã vượt quota! Hiện tại: ${quota.current_count}/${quota.max_allowed} bookings. Phí vượt mức: ${new Intl.NumberFormat('vi-VN').format(quota.overage_fee)}đ`,
+                        variant: 'destructive',
+                    });
+                }
+            }
+        } catch (err) {
+            console.error('Failed to check quota:', err);
+            // Continue with booking even if quota check fails
+        }
+
         // Group slots by date
         const slotsByDate: Record<string, SelectedSlot[]> = {};
         slots.forEach(slot => {
@@ -176,6 +209,71 @@ function PaymentForm() {
         try {
             const { error } = await supabase.from('bookings').insert(bookingRows);
             if (error) throw error;
+
+            // Increment booking count for quota tracking
+            // Call once per booking group (not per individual booking row)
+            try {
+                const { error: quotaError } = await supabase.rpc('increment_booking_count', { 
+                    p_club_id: clubId 
+                });
+                if (quotaError) {
+                    console.error('Failed to increment booking count:', quotaError);
+                    // Don't fail the booking if quota tracking fails
+                }
+
+                // Check quota and send notifications if thresholds are reached
+                const { data: quotaData, error: quotaCheckError } = await supabase.rpc('check_booking_quota', {
+                    p_club_id: clubId
+                });
+
+                if (!quotaCheckError && quotaData && quotaData.length > 0) {
+                    const quota = quotaData[0];
+                    const usagePercentage = quota.usage_percentage;
+
+                    // Send notification if we've crossed a threshold (80%, 90%, or 100%)
+                    if (usagePercentage >= 80) {
+                        // Get club owner email for notification
+                        const { data: clubData } = await supabase
+                            .from('clubs')
+                            .select('name, owner_id')
+                            .eq('id', clubId)
+                            .single();
+
+                        if (clubData && clubData.owner_id) {
+                            // Get owner profile
+                            const { data: ownerProfile } = await supabase
+                                .from('profiles')
+                                .select('email')
+                                .eq('id', clubData.owner_id)
+                                .single();
+
+                            if (ownerProfile?.email) {
+                                // Call notification API endpoint
+                                try {
+                                    await fetch('/api/notifications/quota-warning', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            club_name: clubData.name,
+                                            club_owner_email: ownerProfile.email,
+                                            current_count: quota.current_count,
+                                            max_allowed: quota.max_allowed,
+                                            usage_percentage: usagePercentage,
+                                            overage_count: quota.overage_count,
+                                            overage_fee: quota.overage_fee,
+                                        }),
+                                    });
+                                } catch (notifError) {
+                                    console.error('Failed to send quota notification:', notifError);
+                                    // Don't fail the booking if notification fails
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (quotaErr) {
+                console.error('Quota tracking error:', quotaErr);
+            }
 
             toast({
                 title: 'Gửi yêu cầu đặt sân thành công!',
