@@ -5,3 +5,13 @@ runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
+
+env:
+  - variable: NEXT_PUBLIC_SUPABASE_URL
+    value: https://ixhhgtywgcvmlpkpxfif.supabase.co
+  - variable: NEXT_PUBLIC_SUPABASE_ANON_KEY
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4aGhndHl3Z2N2bWxwa3B4ZmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTkwMjcsImV4cCI6MjA4NjM5NTAyN30.dKzDOg7hmcyRyH-9217HVt2UY-pJukyLFRz7gDKLx8o
+  - variable: SUPABASE_SERVICE_ROLE_KEY
+    secret: SUPABASE_SERVICE_ROLE_KEY
+  - variable: GOOGLE_GENAI_API_KEY
+    secret: GOOGLE_GENAI_API_KEY
