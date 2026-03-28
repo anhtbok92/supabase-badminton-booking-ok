@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSupabaseQuery, useSupabaseRow, useUser, useSupabase } from '@/supabase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { uploadFile } from '@/lib/upload';
 
 const paymentFormSchema = z.object({
     name: z.string().min(2, { message: 'Họ tên phải có ít nhất 2 ký tự.' }),
@@ -107,33 +108,16 @@ function PaymentForm() {
         const currentUploading = Array.from(files).map(file => ({ name: file.name }));
         setUploadingFiles(prev => [...prev, ...currentUploading]);
 
-        const cloudName = 'dxmx9b1zi';
-        const uploadPreset = 'toan_badminton';
-
-        Array.from(files).forEach(file => {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', uploadPreset);
-
-            fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                method: 'POST',
-                body: formData,
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.secure_url) {
-                        setPaymentProofUrls(prev => [...prev, data.secure_url]);
-                    } else {
-                        throw new Error(data.error?.message || 'Upload failed');
-                    }
-                })
-                .catch(error => {
-                    console.error("Upload failed:", error);
-                    toast({ title: "Lỗi tải lên", description: `Không thể tải lên file ${file.name}.`, variant: "destructive" });
-                })
-                .finally(() => {
-                    setUploadingFiles(prev => prev.filter(f => f.name !== file.name));
-                });
+        Array.from(files).forEach(async (file) => {
+            try {
+                const url = await uploadFile(supabase, 'payment-proofs', file);
+                setPaymentProofUrls(prev => [...prev, url]);
+            } catch (error) {
+                console.error("Upload failed:", error);
+                toast({ title: "Lỗi tải lên", description: `Không thể tải lên file ${file.name}.`, variant: "destructive" });
+            } finally {
+                setUploadingFiles(prev => prev.filter(f => f.name !== file.name));
+            }
         });
     };
 
