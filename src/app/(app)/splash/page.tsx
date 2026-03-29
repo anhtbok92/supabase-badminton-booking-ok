@@ -24,7 +24,7 @@ export default function SplashPage() {
 
     // Redirect after a delay
     const redirectTimer = setTimeout(() => {
-      router.replace('/booking');
+      router.replace('/booking?app=true');
     }, 2500); // 2.5 seconds
 
     return () => {
