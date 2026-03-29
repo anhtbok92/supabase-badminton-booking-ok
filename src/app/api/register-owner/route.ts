@@ -273,6 +273,60 @@ export async function POST(req: NextRequest) {
             console.error('Email error:', emailError);
         }
 
+        // 9. Send notification email to admin
+        try {
+            const ADMIN_EMAIL = 'victory1080@gmail.com';
+            await resend.emails.send({
+                from: 'Sport Booking <no-reply@sportbooking.online>',
+                to: ADMIN_EMAIL,
+                subject: `[Đăng ký mới] ${clubName} - ${fullName}`,
+                html: `
+                    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;border:1px solid #eee;border-radius:10px;">
+                        <h2 style="color:#006e1c;">🚀 Có chủ sân mới đăng ký hệ thống!</h2>
+                        <table style="width:100%;border-collapse:collapse;">
+                            <tr>
+                                <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Chủ sân:</strong></td>
+                                <td style="padding:10px;border-bottom:1px solid #eee;">${fullName}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Email:</strong></td>
+                                <td style="padding:10px;border-bottom:1px solid #eee;">${email}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Số điện thoại:</strong></td>
+                                <td style="padding:10px;border-bottom:1px solid #eee;">${phoneNumber}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Tên Câu lạc bộ:</strong></td>
+                                <td style="padding:10px;border-bottom:1px solid #eee;">${clubName}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Địa chỉ:</strong></td>
+                                <td style="padding:10px;border-bottom:1px solid #eee;">${address}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Gói đăng ký:</strong></td>
+                                <td style="padding:10px;border-bottom:1px solid #eee;"><span style="background:#006e1c;color:white;padding:2px 8px;border-radius:4px;">${plan.display_name}</span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px;border-bottom:1px solid #eee;"><strong>Số lượng sân:</strong></td>
+                                <td style="padding:10px;border-bottom:1px solid #eee;">${courtCount} sân</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px;"><strong>Ghi chú:</strong></td>
+                                <td style="padding:10px;">${note || 'N/A'}</td>
+                            </tr>
+                        </table>
+                        <div style="margin-top:20px;padding:15px;background:#f9f9f9;border-radius:5px;">
+                            <p style="margin:0;font-size:14px;">Hệ thống đã tự động tạo tài khoản, khởi tạo <strong>${courtCount} sân</strong> và gửi email thông tin đăng nhập cho chủ sân.</p>
+                        </div>
+                    </div>
+                `,
+            });
+        } catch (adminEmailError) {
+            console.error('Admin notification email error:', adminEmailError);
+        }
+
         return NextResponse.json({
             success: true,
             message: 'Đăng ký thành công',
