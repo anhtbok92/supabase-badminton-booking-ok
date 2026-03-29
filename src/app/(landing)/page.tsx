@@ -68,7 +68,7 @@ export default function LandingPage() {
                 </div>
                 <span className="font-bold text-[#001f2a] text-sm">Xác nhận tức thì</span>
               </div>
-              <p className="text-xs text-[#3f4a3c] leading-tight">Hệ thống xử lý hơn 1000+ lượt đặt sân mỗi ngày tại TP.HCM</p>
+              <p className="text-xs text-[#3f4a3c] leading-tight">Hệ thống xử lý hơn 1000+ lượt đặt sân mỗi ngày tại Hà Nội, TP.HCM</p>
             </div>
           </div>
         </div>
@@ -305,18 +305,18 @@ export default function LandingPage() {
           <div className="flex flex-col gap-4">
             <span className="font-label text-xs font-inter uppercase tracking-widest text-[#006e1c] font-bold">Liên kết nhanh</span>
             <a className="text-sm font-body text-slate-600 hover:underline decoration-2 underline-offset-4 w-fit" href="#about">Giới thiệu</a>
-            <a className="text-sm font-body text-slate-600 hover:underline decoration-2 underline-offset-4 w-fit" href="#">Chính sách bảo mật</a>
-            <a className="text-sm font-body text-slate-600 hover:underline decoration-2 underline-offset-4 w-fit" href="#">Điều khoản dịch vụ</a>
+            <a className="text-sm font-body text-slate-600 hover:underline decoration-2 underline-offset-4 w-fit" href="/privacy">Chính sách bảo mật</a>
+            <a className="text-sm font-body text-slate-600 hover:underline decoration-2 underline-offset-4 w-fit" href="/terms">Điều khoản dịch vụ</a>
           </div>
           <div className="flex flex-col gap-4">
             <span className="font-label text-xs font-inter uppercase tracking-widest text-[#006e1c] font-bold">Liên hệ</span>
             <div className="flex items-center gap-3 text-slate-600">
               <span>📧</span>
-              <span className="text-sm font-body">support@sportbooking.online</span>
+              <span className="text-sm font-body">victory1080@gmail.com</span>
             </div>
             <div className="flex items-center gap-3 text-slate-600">
               <span>📞</span>
-              <span className="text-sm font-body">0123 456 789</span>
+              <span className="text-sm font-body">0982 949 974</span>
             </div>
             <div className="mt-4 p-4 rounded-lg bg-[#ceedfd]/50 border border-[#becab9]/10">
               <p className="text-xs text-[#3f4a3c] font-medium">Đăng ký nhận tin để không bỏ lỡ ưu đãi dành cho CLB mới.</p>

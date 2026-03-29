@@ -5,8 +5,13 @@ import { Toaster } from '@/components/ui/toaster';
 import { SupabaseProvider } from '@/supabase';
 
 export const metadata: Metadata = {
-  title: 'Trung tâm Đặt sân Cầu lông',
-  description: 'Đặt sân cầu lông yêu thích của bạn trực tuyến.',
+  title: 'Sport Booking - Hệ thống Đặt sân Cầu lông',
+  description: 'Đặt sân cầu lông yêu thích của bạn trực tuyến. Nhanh chóng, chính xác và chuyên nghiệp.',
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
 };
 
 export default function RootLayout({
