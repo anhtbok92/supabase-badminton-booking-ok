@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,9 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, Send, Check } from 'lucide-react';
+import { ArrowLeft, Loader2, Check } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useSupabase } from '@/supabase';
 
 const registerOwnerSchema = z.object({
     fullName: z.string().min(2, 'Họ và tên phải có ít nhất 2 ký tự'),
@@ -32,11 +31,10 @@ const PLANS = {
     PRO: { name: 'PRO', displayName: 'Gói Chuyên nghiệp', price: 500000, maxCourts: 30, maxBookings: 3000 },
 };
 
-export default function RegisterOwnerPage() {
+function RegisterOwnerContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
-    const supabase = useSupabase();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<keyof typeof PLANS>('FREE');
@@ -270,5 +268,17 @@ export default function RegisterOwnerPage() {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export default function RegisterOwnerPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex min-h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        }>
+            <RegisterOwnerContent />
+        </Suspense>
     );
 }
