@@ -22,12 +22,12 @@ export default function LandingPage() {
 
           {/* CTA Button */}
           <div className="mb-16">
-            <Link
-              href="/splash?app=true"
+            <a
+              href="https://app.sportbooking.online"
               className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg px-8 py-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
             >
               Bắt đầu đặt lịch ngay →
-            </Link>
+            </a>
           </div>
 
           {/* Features */}

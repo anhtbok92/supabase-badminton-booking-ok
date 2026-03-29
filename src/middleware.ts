@@ -32,9 +32,9 @@ export function middleware(request: NextRequest) {
   
   // Nếu truy cập từ subdomain app (app.sportbooking.online)
   if (hostname === 'app.sportbooking.online') {
-    // Nếu truy cập root, redirect về trang admin
+    // Nếu truy cập root, redirect về splash screen
     if (path === '/') {
-      return NextResponse.redirect(new URL('/admin', request.url));
+      return NextResponse.redirect(new URL('/splash', request.url));
     }
   }
   
