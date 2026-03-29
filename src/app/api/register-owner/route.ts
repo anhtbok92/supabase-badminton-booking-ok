@@ -163,8 +163,7 @@ export async function POST(req: NextRequest) {
             courts.push({
                 club_id: club.id,
                 name: `Sân ${i}`,
-                court_type: 'badminton',
-                is_active: true,
+                order: i,
             });
         }
 
@@ -236,14 +235,19 @@ export async function POST(req: NextRequest) {
                                 </p>
                             </div>
                             
+                            <h2 style="color:#006e1c;font-size:20px;margin:32px 0 16px;">🚀 Hệ thống đã sẵn sàng</h2>
+                            
+                            <p style="color:#3f4a3c;font-size:14px;line-height:1.6;margin-bottom:24px;">
+                                Để giúp bạn bắt đầu nhanh chóng, chúng tôi đã <strong>tự động khởi tạo ${courtCount} sân</strong> (từ Sân 1 đến Sân ${courtCount}) cho câu lạc bộ của bạn.
+                            </p>
+
                             <h2 style="color:#006e1c;font-size:20px;margin:32px 0 16px;">📚 Hướng dẫn sử dụng</h2>
                             
                             <ol style="color:#3f4a3c;font-size:14px;line-height:1.8;padding-left:20px;">
-                                <li><strong>Quản lý sân:</strong> Cập nhật thông tin, giá cả và trạng thái từng sân</li>
-                                <li><strong>Quản lý lịch đặt:</strong> Xem, xác nhận hoặc hủy booking của khách hàng</li>
-                                <li><strong>Thiết lập giá:</strong> Cài đặt giá linh hoạt theo khung giờ và ngày trong tuần</li>
-                                <li><strong>Dashboard:</strong> Theo dõi doanh thu và thống kê sử dụng sân</li>
-                                <li><strong>Thông báo:</strong> Nhận thông báo khi có booking mới</li>
+                                <li><strong>Kiểm tra sân:</strong> Các sân từ 1 đến ${courtCount} đã được tạo sẵn. Bạn có thể thay đổi tên hoặc thêm mô tả trong mục Quản lý sân.</li>
+                                <li><strong>Thiết lập giá:</strong> Mặc định giá là 40.000đ/giờ. Hãy cập nhật bảng giá theo khung giờ của bạn.</li>
+                                <li><strong>Quản lý lịch đặt:</strong> Xem, xác nhận hoặc hủy booking của khách hàng tại Dashboard.</li>
+                                <li><strong>Báo cáo:</strong> Theo dõi doanh thu và thống kê sử dụng sân hàng ngày.</li>
                             </ol>
                             
                             <div style="margin-top:32px;padding-top:24px;border-top:1px solid #e5e7eb;">

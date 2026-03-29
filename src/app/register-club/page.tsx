@@ -23,6 +23,7 @@ import { useSupabase, useUser } from '@/supabase';
 
 const registerClubSchema = z.object({
     fullName: z.string().min(2, 'Họ và tên phải có ít nhất 2 ký tự'),
+    email: z.string().email('Email không hợp lệ'),
     phoneNumber: z.string().regex(/^[0-9]{10,11}$/, 'Số điện thoại không hợp lệ'),
     clubName: z.string().min(3, 'Tên câu lạc bộ phải có ít nhất 3 ký tự'),
     courtCount: z.coerce.number().min(1, 'Số lượng sân phải lớn hơn 0'),
@@ -36,7 +37,6 @@ export default function RegisterClubPage() {
     const router = useRouter();
     const { toast } = useToast();
     const supabase = useSupabase();
-    const { user } = useUser();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,6 +44,7 @@ export default function RegisterClubPage() {
         resolver: zodResolver(registerClubSchema),
         defaultValues: {
             fullName: '',
+            email: '',
             phoneNumber: '',
             clubName: '',
             courtCount: 1,
@@ -56,121 +57,34 @@ export default function RegisterClubPage() {
         setIsSubmitting(true);
 
         try {
-            const defaultPricing = {
-                weekday: [
-                    { timeRange: ['05:00', '24:00'], price: 40000 }
-                ],
-                weekend: [
-                    { timeRange: ['05:00', '24:00'], price: 40000 }
-                ]
-            };
+            // Call the instant registration API
+            const response = await fetch('/api/register-owner', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...values,
+                    planName: 'FREE', // Default to FREE plan
+                }),
+            });
 
-            const clubData = {
-                name: values.clubName,
-                address: values.address,
-                phone: values.phoneNumber,
-                club_type: 'other',
-                is_active: false,
-                verification_status: 'pending',
-                owner_name: values.fullName,
-                owner_phone: values.phoneNumber,
-                number_of_courts: values.courtCount,
-                description: values.note || null,
-                owner_id: user?.id || null,
-                pricing: defaultPricing,
-            };
+            const result = await response.json();
 
-            const { data: newClub, error: clubError } = await supabase
-                .from('clubs')
-                .insert(clubData)
-                .select()
-                .single();
-            
-            if (clubError) throw clubError;
-
-            // Auto-assign FREE plan with 3-month trial
-            try {
-                // Get FREE plan
-                const { data: freePlan, error: planError } = await supabase
-                    .from('subscription_plans')
-                    .select('*')
-                    .eq('name', 'FREE')
-                    .single();
-
-                if (planError) {
-                    console.error('Failed to fetch FREE plan:', planError);
-                } else if (freePlan) {
-                    // Calculate end date (3 months from now)
-                    const startDate = new Date();
-                    const endDate = new Date();
-                    endDate.setMonth(endDate.getMonth() + 3);
-
-                    // Create subscription
-                    const { data: subscription, error: subscriptionError } = await supabase
-                        .from('club_subscriptions')
-                        .insert({
-                            club_id: newClub.id,
-                            plan_id: freePlan.id,
-                            billing_cycle: 'monthly',
-                            start_date: startDate.toISOString().split('T')[0],
-                            end_date: endDate.toISOString().split('T')[0],
-                            is_active: true,
-                            auto_renew: false,
-                        })
-                        .select()
-                        .single();
-
-                    if (subscriptionError) {
-                        console.error('Failed to create subscription:', subscriptionError);
-                    } else if (subscription) {
-                        // Update club with subscription reference
-                        const { error: updateError } = await supabase
-                            .from('clubs')
-                            .update({
-                                current_subscription_id: subscription.id,
-                                subscription_status: 'active',
-                            })
-                            .eq('id', newClub.id);
-
-                        if (updateError) {
-                            console.error('Failed to update club with subscription:', updateError);
-                        }
-                    }
-                }
-            } catch (subscriptionError) {
-                console.error('Error assigning FREE plan:', subscriptionError);
-                // Don't fail the registration if subscription assignment fails
-            }
-
-            // Gửi email thông báo cho admin
-            try {
-                const emailResponse = await fetch('/api/notify-registration', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(values),
-                });
-                const emailResult = await emailResponse.json();
-                console.log('Email notification result:', emailResult);
-                
-                if (!emailResponse.ok) {
-                    console.error('Email notification failed:', emailResult);
-                }
-            } catch (emailError) {
-                console.error('Email notification error:', emailError);
+            if (!response.ok) {
+                throw new Error(result.error || 'Có lỗi xảy ra');
             }
 
             toast({
-                title: "Gửi yêu cầu thành công!",
-                description: "Yêu cầu đăng ký chủ sân của bạn đã được gửi. Chúng tôi sẽ liên hệ sớm.",
+                title: "Đăng ký thành công!",
+                description: "Thông tin đăng nhập đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.",
             });
 
-            router.push('/booking');
+            router.push('/');
 
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             toast({
                 title: "Lỗi",
-                description: "Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.",
+                description: error.message || "Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.",
                 variant: "destructive"
             });
         } finally {
@@ -205,6 +119,20 @@ export default function RegisterClubPage() {
                                         <FormLabel>Họ và tên chủ sân</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Nguyễn Văn A" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input type="email" placeholder="email@example.com" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -258,7 +186,7 @@ export default function RegisterClubPage() {
                                 name="courtCount"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Số lượng sân dự kiến</FormLabel>
+                                        <FormLabel>Số lượng sân</FormLabel>
                                         <FormControl>
                                             <Input type="number" min={1} {...field} />
                                         </FormControl>
@@ -289,12 +217,12 @@ export default function RegisterClubPage() {
                                 {isSubmitting ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Đang gửi...
+                                        Đang đăng ký...
                                     </>
                                 ) : (
                                     <>
-                                        <Send className="mr-2 h-4 w-4" />
-                                        Gửi yêu cầu
+                                        <Check className="mr-2 h-4 w-4" />
+                                        Hoàn tất đăng ký
                                     </>
                                 )}
                             </Button>
