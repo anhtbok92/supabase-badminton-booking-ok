@@ -271,7 +271,10 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
                     const from = sorted[0];
                     const lastTime = sorted[sorted.length - 1];
                     const [h, m] = lastTime.split(':').map(Number);
-                    const to = `${String(h).padStart(2, '0')}:${String(m + 30).padStart(2, '0')}`;
+                    const totalMinutes = h * 60 + m + 30;
+                    const endHour = Math.floor(totalMinutes / 60);
+                    const endMinute = totalMinutes % 60;
+                    const to = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
                     return `${from} - ${to} (${courtName})`;
                 });
                 slotRows.push({ date: format(new Date(date + 'T00:00:00'), 'dd/MM/yyyy'), details: parts.join(', ') });
@@ -396,7 +399,10 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
                                                     const from = sorted[0];
                                                     const lastTime = sorted[sorted.length - 1];
                                                     const [h, m] = lastTime.split(':').map(Number);
-                                                    const to = `${String(h).padStart(2, '0')}:${String(m + 30).padStart(2, '0')}`;
+                                                    const totalMinutes = h * 60 + m + 30;
+                                                    const endHour = Math.floor(totalMinutes / 60);
+                                                    const endMinute = totalMinutes % 60;
+                                                    const to = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
                                                     return { from, to, courtName };
                                                 });
                                                 return (
