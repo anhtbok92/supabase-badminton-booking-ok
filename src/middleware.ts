@@ -5,12 +5,20 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   const path = request.nextUrl.pathname;
   
+  // Danh sách các route công khai (Landing Page, Privacy, Terms, Register)
+  const isPublicRoute = 
+    path === '/' || 
+    path === '/privacy' || 
+    path === '/terms' || 
+    path === '/register-club' || 
+    path === '/register-owner';
+
   // Localhost: Sử dụng query param để test
   if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
     const isAppMode = request.nextUrl.searchParams.get('app') === 'true';
     
-    // Nếu không ở app mode và cố truy cập route khác (không phải landing)
-    if (!isAppMode && path !== '/' && !path.startsWith('/_next') && !path.startsWith('/api')) {
+    // Nếu không ở app mode và cố truy cập route khác (không phải landing/public)
+    if (!isAppMode && !isPublicRoute && !path.startsWith('/_next') && !path.startsWith('/api')) {
       return NextResponse.redirect(new URL('/', request.url));
     }
     
@@ -30,8 +38,8 @@ export function middleware(request: NextRequest) {
   
   // Production domain chính: sportbooking.online
   if (hostname === 'sportbooking.online' || hostname === 'www.sportbooking.online') {
-    // Cho phép truy cập landing page
-    if (path === '/') {
+    // Cho phép truy cập các trang công khai
+    if (isPublicRoute) {
       return NextResponse.next();
     }
     
