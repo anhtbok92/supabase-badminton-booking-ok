@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
     // Send email using Resend
     console.log('Sending email to:', ADMIN_EMAIL);
     const { data, error } = await resend.emails.send({
-      from: 'Hệ thống Đặt sân <onboarding@resend.dev>',
+      from: 'Hệ thống Đặt sân <no-reply@sportbooking.online>',
       to: ADMIN_EMAIL,
       subject: `📊 Báo cáo Overage tháng ${new Date(report.month).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long' })}`,
       html: emailHTML,
@@ -214,7 +214,7 @@ export async function POST(request: NextRequest) {
       await new Promise(resolve => setTimeout(resolve, 5000));
       
       const { data: retryData, error: retryError } = await resend.emails.send({
-        from: 'Hệ thống Đặt sân <onboarding@resend.dev>',
+        from: 'Hệ thống Đặt sân <no-reply@sportbooking.online>',
         to: ADMIN_EMAIL,
         subject: `📊 Báo cáo Overage tháng ${new Date(report.month).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long' })}`,
         html: emailHTML,

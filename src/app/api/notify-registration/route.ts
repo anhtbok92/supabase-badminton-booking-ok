@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
         console.log('Sending email to:', ADMIN_EMAIL);
         const { data, error } = await resend.emails.send({
-            from: 'Hệ thống Đặt sân <onboarding@resend.dev>',
+            from: 'Hệ thống Đặt sân <no-reply@sportbooking.online>',
             to: ADMIN_EMAIL,
             subject: `[Đăng ký mới] ${clubName} - ${fullName}`,
             html: `

@@ -184,7 +184,7 @@ async function sendExpiringWarningEmail(subscription: ExpiringSubscription): Pro
 
   try {
     const { error } = await resend.emails.send({
-      from: 'Hệ thống Đặt sân <onboarding@resend.dev>',
+      from: 'Hệ thống Đặt sân <no-reply@sportbooking.online>',
       to: subscription.club_owner_email,
       subject: `⚠️ Gói đăng ký sắp hết hạn - ${subscription.club_name}`,
       html: generateExpiringWarningEmail(subscription),
@@ -214,7 +214,7 @@ async function sendExpiredNotificationEmail(subscription: ExpiredSubscription): 
 
   try {
     const { error } = await resend.emails.send({
-      from: 'Hệ thống Đặt sân <onboarding@resend.dev>',
+      from: 'Hệ thống Đặt sân <no-reply@sportbooking.online>',
       to: subscription.club_owner_email,
       subject: `🔴 Gói đăng ký đã hết hạn - ${subscription.club_name}`,
       html: generateExpiredNotificationEmail(subscription),

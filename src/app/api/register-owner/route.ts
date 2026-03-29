@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
         // 8. Send onboarding email
         try {
             const { error: emailError } = await resend.emails.send({
-                from: 'Sport Booking <onboarding@resend.dev>',
+                from: 'Sport Booking <no-reply@sportbooking.online>',
                 to: email,
                 subject: 'Chào mừng đến với Sport Booking - Thông tin đăng nhập',
                 html: `
