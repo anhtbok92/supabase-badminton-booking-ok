@@ -17,9 +17,9 @@ import {
 } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, Send } from 'lucide-react';
+import { ArrowLeft, Loader2, Check } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useSupabase, useUser } from '@/supabase';
+import { useSupabase } from '@/supabase';
 
 const registerClubSchema = z.object({
     fullName: z.string().min(2, 'Họ và tên phải có ít nhất 2 ký tự'),
