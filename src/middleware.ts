@@ -17,7 +17,18 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   
-  // Production: Phân biệt theo domain
+  // Vercel domain: Chỉ hiển thị landing page ở root
+  // Không có subdomain nên app routes vẫn accessible trực tiếp
+  if (hostname === 'sportbookingonline.vercel.app') {
+    // Chỉ landing page ở root
+    if (path === '/') {
+      return NextResponse.next();
+    }
+    // Các routes khác (app) vẫn hoạt động bình thường
+    return NextResponse.next();
+  }
+  
+  // Production domain chính: sportbooking.online
   if (hostname === 'sportbooking.online' || hostname === 'www.sportbooking.online') {
     // Cho phép truy cập landing page
     if (path === '/') {
@@ -30,7 +41,7 @@ export function middleware(request: NextRequest) {
     }
   }
   
-  // Nếu truy cập từ subdomain app (app.sportbooking.online)
+  // Subdomain app (app.sportbooking.online)
   if (hostname === 'app.sportbooking.online') {
     // Nếu truy cập root, redirect về splash screen
     if (path === '/') {
