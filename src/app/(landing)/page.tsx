@@ -2,6 +2,27 @@
 
 import { useState } from 'react';
 import { RegisterDialog } from './_components/register-dialog';
+import { 
+  Rocket, 
+  MapPin, 
+  Calendar, 
+  ShieldCheck, 
+  TrendingUp, 
+  Clock, 
+  DollarSign, 
+  ChevronRight,
+  Monitor,
+  LayoutDashboard,
+  Bell,
+  CheckCircle2,
+  FileText,
+  Smartphone,
+  Trophy,
+  Activity,
+  UserCheck,
+  Zap
+} from 'lucide-react';
+import Link from 'next/link';
 
 type PlanType = 'FREE' | 'BASIC' | 'PRO';
 
@@ -15,316 +36,290 @@ export default function LandingPage() {
   };
 
   return (
-    <>
-      {/* TopNavBar */}
-      <nav className="sticky top-0 z-50 bg-[#f4faff] shadow-sm">
-        <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+    <div className="bg-[#0e0e0e] text-white font-body selection:bg-[#9cff93] selection:text-[#00440a]">
+      {/* TopNav */}
+      <nav className="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl border-b border-white/5">
+        <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
           <div className="flex items-center gap-2">
-            <span className="text-3xl">🎾</span>
-            <span className="text-2xl font-black text-[#006e1c] tracking-tighter font-headline">Sport Booking</span>
+            <span className="text-2xl font-black italic text-[#9cff93] tracking-tighter uppercase font-headline">SPORT BOOKING</span>
           </div>
-          <div className="hidden md:flex items-center gap-8">
-            <a className="text-[#006e1c] font-bold border-b-4 border-[#4caf50] font-label text-sm uppercase tracking-widest py-1" href="#about">Giới thiệu</a>
-            <a className="text-[#001f2a] font-medium hover:text-[#4caf50] transition-colors duration-300 font-label text-sm uppercase tracking-widest py-1" href="#features">Tính năng</a>
-            <a className="text-[#001f2a] font-medium hover:text-[#4caf50] transition-colors duration-300 font-label text-sm uppercase tracking-widest py-1" href="#pricing">Bảng giá</a>
-            <a className="text-[#001f2a] font-medium hover:text-[#4caf50] transition-colors duration-300 font-label text-sm uppercase tracking-widest py-1" href="#contact">Liên hệ</a>
+          <div className="hidden md:flex items-center gap-10">
+            <a className="text-[#9cff93] font-headline font-bold uppercase text-xs tracking-widest border-b-2 border-[#9cff93] pb-1" href="#about">Giới thiệu</a>
+            <a className="text-white/70 hover:text-white transition-all font-headline font-bold uppercase text-xs tracking-widest" href="#features">Tính năng</a>
+            <a className="text-white/70 hover:text-white transition-all font-headline font-bold uppercase text-xs tracking-widest" href="#pricing">Bảng giá</a>
+            <a className="text-white/70 hover:text-white transition-all font-headline font-bold uppercase text-xs tracking-widest" href="#contact">Liên hệ</a>
           </div>
           <div className="flex items-center gap-4">
-            <a href="https://app.sportbooking.online/admin" className="px-6 py-2 rounded-full font-bold text-sm text-on-surface hover:text-primary transition-all active:scale-95">Đăng nhập</a>
-            <a href="#pricing" className="px-6 py-2 bg-gradient-to-br from-primary to-primary-container text-white rounded-full font-bold text-sm shadow-md hover:shadow-lg active:scale-95 transition-all">Dùng thử</a>
+            <a href="https://app.sportbooking.online/admin" className="px-6 py-2 rounded-full font-bold text-xs text-white hover:text-[#9cff93] transition-all">Đăng nhập</a>
+            <a href="#pricing" className="px-8 py-2 bg-[#9cff93] text-[#00440a] rounded-md font-headline font-black uppercase text-xs tracking-widest hover:shadow-[0_0_20px_rgba(156,255,147,0.4)] transition-all">Dùng thử</a>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section - bg-background (#f4faff) */}
-      <header className="relative overflow-hidden pt-16 pb-32 bg-[#f4faff]">
-        <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-7 z-10">
-            <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-[#001f2a] tracking-tight leading-[1.1] mb-6">
-              Sport Booking - <span className="text-[#006e1c]">Hệ thống đặt sân</span> thông minh
-            </h1>
-            <p className="text-xl text-[#3f4a3c] font-body mb-10 max-w-xl leading-relaxed">
-              Giải pháp quản lý và đặt sân toàn diện cho câu lạc bộ thể thao. Nhanh chóng, chính xác và chuyên nghiệp hơn bao giờ hết.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a href="https://app.sportbooking.online" className="px-8 py-4 bg-[#ff9800] text-[#653900] rounded-lg font-bold text-lg shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2">
-                Bắt đầu đặt lịch ngay
-                <span>→</span>
-              </a>
-              <button className="px-8 py-4 border-2 border-[#becab9] text-[#001f2a] rounded-lg font-bold text-lg hover:bg-[#d9f2ff] transition-colors flex items-center justify-center gap-2">
-                Xem bản demo
-              </button>
-            </div>
-          </div>
-          <div className="lg:col-span-5 relative">
-            <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)]">
-              <img alt="Sport venue" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_RQ0ugdjLw_SmfNgMeF8KwvoBLeAiVIwRnJaMMfgsvYsjfW7HAQYL7Ifk6A5mh_E5Uj4K7oFQyX-m6P6lp89j1FjOca47qu3mqszIEsn11UeJR5_QQ19j4bGNPoBSRkSFfd9P5YtRMVb-IfB8kkoBSIxxrKB9AjJNYo3xe7XP8D96BNJrZo1TY3GfeAQ664Q7gSTDZdBDsjfVWDTVD5j8_A-eH7bAIJ1zBT2C1Keq89HJnTNiRpHB1clzpBynAVooZP1xpBTYkc7u"/>
-              <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,31,42,0.4)] to-transparent"></div>
-            </div>
-            <div className="absolute -bottom-6 -left-6 bg-[rgba(201,231,247,0.7)] backdrop-blur-[20px] p-6 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)] max-w-[240px]">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-full bg-[#4caf50] flex items-center justify-center">
-                  <span className="text-white">✓</span>
-                </div>
-                <span className="font-bold text-[#001f2a] text-sm">Xác nhận tức thì</span>
+      <main>
+        {/* Hero Section */}
+        <section className="relative overflow-hidden pt-40 pb-32">
+          <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-12 xl:col-span-7 z-10 text-center xl:text-left">
+              <div className="mb-6 inline-flex items-center gap-2 bg-[#9cff93]/10 px-4 py-2 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#9cff93] animate-pulse"></span>
+                <span className="text-[#9cff93] text-xs font-bold uppercase tracking-widest">Đẳng Cấp Thể Thao Digital</span>
               </div>
-              <p className="text-xs text-[#3f4a3c] leading-tight">Hệ thống xử lý hơn 1000+ lượt đặt sân mỗi ngày tại Hà Nội, TP.HCM</p>
+              <h1 className="font-headline text-6xl md:text-8xl font-black text-white leading-[0.9] tracking-tighter mb-8 italic uppercase">
+                BỨT PHÁ<br />
+                <span className="text-transparent px-2" style={{ WebkitTextStroke: '1px #9cff93' }}>LÀM CHỦ</span><br />
+                SÂN CHƠI
+              </h1>
+              <p className="text-white/60 text-lg md:text-xl font-body mb-10 max-w-2xl mx-auto xl:mx-0 leading-relaxed">
+                Nền tảng đặt sân hiện đại số hàng đầu, kết nối cộng đồng vận động viên chuyên nghiệp. Quản lý thời gian, tối ưu hiệu suất và nâng tầm trải nghiệm thi đấu.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center xl:justify-start">
+                <a href="#pricing" className="px-10 py-5 bg-[#9cff93] text-[#00440a] rounded-md font-headline font-black uppercase tracking-widest hover:scale-105 transition-all text-center">
+                  Bắt đầu ngay
+                </a>
+                <button 
+                  onClick={() => handlePlanSelect('FREE')}
+                  className="px-10 py-5 border border-white/20 text-white rounded-md font-headline font-black uppercase tracking-widest hover:border-[#9cff93] hover:text-[#9cff93] transition-all text-center"
+                >
+                  Xem Demo
+                </button>
+              </div>
+            </div>
+            <div className="lg:col-span-12 xl:col-span-5 relative">
+              <div className="relative aspect-[4/5] rounded-xl overflow-hidden shadow-[0_40px_100px_rgba(156,255,147,0.1)] group">
+                <img 
+                  alt="Sport Action" 
+                  className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" 
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_RQ0ugdjLw_SmfNgMeF8KwvoBLeAiVIwRnJaMMfgsvYsjfW7HAQYL7Ifk6A5mh_E5Uj4K7oFQyX-m6P6lp89j1FjOca47qu3mqszIEsn11UeJR5_QQ19j4bGNPoBSRkSFfd9P5YtRMVb-IfB8kkoBSIxxrKB9AjJNYo3xe7XP8D96BNJrZo1TY3GfeAQ664Q7gSTDZdBDsjfVWDTVD5j8_A-eH7bAIJ1zBT2C1Keq89HJnTNiRpHB1clzpBynAVooZP1xpBTYkc7u"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent"></div>
+              </div>
+              <div className="absolute -bottom-8 -left-8 bg-[#1a1919]/60 backdrop-blur-2xl p-8 rounded-xl border-l-4 border-[#9cff93] shadow-2xl max-w-[280px]">
+                <div className="text-[#9cff93] text-4xl font-headline font-black mb-1">30 Giây</div>
+                <div className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">Thời gian đặt sân trung bình</div>
+                <p className="mt-4 text-[11px] text-white/40 italic">Hơn 1000+ lượt đặt mỗi ngày tại Hà Nội, TP.HCM</p>
+              </div>
             </div>
           </div>
-        </div>
-        <span className="absolute -top-20 -right-20 text-[20rem] text-[#006e1c] opacity-5 select-none pointer-events-none">⚽</span>
-      </header>
+          <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-[#9cff93]/5 rounded-full blur-[120px] pointer-events-none"></div>
+        </section>
 
-      {/* User Features Section - bg-surface-container-low (#e6f6ff) */}
-      <section id="features" className="py-24 bg-[#e6f6ff]">
+        {/* User Features */}
+        <section id="features" className="py-32 bg-[#131212] relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-8 relative z-10">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+              <div className="max-w-xl">
+                <span className="font-headline text-[#9cff93] text-sm font-bold tracking-[0.3em] uppercase block mb-4">Dành cho người chơi</span>
+                <h2 className="font-headline text-4xl md:text-5xl font-black italic uppercase">Trải nghiệm đặt sân thông minh</h2>
+              </div>
+              <div className="hidden md:block h-[1px] bg-white/10 flex-grow mx-12 mb-5"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: Rocket, title: 'Bắt đầu tức thì', desc: 'Quy trình đặt sân được tối ưu hóa chỉ trong 30 giây.' },
+                { icon: Clock, title: 'Lịch Trống Real-time', desc: 'Xem lịch trống chính xác, không lo bị trùng giờ hay chờ đợi vô ích.' },
+                { icon: Bell, title: 'Thông báo nhắc lịch', desc: 'Nhận SMS và thông báo nhắc nhở để bạn không bao giờ lỡ trận cầu.' },
+                { icon: Smartphone, title: 'Mọi lúc mọi nơi', desc: 'Giao diện mobile friendly, đặt sân dễ dàng ngay trên smartphone của bạn.' }
+              ].map((item, i) => (
+                <div key={i} className="bg-[#1a1919]/40 backdrop-blur-md border border-white/5 p-10 rounded-xl hover:bg-white/[0.03] transition-all group">
+                  <div className="w-12 h-12 rounded-lg bg-[#9cff93]/10 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                    <item.icon className="text-[#9cff93] w-6 h-6" />
+                  </div>
+                  <h3 className="font-headline text-lg font-bold uppercase mb-4 tracking-tighter">{item.title}</h3>
+                  <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Owner Features Section */}
+        <section id="about" className="py-32 bg-[#0e0e0e]">
+          <div className="max-w-7xl mx-auto px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
+              <div className="lg:col-span-12 xl:col-span-5 order-2 xl:order-1">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="aspect-square rounded-xl overflow-hidden bg-white/5 group relative">
+                    <img alt="Management" className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG7V0HgbfTNXpx4oqRQmO2NUacZ4eNgZ3vAbQ4a8lbGUrdvXujVboomedSVuV2JscZ0y81IJpnvRwU884tAMHkXDXPPdKQcBsCRMW8GHUG4KIypYvmz3x6113DfFjwD7OoCn9zK9wPdzafdGAOqQofpe1mBGE8Wq1gBrglhiHfAodRC-1NsIvQGYNdqqT3_8r5seM4JcgKFbuaxbhyMb2Es6TaJZ0f08egIJnT3bHjKk8_BGrUYJnvx805ey8aVFbdV5FAx7HYtSs" />
+                  </div>
+                  <div className="aspect-square rounded-xl overflow-hidden bg-white/5 mt-10 group relative">
+                    <img alt="Dashboard" className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSJ5uxmM5kEY-0G_9ARacJSU2iMpe4AFhdHrDdvPXF_In3euJeqW-j7MPuQIgQxauMjp8kU81z1KXbR1Bs1UUQtNp7UjPPakg7NBYAX_-cVc09GJYrP8StJJJSQpD2y74hfYuapdFkEMgUeMo1FfDUw608Sidzq8J_K9Eaank-W3XVaF3DEhtE8ICz4d0MhLzWC_1f2_gcRNHves92tKlW0Q6H3SytQ6mQ3cFc5vw-rA-6yZkU7rLaltm7KSs0gc_S51rc7VbbjYs" />
+                  </div>
+                </div>
+              </div>
+              <div className="lg:col-span-12 xl:col-span-7 order-1 xl:order-2">
+                <span className="font-headline text-[#9cff93] text-sm font-bold tracking-[0.3em] uppercase block mb-4">Dành cho chủ sân</span>
+                <h2 className="font-headline text-5xl md:text-6xl font-black italic uppercase mb-10 leading-[0.9]">Tối ưu doanh thu<br /><span className="text-[#9cff93]">CLB Thể Thao</span></h2>
+                <div className="space-y-10">
+                  <div className="flex gap-6 items-start group">
+                    <div className="w-14 h-14 shrink-0 rounded-full bg-[#9cff93]/10 flex items-center justify-center border border-[#9cff93]/20 group-hover:bg-[#9cff93] group-hover:text-[#00440a] transition-all">
+                      <LayoutDashboard className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-headline font-black uppercase text-xl mb-3 tracking-tighter">Quản lý toàn diện</h4>
+                      <p className="text-white/50 leading-relaxed">Thiết lập giá linh hoạt theo giờ cao điểm, ngày lễ và quản lý đa dạng loại sân (Cầu lông, Bóng đá, Tennis, Pickleball).</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-6 items-start group">
+                    <div className="w-14 h-14 shrink-0 rounded-full bg-[#9cff93]/10 flex items-center justify-center border border-[#9cff93]/20 group-hover:bg-[#9cff93] group-hover:text-[#00440a] transition-all">
+                      <TrendingUp className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-headline font-black uppercase text-xl mb-3 tracking-tighter">Dashboard Thống Kê</h4>
+                      <p className="text-white/50 leading-relaxed">Hệ thống báo cáo tự động về doanh thu, tỷ lệ lấp đầy sân và hành vi khách hàng giúp bạn ra quyết định chuẩn xác.</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => handlePlanSelect('BASIC')}
+                    className="mt-4 px-10 py-5 bg-[#1a1919] border border-[#9cff93]/30 text-[#9cff93] rounded-md font-headline font-bold uppercase tracking-widest hover:bg-[#9cff93] hover:text-[#00440a] transition-all"
+                  >
+                    Đăng Ký Chủ Sân
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing */}
+        <section id="pricing" className="py-40 bg-[#131212] border-t border-white/5">
+          <div className="max-w-7xl mx-auto px-8">
+            <div className="text-center mb-24">
+              <h2 className="font-headline text-5xl md:text-7xl font-black italic uppercase italic tracking-tighter mb-6">Gói Đăng Ký Đối Tác</h2>
+              <p className="text-white/40 max-w-2xl mx-auto">Chọn giải pháp quản trị phù hợp nhất với quy mô CLB của bạn. Nâng cấp bất cứ lúc nào.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-8">
+              {/* Plan 1 */}
+              <div className="bg-[#1a1919]/40 backdrop-blur-md border border-white/5 p-12 rounded-xl flex flex-col hover:border-[#9cff93]/30 transition-all">
+                <span className="font-headline text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-4 block">Cơ bản</span>
+                <div className="text-4xl font-headline font-black mb-10">FREE<span className="text-sm font-normal text-white/30 ml-2">/vĩnh viễn</span></div>
+                <div className="space-y-6 mb-12 flex-grow">
+                  <div className="flex items-center gap-4 text-sm text-white/60"><CheckCircle2 className="w-5 h-5 text-[#9cff93]" /> <span>Tối đa 3 sân</span></div>
+                  <div className="flex items-center gap-4 text-sm text-white/60"><CheckCircle2 className="w-5 h-5 text-[#9cff93]" /> <span>100 lượt đặt/tháng</span></div>
+                  <div className="flex items-center gap-4 text-sm text-white/60"><CheckCircle2 className="w-5 h-5 text-[#9cff93]" /> <span>Tính năng cơ bản</span></div>
+                </div>
+                <button 
+                  onClick={() => handlePlanSelect('FREE')}
+                  className="w-full py-4 border border-white/10 rounded-md font-headline font-black uppercase text-xs tracking-widest hover:border-[#9cff93] hover:text-[#9cff93] transition-all"
+                >
+                  Bắt đầu ngay
+                </button>
+              </div>
+              {/* Plan 2: RECOMMENDED */}
+              <div className="bg-[#9cff93] text-[#00440a] p-12 rounded-xl flex flex-col relative scale-[1.08] z-10 shadow-[0_40px_80px_rgba(156,255,147,0.15)]">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00440a] text-[#9cff93] px-4 py-1 rounded text-[9px] font-black uppercase tracking-[0.3em] whitespace-nowrap">KHUYÊN DÙNG</div>
+                <span className="font-headline text-[10px] font-black uppercase tracking-[0.3em] mb-4 block opacity-60">Chuyên nghiệp</span>
+                <div className="text-5xl font-headline font-black mb-10">500.000<span className="text-sm font-bold opacity-60 ml-2">đ/tháng</span></div>
+                <div className="space-y-6 mb-12 flex-grow">
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6" /> <span>Tối đa 30 sân</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6" /> <span>3.000 lượt đặt/tháng</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6" /> <span>Dashboard chuyên sâu (AI)</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6" /> <span>Hỗ trợ VIP 24/7</span></div>
+                </div>
+                <button 
+                  onClick={() => handlePlanSelect('PRO')}
+                  className="w-full py-5 bg-[#00440a] text-white rounded-md font-headline font-black uppercase text-xs tracking-widest hover:opacity-90 transition-opacity"
+                >
+                  Chọn gói PRO
+                </button>
+              </div>
+              {/* Plan 3 */}
+              <div className="bg-[#1a1919]/40 backdrop-blur-md border border-white/5 p-12 rounded-xl flex flex-col hover:border-[#9cff93]/30 transition-all">
+                <span className="font-headline text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-4 block">Mở rộng</span>
+                <div className="text-4xl font-headline font-black mb-10">200.000<span className="text-sm font-normal text-white/30 ml-2">đ/tháng</span></div>
+                <div className="space-y-6 mb-12 flex-grow">
+                  <div className="flex items-center gap-4 text-sm text-white/60"><CheckCircle2 className="w-5 h-5 text-[#9cff93]" /> <span>Tối đa 10 sân</span></div>
+                  <div className="flex items-center gap-4 text-sm text-white/60"><CheckCircle2 className="w-5 h-5 text-[#9cff93]" /> <span>1.000 lượt đặt/tháng</span></div>
+                  <div className="flex items-center gap-4 text-sm text-white/60"><CheckCircle2 className="w-5 h-5 text-[#9cff93]" /> <span>Báo cáo doanh thu nâng cao</span></div>
+                </div>
+                <button 
+                  onClick={() => handlePlanSelect('BASIC')}
+                  className="w-full py-4 border border-white/10 rounded-md font-headline font-black uppercase text-xs tracking-widest hover:border-[#9cff93] hover:text-[#9cff93] transition-all"
+                >
+                  Chọn gói Basic
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="py-40 relative">
+          <div className="max-w-7xl mx-auto px-8">
+            <div className="bg-[#1c1b1b] rounded-2xl p-20 text-center relative overflow-hidden border border-white/5 group">
+              <div className="z-10 relative">
+                <h2 className="font-headline text-5xl md:text-6xl font-black italic uppercase mb-8">Sẵn sàng để <span className="text-[#9cff93]">LÀM CHỦ</span> sân chơi?</h2>
+                <p className="text-white/50 text-xl mb-12 max-w-2xl mx-auto">Chuyển đổi số ngay hôm nay. Không cần thẻ tín dụng, đăng ký trong 1 phút.</p>
+                <button 
+                  onClick={() => handlePlanSelect('PRO')}
+                  className="px-12 py-6 bg-[#9cff93] text-[#00440a] rounded-md font-headline font-black uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(156,255,147,0.2)] hover:scale-105 transition-all text-xl"
+                >
+                  Dùng thử ngay
+                </button>
+              </div>
+              <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-[#9cff93]/5 rounded-full blur-[120px] -translate-y-1/2 group-hover:bg-[#9cff93]/10 transition-colors"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer id="contact" className="bg-[#0e0e0e] border-t border-white/10 pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-8">
-          <div className="mb-16 text-center lg:text-left">
-            <span className="font-label text-xs uppercase tracking-[0.3em] text-[#006e1c] font-bold mb-4 block">Dành cho người chơi</span>
-            <h2 className="font-headline text-4xl font-extrabold text-[#001f2a]">Trải nghiệm đặt sân đỉnh cao</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: '🎾', title: 'Đa dạng môn thể thao', desc: 'Đặt sân cầu lông, bóng đá, bóng chuyền, tennis chỉ với vài cú chạm trên ứng dụng.' },
-              { icon: '⏰', title: 'Lịch trống thực tế', desc: 'Xem lịch sân trống theo thời gian thực. Không còn tình trạng trùng lịch hay chờ đợi.' },
-              { icon: '📊', title: 'Quản lý lịch cá nhân', desc: 'Dễ dàng theo dõi, thay đổi hoặc hủy lịch đặt ngay trong tài khoản của bạn.' },
-              { icon: '🔔', title: 'Thông báo nhắc nhở', desc: 'Nhận thông báo xác nhận và nhắc lịch trước giờ ra sân để bạn không bao giờ lỡ hẹn.' },
-              { icon: '📰', title: 'Tin tức thể thao', desc: 'Cập nhật những tin tức, giải đấu và mẹo tập luyện mới nhất mỗi ngày.' },
-              { icon: '☁️', title: 'Xác thực thanh toán', desc: 'Tải lên bằng chứng chuyển khoản nhanh chóng để chủ sân xác nhận lịch đặt.' },
-            ].map((feature, i) => (
-              <div key={i} className="bg-white p-8 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)] hover:-translate-y-2 transition-transform duration-300">
-                <div className="w-14 h-14 bg-[#d9f2ff] flex items-center justify-center rounded-lg mb-6 text-3xl">
-                  {feature.icon}
-                </div>
-                <h3 className="font-headline text-xl font-bold mb-3 text-[#001f2a]">{feature.title}</h3>
-                <p className="text-[#3f4a3c] text-sm leading-relaxed">{feature.desc}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+            <div className="space-y-8">
+              <span className="text-2xl font-black italic text-white uppercase font-headline">SPORT BOOKING</span>
+              <p className="text-white/40 text-sm leading-relaxed max-w-xs">
+                Kiến tạo cộng đồng thể thao văn minh và hiện đại thông qua công nghệ quản lý sân thông minh số 1 Việt Nam.
+              </p>
+              <div className="flex gap-4">
+                <a href="#" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:border-[#9cff93] hover:text-[#9cff93] transition-all">
+                  <Smartphone className="w-4 h-4" />
+                </a>
+                <a href="#" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:border-[#9cff93] hover:text-[#9cff93] transition-all">
+                  <Zap className="w-4 h-4" />
+                </a>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
+            
+            <div className="space-y-8">
+              <h5 className="font-headline text-[#9cff93] text-[11px] font-black uppercase tracking-[0.3em]">Khám phá</h5>
+              <div className="flex flex-col gap-4 text-sm text-white/40 font-bold uppercase tracking-widest font-headline">
+                <a href="#about" className="hover:text-white transition-colors">Giới thiệu</a>
+                <a href="#features" className="hover:text-white transition-colors">Tính năng</a>
+                <a href="#pricing" className="hover:text-white transition-colors">Bảng giá</a>
+              </div>
+            </div>
 
-      {/* Owner Management Features - bg-white */}
-      <section className="py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="mb-16 text-center">
-            <span className="font-label text-xs uppercase tracking-[0.3em] text-[#8b5000] font-bold mb-4 block">Dành cho chủ sân</span>
-            <h2 className="font-headline text-4xl font-extrabold text-[#001f2a]">Hệ quản trị toàn diện chuyên nghiệp</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-3 gap-6 h-auto md:h-[800px]">
-            <div className="md:col-span-2 md:row-span-2 bg-[#006e1c] rounded-lg p-10 text-white flex flex-col justify-between relative overflow-hidden group">
-              <div className="z-10">
-                <h3 className="font-headline text-3xl font-bold mb-4">Dashboard Thống Kê</h3>
-                <p className="text-white/80 max-w-xs mb-8">Theo dõi doanh thu, tỷ lệ lấp đầy sân và xu hướng đặt lịch theo tuần/tháng một cách trực quan.</p>
-              </div>
-              <div className="bg-white/10 p-6 rounded-lg backdrop-blur-md z-10">
-                <div className="flex items-end gap-2 mb-2">
-                  <span className="text-4xl font-black">94%</span>
-                  <span className="text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Hiệu suất sử dụng sân</span>
-                </div>
-                <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#ff9800] h-full w-[94%]"></div>
-                </div>
-              </div>
-              <span className="absolute -bottom-10 -right-10 text-[15rem] text-white/10 group-hover:scale-110 transition-transform duration-700">📊</span>
-            </div>
-            <div className="md:col-span-2 bg-[#d9f2ff] rounded-lg p-8 flex items-center gap-6 group">
-              <div className="w-16 h-16 shrink-0 bg-white rounded-lg flex items-center justify-center shadow-md text-3xl">💰</div>
-              <div>
-                <h4 className="font-headline text-xl font-bold text-[#001f2a]">Giá linh hoạt</h4>
-                <p className="text-[#3f4a3c] text-sm">Cài đặt giá theo giờ cao điểm, ngày lễ hoặc thành viên thân thiết.</p>
+            <div className="space-y-8">
+              <h5 className="font-headline text-[#9cff93] text-[11px] font-black uppercase tracking-[0.3em]">Hỗ trợ pháp lý</h5>
+              <div className="flex flex-col gap-4 text-sm text-white/40 font-bold uppercase tracking-widest font-headline">
+                <Link href="/privacy" className="hover:text-white transition-colors">Chính sách bảo mật</Link>
+                <Link href="/terms" className="hover:text-white transition-colors">Điều khoản dịch vụ</Link>
               </div>
             </div>
-            <div className="md:col-span-1 bg-[#e6f6ff] rounded-lg p-8 text-center flex flex-col items-center justify-center hover:bg-[#d9f2ff] transition-colors">
-              <span className="text-4xl mb-4">📍</span>
-              <h4 className="font-headline font-bold text-[#001f2a]">Quản lý cơ sở</h4>
-            </div>
-            <div className="md:col-span-1 bg-[#e6f6ff] rounded-lg p-8 text-center flex flex-col items-center justify-center hover:bg-[#d9f2ff] transition-colors">
-              <span className="text-4xl mb-4">📄</span>
-              <h4 className="font-headline font-bold text-[#001f2a]">Báo cáo chi tiết</h4>
-            </div>
-            <div className="md:col-span-2 bg-[#163440] text-white rounded-lg p-8 flex justify-between items-center group">
-              <div className="max-w-[60%]">
-                <h4 className="font-headline text-xl font-bold mb-2">Quản lý từng sân riêng biệt</h4>
-                <p className="text-white/60 text-sm">Kiểm soát trạng thái bảo trì, lịch thi đấu cho từng khu vực sân.</p>
-              </div>
-              <span className="text-6xl text-[#006e1c] opacity-40 group-hover:rotate-12 transition-transform">📦</span>
-            </div>
-            <div className="md:col-span-1 bg-[#d9f2ff] rounded-lg p-8 flex flex-col justify-end relative">
-              <span className="text-4xl absolute top-8 left-8">🔔</span>
-              <h4 className="font-headline font-bold text-[#001f2a]">Trung tâm thông báo</h4>
-            </div>
-            <div className="md:col-span-1 bg-[#4caf50] rounded-lg p-8 text-white flex flex-col justify-end relative">
-              <span className="text-4xl absolute top-8 left-8">✅</span>
-              <h4 className="font-headline font-bold">Xác nhận lịch</h4>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Subscription Plans - bg-background (#f4faff) */}
-      <section id="pricing" className="py-24 bg-[#f4faff]">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="text-center mb-20">
-            <h2 className="font-headline text-4xl font-extrabold text-[#001f2a] mb-4">Gói dịch vụ linh hoạt</h2>
-            <p className="text-[#3f4a3c] max-w-2xl mx-auto">Chọn gói phù hợp với quy mô câu lạc bộ của bạn. Nâng cấp bất cứ lúc nào.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            <div className="bg-white p-10 rounded-lg flex flex-col border border-[#becab9]/15 hover:border-[#4caf50]/40 transition-colors">
-              <span className="font-label text-xs font-bold text-[#3f4a3c] uppercase tracking-widest mb-2">Cơ bản</span>
-              <h3 className="font-headline text-3xl font-bold mb-6">FREE</h3>
-              <div className="space-y-4 mb-10 flex-grow">
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a]">Tối đa 3 sân</span></div>
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a]">100 lượt đặt/tháng</span></div>
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a]">Báo cáo cơ bản</span></div>
-              </div>
-              <button onClick={() => handlePlanSelect('FREE')} className="w-full py-4 border-2 border-[#006e1c] text-[#006e1c] rounded-lg font-bold hover:bg-[#4caf50] hover:text-white transition-all text-center">Đăng ký ngay</button>
-            </div>
-            <div className="bg-white p-10 rounded-lg flex flex-col border-4 border-[#006e1c] shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)] relative scale-105 z-10">
-              <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#006e1c] text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">RECOMMENDED</div>
-              <span className="font-label text-xs font-bold text-[#006e1c] uppercase tracking-widest mb-2">Chuyên nghiệp</span>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="font-headline text-3xl font-bold">500.000</span>
-                <span className="text-[#3f4a3c] font-medium">VNĐ/tháng</span>
-              </div>
-              <div className="space-y-4 mb-10 flex-grow">
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a] font-bold">Tối đa 30 sân</span></div>
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a] font-bold">3.000 lượt đặt/tháng</span></div>
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a]">Báo cáo chuyên sâu (AI)</span></div>
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a]">Hỗ trợ ưu tiên 24/7</span></div>
-              </div>
-              <button onClick={() => handlePlanSelect('PRO')} className="w-full py-4 bg-[#006e1c] text-white rounded-lg font-bold shadow-lg shadow-[#006e1c]/20 hover:scale-[1.02] transition-transform text-center">Đăng ký PRO</button>
-            </div>
-            <div className="bg-white p-10 rounded-lg flex flex-col border border-[#becab9]/15">
-              <span className="font-label text-xs font-bold text-[#3f4a3c] uppercase tracking-widest mb-2">Mở rộng</span>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="font-headline text-3xl font-bold">200.000</span>
-                <span className="text-[#3f4a3c] font-medium">VNĐ/tháng</span>
-              </div>
-              <div className="space-y-4 mb-10 flex-grow">
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a]">Tối đa 10 sân</span></div>
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a]">1.000 lượt đặt/tháng</span></div>
-                <div className="flex items-center gap-3"><span className="text-[#006e1c] text-xl">✓</span><span className="text-[#001f2a]">Quản lý nhân viên</span></div>
-              </div>
-              <button onClick={() => handlePlanSelect('BASIC')} className="w-full py-4 border-2 border-[#006e1c] text-[#006e1c] rounded-lg font-bold hover:bg-[#4caf50] hover:text-white transition-all text-center">Đăng ký ngay</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us - bg-surface-container-low (#e6f6ff) */}
-      <section id="about" className="py-24 bg-[#e6f6ff] overflow-hidden relative">
-        <div className="max-w-7xl mx-auto px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div className="order-2 lg:order-1">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div className="bg-white p-6 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)] translate-y-8">
-                    <span className="text-3xl mb-4 block">⚡</span>
-                    <h4 className="font-bold mb-2">Nhanh chóng</h4>
-                    <p className="text-xs text-[#3f4a3c]">Đặt sân chỉ trong 30 giây với quy trình tối ưu.</p>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)] translate-y-8">
-                    <span className="text-3xl mb-4 block">✓</span>
-                    <h4 className="font-bold mb-2">Chính xác</h4>
-                    <p className="text-xs text-[#3f4a3c]">Hệ thống đồng bộ hóa 100% không lo sai sót.</p>
-                  </div>
+            <div className="space-y-8">
+              <h5 className="font-headline text-[#9cff93] text-[11px] font-black uppercase tracking-[0.3em]">Liên hệ</h5>
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 text-white/50 text-sm">
+                  <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-[#9cff93]" /></span>
+                  <span>victory1080@gmail.com</span>
                 </div>
-                <div className="space-y-4">
-                  <div className="bg-white p-6 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)]">
-                    <span className="text-3xl mb-4 block">🏆</span>
-                    <h4 className="font-bold mb-2">Chuyên nghiệp</h4>
-                    <p className="text-xs text-[#3f4a3c]">Giao diện hiện đại nâng tầm thương hiệu CLB.</p>
-                  </div>
-                  <div className="bg-white p-6 rounded-lg shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)]">
-                    <span className="text-3xl mb-4 block">🧠</span>
-                    <h4 className="font-bold mb-2">Thông minh</h4>
-                    <p className="text-xs text-[#3f4a3c]">AI hỗ trợ sắp xếp lịch và dự báo doanh thu.</p>
-                  </div>
+                <div className="flex items-center gap-4 text-white/50 text-sm">
+                  <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-[#9cff93]" /></span>
+                  <span>0982 949 974</span>
                 </div>
               </div>
             </div>
-            <div className="order-1 lg:order-2">
-              <span className="font-label text-xs uppercase tracking-[0.3em] text-[#006e1c] font-bold mb-4 block">Tại sao chọn chúng tôi?</span>
-              <h2 className="font-headline text-4xl font-extrabold text-[#001f2a] mb-8">Hơn cả một phần mềm, đó là đối tác vận hành</h2>
-              <ul className="space-y-6">
-                <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-[#4caf50]/20 flex items-center justify-center shrink-0">
-                    <span className="text-[#006e1c] text-sm">✓</span>
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-[#001f2a]">Linh hoạt tối đa</h5>
-                    <p className="text-sm text-[#3f4a3c]">Phù hợp cho mọi loại hình sân từ nhỏ đến quy mô chuỗi hệ thống.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-[#4caf50]/20 flex items-center justify-center shrink-0">
-                    <span className="text-[#006e1c] text-sm">✓</span>
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-[#001f2a]">Hỗ trợ tận tâm</h5>
-                    <p className="text-sm text-[#3f4a3c]">Đội ngũ kỹ thuật túc trực 24/7 giải quyết mọi vấn đề phát sinh.</p>
-                  </div>
-                </li>
-              </ul>
+          </div>
+          <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <span className="text-[10px] font-headline font-bold text-white/20 uppercase tracking-[0.4em]">© 2024 SPORT BOOKING KINETIC PRECISION. ALL RIGHTS RESERVED.</span>
+            <div className="flex gap-6 text-white/20 text-xs">
+              <span className="hover:text-[#9cff93] cursor-pointer">VIETNAM</span>
+              <span className="hover:text-[#9cff93] cursor-pointer">HANOI</span>
             </div>
           </div>
-        </div>
-        <span className="absolute top-10 -left-20 text-[25rem] text-[#006e1c] opacity-5 rotate-12">🏸</span>
-      </section>
-
-      {/* Final CTA - no specific bg color in original, using default */}
-      <section className="py-24">
-        <div className="max-w-5xl mx-auto px-8 text-center">
-          <div className="bg-[#006e1c] rounded-lg p-16 relative overflow-hidden shadow-[0_24px_48px_-12px_rgba(0,31,42,0.08)]">
-            <div className="z-10 relative">
-              <h2 className="font-headline text-4xl md:text-5xl font-extrabold text-white mb-6">Sẵn sàng chuyển đổi số cho CLB của bạn?</h2>
-              <p className="text-white/80 text-xl mb-12">Không cần thẻ tín dụng • Dùng thử FREE vĩnh viễn</p>
-              <a href="https://app.sportbooking.online" className="inline-block px-12 py-5 bg-[#ff9800] text-[#653900] rounded-full font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-xl">
-                Dùng thử miễn phí ngay
-              </a>
-            </div>
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer - bg-[#d9f2ff] */}
-      <footer id="contact" className="bg-[#d9f2ff] pt-20 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 px-8 max-w-7xl mx-auto">
-          <div>
-            <span className="text-xl font-bold text-[#001f2a] font-headline mb-6 block">Sport Booking</span>
-            <p className="text-sm font-body text-slate-600 mb-8 max-w-xs leading-relaxed">
-              Kiến tạo cộng đồng thể thao văn minh và hiện đại thông qua công nghệ đặt sân hàng đầu Việt Nam.
-            </p>
-            <div className="flex gap-4">
-              <a className="w-10 h-10 rounded-full bg-[#c9e7f7] flex items-center justify-center text-[#006e1c] hover:bg-[#006e1c] hover:text-white transition-colors" href="#">🌐</a>
-              <a className="w-10 h-10 rounded-full bg-[#c9e7f7] flex items-center justify-center text-[#006e1c] hover:bg-[#006e1c] hover:text-white transition-colors" href="#">📱</a>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="font-label text-xs font-inter uppercase tracking-widest text-[#006e1c] font-bold">Liên kết nhanh</span>
-            <a className="text-sm font-body text-slate-600 hover:underline decoration-2 underline-offset-4 w-fit" href="#about">Giới thiệu</a>
-            <a className="text-sm font-body text-slate-600 hover:underline decoration-2 underline-offset-4 w-fit" href="/privacy">Chính sách bảo mật</a>
-            <a className="text-sm font-body text-slate-600 hover:underline decoration-2 underline-offset-4 w-fit" href="/terms">Điều khoản dịch vụ</a>
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="font-label text-xs font-inter uppercase tracking-widest text-[#006e1c] font-bold">Liên hệ</span>
-            <div className="flex items-center gap-3 text-slate-600">
-              <span>📧</span>
-              <span className="text-sm font-body">victory1080@gmail.com</span>
-            </div>
-            <div className="flex items-center gap-3 text-slate-600">
-              <span>📞</span>
-              <span className="text-sm font-body">0982 949 974</span>
-            </div>
-            <div className="mt-4 p-4 rounded-lg bg-[#ceedfd]/50 border border-[#becab9]/10">
-              <p className="text-xs text-[#3f4a3c] font-medium">Đăng ký nhận tin để không bỏ lỡ ưu đãi dành cho CLB mới.</p>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-8 mt-16 pt-8 border-t border-[#becab9]/10 text-center">
-          <p className="text-xs font-inter uppercase tracking-widest text-slate-500">© 2024 Sport Booking. All rights reserved.</p>
         </div>
       </footer>
 
@@ -334,6 +329,6 @@ export default function LandingPage() {
         onOpenChange={setDialogOpen} 
         selectedPlan={selectedPlan}
       />
-    </>
+    </div>
   );
 }

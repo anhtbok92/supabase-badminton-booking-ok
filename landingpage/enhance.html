@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-dim": "#00ec3b",
+                        "surface-container": "#1a1919",
+                        "surface-container-low": "#131313",
+                        "surface": "#0e0e0e",
+                        "surface-tint": "#9cff93",
+                        "error-container": "#b92902",
+                        "tertiary-container": "#ebebeb",
+                        "primary-fixed": "#00fc40",
+                        "secondary": "#e5e2e1",
+                        "on-error-container": "#ffd2c8",
+                        "secondary-dim": "#d7d4d3",
+                        "on-tertiary-fixed": "#4f5051",
+                        "on-primary-fixed": "#00440a",
+                        "secondary-container": "#474646",
+                        "inverse-on-surface": "#565554",
+                        "tertiary-fixed": "#ffffff",
+                        "error": "#ff7351",
+                        "on-background": "#ffffff",
+                        "inverse-surface": "#fcf8f8",
+                        "tertiary": "#f9f9f9",
+                        "on-secondary-fixed-variant": "#5c5b5b",
+                        "primary-fixed-dim": "#00ec3b",
+                        "surface-container-highest": "#262626",
+                        "on-surface": "#ffffff",
+                        "tertiary-fixed-dim": "#f0f1f1",
+                        "surface-bright": "#2c2c2c",
+                        "surface-container-high": "#201f1f",
+                        "inverse-primary": "#006f16",
+                        "on-primary-container": "#005a10",
+                        "background": "#0e0e0e",
+                        "on-secondary-container": "#d2d0cf",
+                        "outline-variant": "#494847",
+                        "primary-container": "#00fc40",
+                        "on-secondary": "#525151",
+                        "secondary-fixed-dim": "#d7d4d3",
+                        "on-error": "#450900",
+                        "on-secondary-fixed": "#403f3f",
+                        "on-tertiary-fixed-variant": "#6c6d6e",
+                        "on-tertiary-container": "#555757",
+                        "on-tertiary": "#5e5f60",
+                        "tertiary-dim": "#ebebeb",
+                        "surface-variant": "#262626",
+                        "surface-container-lowest": "#000000",
+                        "primary": "#9cff93",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-primary": "#006413",
+                        "on-surface-variant": "#adaaaa",
+                        "on-primary-fixed-variant": "#006513",
+                        "surface-dim": "#0e0e0e",
+                        "outline": "#777575",
+                        "error-dim": "#d53d18"
+                    },
+                    fontFamily: {
+                        "headline": ["Lexend"],
+                        "body": ["Inter"],
+                        "label": ["Lexend"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(19, 19, 19, 0.6);
+            backdrop-filter: blur(20px);
+        }
+
+        .diagonal-mask {
+            clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary">
+    <!-- Top Navigation Shell -->
+    <nav class="fixed top-0 w-full z-50 bg-neutral-950/60 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,255,65,0.08)]">
+        <div class="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
+            <div class="text-2xl font-black italic text-[#00FF41] tracking-tighter uppercase font-headline">COURTSIDE
+            </div>
+            <div class="hidden md:flex items-center gap-10">
+                <a class="text-[#00FF41] border-b-2 border-[#00FF41] pb-1 font-headline tracking-tight font-bold uppercase text-sm"
+                    href="#">Đặt Sân</a>
+                <a class="text-white/70 hover:text-white transition-all duration-300 font-headline tracking-tight font-bold uppercase text-sm hover:scale-105"
+                    href="#">Chủ Sân</a>
+                <a class="text-white/70 hover:text-white transition-all duration-300 font-headline tracking-tight font-bold uppercase text-sm hover:scale-105"
+                    href="#">Bảng Giá</a>
+                <a class="text-white/70 hover:text-white transition-all duration-300 font-headline tracking-tight font-bold uppercase text-sm hover:scale-105"
+                    href="#">Tin Tức</a>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="flex gap-4 text-white/70">
+                    <span
+                        class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</span>
+                    <span
+                        class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">account_circle</span>
+                </div>
+                <button
+                    class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-2 rounded-md font-headline font-bold uppercase text-xs tracking-widest hover:shadow-[0_0_15px_rgba(156,255,147,0.4)] active:scale-95 transition-all">
+                    Đăng Nhập
+                </button>
+            </div>
+        </div>
+    </nav>
+    <main class="pt-24 pb-20">
+        <!-- Hero Section -->
+        <section class="max-w-screen-2xl mx-auto px-8 py-12 grid grid-cols-12 gap-8 items-center">
+            <div class="col-span-12 lg:col-span-7 z-10">
+                <div class="mb-4">
+                    <span class="font-headline text-primary text-sm font-bold tracking-[0.2em] uppercase">Đẳng Cấp Thể
+                        Thao Digital</span>
+                </div>
+                <h1
+                    class="font-headline text-7xl md:text-8xl font-black text-on-surface leading-[0.9] tracking-tighter mb-8 italic">
+                    BỨT PHÁ<br /><span class="text-transparent border-t-2 border-b-2 border-primary py-2"
+                        style="-webkit-text-stroke: 1px #9cff93;">LÀM CHỦ</span><br />SÂN CHƠI
+                </h1>
+                <p class="text-on-surface-variant text-lg max-w-xl mb-10 leading-relaxed">
+                    Nền tảng đặt sân hiện đại, kết nối cộng đồng vận động viên chuyên nghiệp. Quản lý thời gian, tối ưu
+                    hiệu suất và nâng tầm trải nghiệm thi đấu của bạn ngay hôm nay.
+                </p>
+                <div class="flex gap-4">
+                    <button
+                        class="bg-primary text-on-primary px-10 py-4 rounded-md font-headline font-extrabold uppercase tracking-widest hover:scale-105 transition-all">Đặt
+                        Sân Ngay</button>
+                    <button
+                        class="border border-outline-variant hover:border-primary px-10 py-4 rounded-md font-headline font-extrabold uppercase tracking-widest transition-all">Dành
+                        Cho Chủ Sân</button>
+                </div>
+            </div>
+            <div class="col-span-12 lg:col-span-5 relative">
+                <div
+                    class="aspect-[4/5] rounded-xl overflow-hidden bg-surface-container-low shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
+                    <img alt="Action shot of a badminton player performing a smash in a high-tech court with neon accents"
+                        class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDayWpMvMDbDzVL4Stsgc7zmlNbEC--MgYqQ_fkDvrrAH582HkBBJcSdr1n8jpjO-oAjtNjHscPPHHBHul9eb80ZiUDzOs41tYDMmV3F25-1uR0rbDKx5G6_awFj-GCEjAPoUwD5fRqUCWhn7BlWnlWQ-DelXXRCyQVGrMsvj90gzyYHOrBeG7o8YzYJnEpHuPX-Z34T-p39-bPKw13vtvvDmFsIwEp9h5yTqPsxTMLXEhJ_B1X0qrdu8palcC-XlYnQegOx_1qrHA" />
+                </div>
+                <div
+                    class="absolute -bottom-6 -left-12 glass-card p-8 rounded-xl border-l-4 border-primary max-w-xs shadow-2xl">
+                    <div class="text-primary text-4xl font-headline font-black mb-1">30 Giây</div>
+                    <div class="font-headline text-xs font-bold uppercase tracking-widest text-on-surface">Thời Gian Đặt
+                        Sân Trung Bình</div>
+                </div>
+            </div>
+        </section>
+        <!-- Features Section: User Features -->
+        <section class="bg-surface-container-low py-32 mt-20">
+            <div class="max-w-screen-2xl mx-auto px-8">
+                <div class="flex justify-between items-end mb-16">
+                    <div>
+                        <span
+                            class="font-headline text-primary text-sm font-bold tracking-[0.2em] uppercase block mb-4">Dành
+                            Cho Người Chơi</span>
+                        <h2 class="font-headline text-5xl font-black italic uppercase">Trải Nghiệm Đặt Sân Thông Minh
+                        </h2>
+                    </div>
+                    <div class="hidden md:block h-[2px] bg-primary/20 flex-grow mx-12 mb-4"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div
+                        class="md:col-span-2 glass-card p-10 rounded-xl group hover:bg-surface-container-highest transition-all">
+                        <span class="material-symbols-outlined text-primary text-4xl mb-6">sports_tennis</span>
+                        <h3 class="font-headline text-2xl font-bold uppercase mb-4">Đa Dạng Loại Sân</h3>
+                        <p class="text-on-surface-variant leading-relaxed">Hỗ trợ đặt sân Cầu lông, Bóng đá, Bóng
+                            chuyền, Tennis, và môn thể thao xu hướng Pickleball chỉ với một chạm.</p>
+                        <div class="mt-8 h-1 w-0 group-hover:w-full bg-primary transition-all duration-500"></div>
+                    </div>
+                    <div class="glass-card p-10 rounded-xl group hover:bg-surface-container-highest transition-all">
+                        <span class="material-symbols-outlined text-primary text-4xl mb-6">schedule</span>
+                        <h3 class="font-headline text-xl font-bold uppercase mb-4">Lịch Trống Real-time</h3>
+                        <p class="text-on-surface-variant text-sm">Xem lịch sân trống chính xác theo thời gian thực,
+                            không lo bị trùng lịch hay chờ đợi.</p>
+                    </div>
+                    <div class="glass-card p-10 rounded-xl group hover:bg-surface-container-highest transition-all">
+                        <span class="material-symbols-outlined text-primary text-4xl mb-6">notifications_active</span>
+                        <h3 class="font-headline text-xl font-bold uppercase mb-4">Thông Báo Tức Thì</h3>
+                        <p class="text-on-surface-variant text-sm">Nhận thông báo nhắc lịch thi đấu và cập nhật trạng
+                            thái đặt sân ngay trên điện thoại.</p>
+                    </div>
+                    <div class="glass-card p-10 rounded-xl group hover:bg-surface-container-highest transition-all">
+                        <span class="material-symbols-outlined text-primary text-4xl mb-6">payments</span>
+                        <h3 class="font-headline text-xl font-bold uppercase mb-4">Thanh Toán Nhanh</h3>
+                        <p class="text-on-surface-variant text-sm">Dễ dàng upload bằng chứng chuyển khoản và xác nhận
+                            thanh toán tự động.</p>
+                    </div>
+                    <div
+                        class="md:col-span-3 glass-card p-10 rounded-xl flex flex-col md:flex-row gap-8 items-center group hover:bg-surface-container-highest transition-all overflow-hidden">
+                        <div class="flex-1">
+                            <h3 class="font-headline text-2xl font-bold uppercase mb-4 text-primary">Tin Tức Thể Thao
+                            </h3>
+                            <p class="text-on-surface-variant leading-relaxed">Cập nhật tin tức mới nhất về các giải
+                                đấu, mẹo tập luyện và xu hướng thể thao cộng đồng ngay trên ứng dụng của bạn.</p>
+                        </div>
+                        <div class="w-full md:w-64 h-40 rounded-lg overflow-hidden shrink-0">
+                            <img alt="Pickleball players in motion with high speed photography"
+                                class="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLDIgSD1YzTDxpjZOCnF6L28UpWNk4I9DS6qWPujDttxCMnmoYfnACcdgpRqNAvBxxIpA9ctu6YldJWwGCDXIj8JozNcCvp0ep1Yxwm0BnvhSO16eNjo4yvXQTzlTdN2VrXooXZT-wcGvs0elMY1gJPy4hEaP5O-9RmRRsgEZN9NltbqWl6K6aUiJZllhR9YZJLU66GvxNpjQWQdsRGo2BciED-gmTxhAuXuf0AmBkhOqvS0pZgaIkHCGyR_E-dQxr8xPEWkOqlHI" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Owners Section -->
+        <section class="max-w-screen-2xl mx-auto px-8 py-32 grid grid-cols-12 gap-12 items-center">
+            <div class="col-span-12 lg:col-span-5 order-2 lg:order-1">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="aspect-square bg-surface-container-high rounded-lg overflow-hidden">
+                        <img alt="Modern indoor soccer pitch with bright lighting" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG7V0HgbfTNXpx4oqRQmO2NUacZ4eNgZ3vAbQ4a8lbGUrdvXujVboomedSVuV2JscZ0y81IJpnvRwU884tAMHkXDXPPdKQcBsCRMW8GHUG4KIypYvmz3x6113DfFjwD7OoCn9zK9wPdzafdGAOqQofpe1mBGE8Wq1gBrglhiHfAodRC-1NsIvQGYNdqqT3_8r5seM4JcgKFbuaxbhyMb2Es6TaJZ0f08egIJnT3bHjKk8_BGrUYJnvx805ey8aVFbdV5FAx7HYtSs" />
+                    </div>
+                    <div class="aspect-square bg-surface-container-high rounded-lg overflow-hidden mt-8">
+                        <img alt="Top view of a professional volleyball court" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSJ5uxmM5kEY-0G_9ARacJSU2iMpe4AFhdHrDdvPXF_In3euJeqW-j7MPuQIgQxauMjp8kU81z1KXbR1Bs1UUQtNp7UjPPakg7NBYAX_-cVc09GJYrP8StJJJSQpD2y74hfYuapdFkEMgUeMo1FfDUw608Sidzq8J_K9Eaank-W3XVaF3DEhtE8ICz4d0MhLzWC_1f2_gcRNHves92tKlW0Q6H3SytQ6mQ3cFc5vw-rA-6yZkU7rLaltm7KSs0gc_S51rc7VbbjYs" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 lg:col-span-7 order-1 lg:order-2">
+                <span class="font-headline text-primary text-sm font-bold tracking-[0.2em] uppercase block mb-4">Dành
+                    Cho Đối Tác Chủ Sân</span>
+                <h2 class="font-headline text-6xl font-black italic uppercase mb-8 leading-tight">Tối Ưu Doanh
+                    Thu<br />Câu Lạc Bộ</h2>
+                <div class="space-y-8">
+                    <div class="flex gap-6 items-start">
+                        <div class="bg-primary/10 p-4 rounded-full">
+                            <span class="material-symbols-outlined text-primary">dashboard_customize</span>
+                        </div>
+                        <div>
+                            <h4 class="font-headline font-bold uppercase mb-2">Quản Lý Toàn Diện</h4>
+                            <p class="text-on-surface-variant">Quản lý đa dạng loại sân, thiết lập giá linh hoạt theo
+                                khung giờ cao điểm và ngày lễ một cách dễ dàng.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6 items-start">
+                        <div class="bg-primary/10 p-4 rounded-full">
+                            <span class="material-symbols-outlined text-primary">bar_chart</span>
+                        </div>
+                        <div>
+                            <h4 class="font-headline font-bold uppercase mb-2">Dashboard Thống Kê</h4>
+                            <p class="text-on-surface-variant">Hệ thống báo cáo tự động về doanh thu, tỷ lệ lấp đầy sân
+                                và hành vi khách hàng giúp bạn ra quyết định chính xác.</p>
+                        </div>
+                    </div>
+                    <button
+                        class="bg-surface-container-highest border border-primary/30 text-primary px-8 py-4 rounded-md font-headline font-extrabold uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all">Đăng
+                        Ký Chủ Sân</button>
+                </div>
+            </div>
+        </section>
+        <!-- Pricing Plans -->
+        <section class="bg-surface-container-low py-32 border-t border-white/5">
+            <div class="max-w-screen-2xl mx-auto px-8">
+                <div class="text-center mb-20">
+                    <h2 class="font-headline text-5xl font-black italic uppercase mb-4">Gói Đăng Ký Đối Tác</h2>
+                    <p class="text-on-surface-variant">Giải pháp quản lý tối ưu phù hợp với quy mô CLB của bạn.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Plan 1 -->
+                    <div
+                        class="bg-surface p-10 rounded-xl border border-white/5 hover:border-primary/50 transition-all flex flex-col">
+                        <div
+                            class="font-headline text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">
+                            Miễn Phí</div>
+                        <div class="text-4xl font-headline font-black mb-8">0 VNĐ<span
+                                class="text-sm font-normal text-on-surface-variant">/mãi mãi</span></div>
+                        <ul class="space-y-4 mb-10 flex-grow">
+                            <li class="flex items-center gap-3 text-sm"><span
+                                    class="material-symbols-outlined text-primary text-lg">check_circle</span> Quản lý
+                                tối đa 3 sân</li>
+                            <li class="flex items-center gap-3 text-sm text-on-surface-variant"><span
+                                    class="material-symbols-outlined text-primary text-lg">check_circle</span> Giới hạn
+                                100 booking</li>
+                            <li class="flex items-center gap-3 text-sm text-on-surface-variant"><span
+                                    class="material-symbols-outlined text-primary text-lg">check_circle</span> Tính năng
+                                cơ bản</li>
+                        </ul>
+                        <button
+                            class="w-full border border-outline-variant py-4 font-headline font-bold uppercase text-xs tracking-widest hover:border-primary transition-colors">Bắt
+                            Đầu Ngay</button>
+                    </div>
+                    <!-- Plan 2: Featured -->
+                    <div
+                        class="bg-primary text-on-primary p-10 rounded-xl scale-105 shadow-[0_30px_60px_rgba(0,255,65,0.15)] z-10 flex flex-col relative overflow-hidden">
+                        <div
+                            class="absolute top-4 right-4 bg-on-primary text-primary px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded">
+                            Khuyên Dùng</div>
+                        <div class="font-headline text-xs font-bold uppercase tracking-widest mb-4 opacity-80">Chuyên
+                            Nghiệp (PRO)</div>
+                        <div class="text-4xl font-headline font-black mb-8">500k<span
+                                class="text-sm font-normal opacity-80">/tháng</span></div>
+                        <ul class="space-y-4 mb-10 flex-grow">
+                            <li class="flex items-center gap-3 text-sm font-bold"><span
+                                    class="material-symbols-outlined text-lg">check_circle</span> Quản lý 30 sân</li>
+                            <li class="flex items-center gap-3 text-sm font-bold"><span
+                                    class="material-symbols-outlined text-lg">check_circle</span> 3000 booking/tháng
+                            </li>
+                            <li class="flex items-center gap-3 text-sm font-bold"><span
+                                    class="material-symbols-outlined text-lg">check_circle</span> Dashboard chuyên sâu
+                            </li>
+                            <li class="flex items-center gap-3 text-sm font-bold"><span
+                                    class="material-symbols-outlined text-lg">check_circle</span> Hỗ trợ 24/7</li>
+                        </ul>
+                        <button
+                            class="w-full bg-on-primary text-primary py-4 font-headline font-bold uppercase text-xs tracking-widest hover:opacity-90 transition-opacity">Chọn
+                            Gói PRO</button>
+                    </div>
+                    <!-- Plan 3 -->
+                    <div
+                        class="bg-surface p-10 rounded-xl border border-white/5 hover:border-primary/50 transition-all flex flex-col">
+                        <div
+                            class="font-headline text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">
+                            Cơ Bản (BASIC)</div>
+                        <div class="text-4xl font-headline font-black mb-8">200k<span
+                                class="text-sm font-normal text-on-surface-variant">/tháng</span></div>
+                        <ul class="space-y-4 mb-10 flex-grow">
+                            <li class="flex items-center gap-3 text-sm"><span
+                                    class="material-symbols-outlined text-primary text-lg">check_circle</span> Quản lý
+                                10 sân</li>
+                            <li class="flex items-center gap-3 text-sm text-on-surface-variant"><span
+                                    class="material-symbols-outlined text-primary text-lg">check_circle</span> 1000
+                                booking/tháng</li>
+                            <li class="flex items-center gap-3 text-sm text-on-surface-variant"><span
+                                    class="material-symbols-outlined text-primary text-lg">check_circle</span> Báo cáo
+                                doanh thu nâng cao</li>
+                        </ul>
+                        <button
+                            class="w-full border border-outline-variant py-4 font-headline font-bold uppercase text-xs tracking-widest hover:border-primary transition-colors">Chọn
+                            Gói BASIC</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Why Us -->
+        <section class="py-32 overflow-hidden">
+            <div class="max-w-screen-2xl mx-auto px-8 relative">
+                <div class="grid grid-cols-12 gap-12">
+                    <div class="col-span-12 lg:col-span-6">
+                        <h2 class="font-headline text-6xl font-black italic uppercase mb-12 leading-[0.9]">Tại Sao Chọn
+                            COURTSIDE?</h2>
+                        <div class="space-y-12">
+                            <div>
+                                <h3
+                                    class="font-headline text-primary text-xl font-bold uppercase mb-4 tracking-tighter">
+                                    Nhanh Chóng &amp; Chính Xác</h3>
+                                <p class="text-on-surface-variant leading-relaxed border-l border-primary/30 pl-6">Mọi
+                                    thao tác chỉ mất 30 giây. Thông tin lịch trống được cập nhật theo thời gian thực
+                                    (Real-time), đảm bảo không bao giờ sai sót.</p>
+                            </div>
+                            <div>
+                                <h3
+                                    class="font-headline text-primary text-xl font-bold uppercase mb-4 tracking-tighter">
+                                    Chuyên Nghiệp &amp; Thông Minh</h3>
+                                <p class="text-on-surface-variant leading-relaxed border-l border-primary/30 pl-6">Giao
+                                    diện hiện đại, tính năng linh hoạt và hệ thống quản lý thông minh giúp bạn hoàn toàn
+                                    làm chủ cuộc chơi.</p>
+                            </div>
+                            <div>
+                                <h3
+                                    class="font-headline text-primary text-xl font-bold uppercase mb-4 tracking-tighter">
+                                    Hỗ Trợ Tận Tâm</h3>
+                                <p class="text-on-surface-variant leading-relaxed border-l border-primary/30 pl-6">Đội
+                                    ngũ hỗ trợ kỹ thuật và CSKH luôn sẵn sàng đồng hành cùng bạn 24/7 để giải quyết mọi
+                                    thắc mắc.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-12 lg:col-span-6 relative">
+                        <div class="absolute inset-0 bg-primary/5 rounded-full blur-[120px]"></div>
+                        <div class="relative z-10 glass-card p-1 rounded-2xl">
+                            <img alt="Abstract motion tracking design with sport aesthetics"
+                                class="w-full rounded-2xl grayscale brightness-75"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFLOrD4X9R_a2mDpQtd9WtLueuW22H-ZbxBZqjzmTq9Njk_6aQDq_tlRTLGX9YijekvM9EciwqA0-9Ky3OesYnRNveuewUdAkGmRH4OeT8RZnAy6CCadjF9oHZxlg4Bx0C1_FdGaZtUH9sJC_1BpmPdjISOBgdslaJ24VRwOZX259pXmiAsh6wbabWDeEEich_rRQgdmecVJHWalSxx02ErdMdmj2stGAl0jkL9UL-T0l8nkQCqyE-D18Zo7PHCf3WZuA7JJ3OcXg" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-[#131313] w-full pt-16 pb-8 border-t border-white/10">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-12 max-w-7xl mx-auto mb-16">
+            <div class="space-y-6">
+                <div class="text-xl font-black text-white font-headline uppercase">COURTSIDE</div>
+                <p class="text-neutral-500 text-sm font-body normal-case">Cách mạng hóa trải nghiệm thể thao thông qua
+                    nền tảng đặt sân và quản lý câu lạc bộ thông minh nhất Việt Nam.</p>
+            </div>
+            <div class="space-y-6">
+                <h5 class="text-[#00FF41] font-headline text-sm tracking-widest uppercase">Khám Phá</h5>
+                <ul class="space-y-4">
+                    <li><a class="text-neutral-500 hover:text-white transition-colors uppercase text-sm font-headline tracking-widest"
+                            href="#">Tìm Sân</a></li>
+                    <li><a class="text-neutral-500 hover:text-white transition-colors uppercase text-sm font-headline tracking-widest"
+                            href="#">Đối Tác</a></li>
+                    <li><a class="text-neutral-500 hover:text-white transition-colors uppercase text-sm font-headline tracking-widest"
+                            href="#">Tin Tức</a></li>
+                </ul>
+            </div>
+            <div class="space-y-6">
+                <h5 class="text-[#00FF41] font-headline text-sm tracking-widest uppercase">Pháp Lý</h5>
+                <ul class="space-y-4">
+                    <li><a class="text-neutral-500 hover:text-white transition-colors uppercase text-sm font-headline tracking-widest"
+                            href="#">Quyền Riêng Tư</a></li>
+                    <li><a class="text-neutral-500 hover:text-white transition-colors uppercase text-sm font-headline tracking-widest"
+                            href="#">Điều Khoản</a></li>
+                </ul>
+            </div>
+            <div class="space-y-6">
+                <h5 class="text-[#00FF41] font-headline text-sm tracking-widest uppercase">Hỗ Trợ</h5>
+                <ul class="space-y-4">
+                    <li><a class="text-neutral-500 hover:text-white transition-colors uppercase text-sm font-headline tracking-widest"
+                            href="#">Hướng Dẫn</a></li>
+                    <li><a class="text-neutral-500 hover:text-white transition-colors uppercase text-sm font-headline tracking-widest"
+                            href="#">Liên Hệ</a></li>
+                    <li><a class="text-neutral-500 hover:text-white transition-colors uppercase text-sm font-headline tracking-widest"
+                            href="#">Tuyển Dụng</a></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            class="max-w-7xl mx-auto px-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="font-['Lexend'] text-sm tracking-widest uppercase text-neutral-500">© 2024 COURTSIDE KINETIC
+                PRECISION. ALL RIGHTS RESERVED.</div>
+            <div class="flex gap-6">
+                <span
+                    class="material-symbols-outlined text-neutral-500 cursor-pointer hover:text-primary transition-colors">public</span>
+                <span
+                    class="material-symbols-outlined text-neutral-500 cursor-pointer hover:text-primary transition-colors">alternate_email</span>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

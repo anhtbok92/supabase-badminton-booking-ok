@@ -98,112 +98,118 @@ export function RegisterDialog({ open, onOpenChange, selectedPlan }: RegisterDia
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle className="text-2xl">Đăng ký chủ sân</DialogTitle>
-                    <DialogDescription>
-                        Gói đã chọn: <span className="font-bold text-primary">{planInfo.displayName}</span> - {planInfo.price.toLocaleString('vi-VN')} VNĐ/tháng
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-[#1a1919] border-white/10 text-white selection:bg-[#9cff93] selection:text-[#00440a]">
+                <DialogHeader className="mb-6">
+                    <DialogTitle className="text-3xl font-headline font-black italic uppercase tracking-tighter">Đăng ký đối tác chủ sân</DialogTitle>
+                    <DialogDescription className="text-white/40 pt-2 font-body italic">
+                        Gói đã chọn: <span className="font-headline font-bold text-[#9cff93] uppercase tracking-widest">{planInfo.displayName}</span> - {planInfo.price.toLocaleString('vi-VN')} VNĐ/tháng
                         <br />
                         Tối đa {planInfo.maxCourts} sân • {planInfo.maxBookings} lượt đặt/tháng
                     </DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="fullName"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Họ và tên chủ sân</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Nguyễn Văn A" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="fullName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9cff93]">Họ và tên chủ sân</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Nguyễn Văn A" className="bg-white/5 border-white/10 focus:border-[#9cff93] focus:ring-[#9cff93]/20" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type="email" placeholder="email@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9cff93]">Email</FormLabel>
+                                        <FormControl>
+                                            <Input type="email" placeholder="email@example.com" className="bg-white/5 border-white/10 focus:border-[#9cff93] focus:ring-[#9cff93]/20" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-                        <FormField
-                            control={form.control}
-                            name="phoneNumber"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Số điện thoại liên hệ</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="0901234567" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="phoneNumber"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9cff93]">Số điện thoại liên hệ</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="0901234567" className="bg-white/5 border-white/10 focus:border-[#9cff93] focus:ring-[#9cff93]/20" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="clubName"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Tên Câu Lạc Bộ / Sân</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="CLB Cầu Lông ABC" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="clubName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9cff93]">Tên Câu Lạc Bộ / Sân</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="CLB Cầu Lông ABC" className="bg-white/5 border-white/10 focus:border-[#9cff93] focus:ring-[#9cff93]/20" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-                        <FormField
-                            control={form.control}
-                            name="address"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Địa chỉ sân</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Số 123 đường XYZ..." {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="address"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9cff93]">Địa chỉ sân</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Số 123 đường XYZ..." className="bg-white/5 border-white/10 focus:border-[#9cff93] focus:ring-[#9cff93]/20" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="courtCount"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Số lượng sân (tối đa 30 sân)</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" min={1} max={30} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="courtCount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9cff93]">Số lượng sân (tối đa 30 sân)</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" min={1} max={30} className="bg-white/5 border-white/10 focus:border-[#9cff93] focus:ring-[#9cff93]/20" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <FormField
                             control={form.control}
                             name="note"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Ghi chú thêm (tùy chọn)</FormLabel>
+                                    <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-[#9cff93]">Ghi chú thêm (tùy chọn)</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="Mô tả thêm về sân hoặc yêu cầu đặc biệt..."
-                                            className="resize-none"
+                                            className="resize-none bg-white/5 border-white/10 focus:border-[#9cff93] focus:ring-[#9cff93]/20"
                                             rows={3}
                                             {...field}
                                         />
@@ -213,21 +219,24 @@ export function RegisterDialog({ open, onOpenChange, selectedPlan }: RegisterDia
                             )}
                         />
 
-                        <div className="flex gap-3 pt-4">
-                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+                        <div className="flex gap-4 pt-6">
+                            <Button 
+                                type="button" 
+                                variant="outline" 
+                                onClick={() => onOpenChange(false)} 
+                                className="flex-1 font-headline font-bold uppercase text-[10px] tracking-widest border-white/10 hover:bg-white/5"
+                            >
                                 Hủy
                             </Button>
-                            <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                            <Button 
+                                type="submit" 
+                                className="flex-1 bg-[#9cff93] text-[#00440a] font-headline font-black uppercase text-[10px] tracking-[0.2em] hover:shadow-[0_0_20px_rgba(156,255,147,0.4)] hover:bg-[#9cff93]" 
+                                disabled={isSubmitting}
+                            >
                                 {isSubmitting ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Đang xử lý...
-                                    </>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (
-                                    <>
-                                        <Check className="mr-2 h-4 w-4" />
-                                        Hoàn tất đăng ký
-                                    </>
+                                    'Hoàn tất đăng ký ngay'
                                 )}
                             </Button>
                         </div>
