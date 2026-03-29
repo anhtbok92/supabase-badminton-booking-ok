@@ -14,8 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, Pencil, Lock, Unlock, Key } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { MoreHorizontal, PlusCircle, Pencil, Lock, Unlock, Key, Trash2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -66,6 +66,8 @@ export function ClubOwnerManager() {
     const { data: clubs } = useSupabaseQuery<Club>('clubs');
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedOwner, setSelectedOwner] = useState<UserProfile | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<UserProfile | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const { toast } = useToast();
 
     const handleToggleLock = async (owner: UserProfile) => {
@@ -77,6 +79,27 @@ export function ClubOwnerManager() {
     const handleSendResetEmail = async (email: string) => {
         const { error } = await supabase.auth.resetPasswordForEmail(email);
         if (error) { toast({ title: "Lỗi", variant: "destructive" }); } else { toast({ title: "Đã gửi email", description: `Email đặt lại mật khẩu đã được gửi đến ${email}.` }); }
+    };
+
+    const handleDeleteOwner = async () => {
+        if (!deleteTarget) return;
+        setIsDeleting(true);
+        try {
+            const response = await fetch('/api/admin/delete-owner', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: deleteTarget.id }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Xóa thất bại.');
+            toast({ title: "Thành công", description: `Đã xóa chủ club ${deleteTarget.email} và vô hiệu hóa các club liên quan.` });
+            setDeleteTarget(null);
+            refetch();
+        } catch (error: any) {
+            toast({ title: "Lỗi", description: error.message, variant: "destructive" });
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     return (
@@ -99,6 +122,8 @@ export function ClubOwnerManager() {
                                             <DropdownMenuContent align="end"><DropdownMenuLabel>Tùy chọn tài khoản</DropdownMenuLabel><DropdownMenuSeparator />
                                                 <DropdownMenuItem onClick={() => handleToggleLock(owner)}>{isLocked ? <><Unlock className="mr-2 h-4 w-4" /> Mở khóa</> : <><Lock className="mr-2 h-4 w-4" /> Khóa tài khoản</>}</DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => handleSendResetEmail(owner.email!)}><Key className="mr-2 h-4 w-4" /> Gửi email đặt lại mật khẩu</DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteTarget(owner)}><Trash2 className="mr-2 h-4 w-4" /> Xóa chủ club</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div></TableCell>
@@ -110,6 +135,24 @@ export function ClubOwnerManager() {
                 </Table>
             </CardContent>
             {dialogOpen && <ClubOwnerFormDialog isOpen={dialogOpen} setIsOpen={setDialogOpen} owner={selectedOwner} allClubs={clubs || []} onSuccess={refetch} />}
+
+            <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Xác nhận xóa chủ club</DialogTitle>
+                        <DialogDescription>
+                            Bạn có chắc muốn xóa <span className="font-semibold">{deleteTarget?.email}</span>?
+                            Tất cả câu lạc bộ của họ sẽ bị vô hiệu hóa trên hệ thống. Hành động này không thể hoàn tác.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="gap-2">
+                        <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={isDeleting}>Hủy</Button>
+                        <Button variant="destructive" onClick={handleDeleteOwner} disabled={isDeleting}>
+                            {isDeleting ? 'Đang xóa...' : 'Xóa chủ club'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </Card>
     );
 }

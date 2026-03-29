@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,7 +8,7 @@ import { ConfigProvider } from 'antd';
 import viVN from 'antd/locale/vi_VN';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 
-import { useSupabase, useUser, useSupabaseRow } from '@/supabase';
+import { useSupabase, useUser } from '@/supabase';
 import type { UserProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -128,7 +128,38 @@ function AdminAccountLocked() {
 
 export default function AdminPage() {
     const { user, loading: authLoading } = useUser();
-    const { data: userProfile, loading: profileLoading } = useSupabaseRow<UserProfile>(user ? 'users' : null, user?.id ?? null);
+    const supabase = useSupabase();
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [profileLoading, setProfileLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadProfile() {
+            if (!user) {
+                setProfileLoading(false);
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error) {
+                    console.error('Error loading profile:', error);
+                } else {
+                    setUserProfile(data);
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            } finally {
+                setProfileLoading(false);
+            }
+        }
+
+        loadProfile();
+    }, [user, supabase]);
 
     const loading = authLoading || (user && profileLoading);
 
