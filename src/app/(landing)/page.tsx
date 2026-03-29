@@ -30,8 +30,8 @@ export default function LandingPage() {
             <a className="text-[#001f2a] font-medium hover:text-[#4caf50] transition-colors duration-300 font-label text-sm uppercase tracking-widest py-1" href="#contact">Liên hệ</a>
           </div>
           <div className="flex items-center gap-4">
-            <a href="https://app.sportbooking.online/login" className="px-6 py-2 rounded-full font-bold text-sm text-on-surface hover:text-primary transition-all active:scale-95">Đăng nhập</a>
-            <a href="https://app.sportbooking.online" className="px-6 py-2 bg-gradient-to-br from-primary to-primary-container text-white rounded-full font-bold text-sm shadow-md hover:shadow-lg active:scale-95 transition-all">Đăng ký</a>
+            <a href="https://app.sportbooking.online/admin" className="px-6 py-2 rounded-full font-bold text-sm text-on-surface hover:text-primary transition-all active:scale-95">Đăng nhập</a>
+            <a href="#pricing" className="px-6 py-2 bg-gradient-to-br from-primary to-primary-container text-white rounded-full font-bold text-sm shadow-md hover:shadow-lg active:scale-95 transition-all">Dùng thử</a>
           </div>
         </div>
       </nav>
