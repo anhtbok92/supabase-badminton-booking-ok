@@ -1,7 +1,11 @@
 import { jsPDF } from 'jspdf';
 import { ROBOTO_FONT } from './roboto-font';
+import { FAVICON_BASE64 } from './favicon-base64';
 
 export type GuideType = 'user' | 'owner';
+
+const CONTACT_PHONE = '0982.949.974';
+const CONTACT_EMAIL = 'victory1080@gmail.com';
 
 export function createPdfDoc(): jsPDF {
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -40,42 +44,61 @@ export function checkPageBreak(doc: jsPDF, y: number, needed: number): number {
     return y;
 }
 
+// ===== FIX #1: Header với Logo favicon =====
 export function drawHeader(doc: jsPDF, title: string, subtitle: string, guideType: GuideType): number {
     doc.setFillColor(...COLORS.primary);
-    doc.rect(0, 0, PAGE_WIDTH, 80, 'F');
+    doc.rect(0, 0, PAGE_WIDTH, 85, 'F');
     doc.setFillColor(...COLORS.accent);
-    doc.rect(0, 80, PAGE_WIDTH, 4, 'F');
+    doc.rect(0, 85, PAGE_WIDTH, 4, 'F');
+
+    // Logo favicon ở giữa trên cùng
+    try {
+        doc.addImage(FAVICON_BASE64, 'PNG', PAGE_WIDTH / 2 - 8, 8, 16, 16);
+    } catch (_) { /* ignore if image fails */ }
 
     doc.setTextColor(...COLORS.white);
-    doc.setFontSize(28);
-    doc.text(title, PAGE_WIDTH / 2, 35, { align: 'center' });
-    doc.setFontSize(14);
+    doc.setFontSize(26);
+    doc.text(title, PAGE_WIDTH / 2, 38, { align: 'center' });
+    doc.setFontSize(13);
     doc.text(subtitle, PAGE_WIDTH / 2, 50, { align: 'center' });
+
+    // Brand name
+    doc.setFontSize(9);
+    doc.text('SportBooking', PAGE_WIDTH / 2, 58, { align: 'center' });
 
     const badgeText = guideType === 'user' ? 'DÀNH CHO NGƯỜI ĐẶT SÂN' : 'DÀNH CHO CHỦ SÂN';
     doc.setFillColor(...COLORS.accent);
     const badgeWidth = doc.getTextWidth(badgeText) + 20;
-    doc.roundedRect((PAGE_WIDTH - badgeWidth) / 2, 58, badgeWidth, 14, 3, 3, 'F');
+    doc.roundedRect((PAGE_WIDTH - badgeWidth) / 2, 63, badgeWidth, 14, 3, 3, 'F');
     doc.setFontSize(10);
     doc.setTextColor(...COLORS.white);
-    doc.text(badgeText, PAGE_WIDTH / 2, 67, { align: 'center' });
-    return 100;
+    doc.text(badgeText, PAGE_WIDTH / 2, 72, { align: 'center' });
+    return 105;
 }
 
+// ===== Section title - số căn giữa hình tròn =====
 export function drawSectionTitle(doc: jsPDF, y: number, num: string, title: string): number {
     y = checkPageBreak(doc, y, 20);
+    const circleX = MARGIN + 8;
+    const circleY = y + 5;
+    const circleR = 8;
+
     doc.setFillColor(...COLORS.primary);
-    doc.circle(MARGIN + 8, y + 4, 8, 'F');
+    doc.circle(circleX, circleY, circleR, 'F');
+
+    // Căn giữa số: dùng align center cho ngang, +1.5mm cho dọc (font 12pt ~ 4.2mm, baseline offset ~1.5)
     doc.setTextColor(...COLORS.white);
     doc.setFontSize(12);
-    doc.text(num, MARGIN + 8, y + 7, { align: 'center' });
+    doc.text(num, circleX, circleY + 1.5, { align: 'center' });
+
     doc.setTextColor(...COLORS.primaryDark);
     doc.setFontSize(16);
-    doc.text(title, MARGIN + 22, y + 8);
+    doc.text(title, MARGIN + 22, y + 9);
+
     doc.setDrawColor(...COLORS.primary);
     doc.setLineWidth(0.5);
-    doc.line(MARGIN, y + 14, MARGIN + CONTENT_WIDTH, y + 14);
-    return y + 22;
+    doc.line(MARGIN, y + 15, MARGIN + CONTENT_WIDTH, y + 15);
+    return y + 23;
 }
 
 export function drawSubSection(doc: jsPDF, y: number, title: string): number {
@@ -107,6 +130,7 @@ export function drawBulletPoint(doc: jsPDF, y: number, text: string, indent: num
     return y + lines.length * 5 + 2;
 }
 
+// ===== Step box - số căn giữa hình tròn =====
 export function drawStepBox(doc: jsPDF, y: number, stepNum: number, title: string, description: string): number {
     y = checkPageBreak(doc, y, 25);
     doc.setFillColor(...COLORS.lightBg);
@@ -114,11 +138,14 @@ export function drawStepBox(doc: jsPDF, y: number, stepNum: number, title: strin
     const boxHeight = 12 + descLines.length * 5 + 5;
     doc.roundedRect(MARGIN + 5, y - 5, CONTENT_WIDTH - 10, boxHeight, 3, 3, 'F');
 
+    // Số bước - căn giữa bằng align center + offset dọc
+    const stepCircleX = MARGIN + 15;
+    const stepCircleY = y + 2;
     doc.setFillColor(...COLORS.accent);
-    doc.circle(MARGIN + 15, y + 2, 6, 'F');
+    doc.circle(stepCircleX, stepCircleY, 6, 'F');
     doc.setTextColor(...COLORS.white);
     doc.setFontSize(10);
-    doc.text(String(stepNum), MARGIN + 15, y + 5, { align: 'center' });
+    doc.text(String(stepNum), stepCircleX, stepCircleY + 1.2, { align: 'center' });
 
     doc.setTextColor(...COLORS.dark);
     doc.setFontSize(11);
@@ -152,31 +179,51 @@ export function drawInfoBox(doc: jsPDF, y: number, title: string, content: strin
     return y + boxHeight + 5;
 }
 
+// ===== FIX #3: Table - text wrap trong cell thay vì tràn ra ngoài =====
 export function drawTable(doc: jsPDF, y: number, headers: string[], rows: string[][]): number {
-    y = checkPageBreak(doc, y, 15 + rows.length * 10);
     const colWidth = (CONTENT_WIDTH - 10) / headers.length;
+    const cellPadding = 3;
+    const textWidth = colWidth - cellPadding * 2;
 
+    // Tính chiều cao mỗi row dựa trên text wrap
+    function getRowHeight(row: string[]): number {
+        let maxLines = 1;
+        doc.setFontSize(9);
+        row.forEach(cell => {
+            const lines = doc.splitTextToSize(cell, textWidth);
+            if (lines.length > maxLines) maxLines = lines.length;
+        });
+        return Math.max(10, maxLines * 4.5 + 4);
+    }
+
+    // Header row
+    const headerHeight = getRowHeight(headers);
+    y = checkPageBreak(doc, y, headerHeight + 10);
     doc.setFillColor(...COLORS.primary);
-    doc.rect(MARGIN + 5, y, CONTENT_WIDTH - 10, 10, 'F');
+    doc.rect(MARGIN + 5, y, CONTENT_WIDTH - 10, headerHeight, 'F');
     doc.setTextColor(...COLORS.white);
     doc.setFontSize(9);
     headers.forEach((header, i) => {
-        doc.text(header, MARGIN + 8 + i * colWidth, y + 7);
+        const lines = doc.splitTextToSize(header, textWidth);
+        doc.text(lines, MARGIN + 5 + i * colWidth + cellPadding, y + 4.5);
     });
-    y += 10;
+    y += headerHeight;
 
+    // Data rows
     rows.forEach((row, rowIndex) => {
-        y = checkPageBreak(doc, y, 10);
+        const rowHeight = getRowHeight(row);
+        y = checkPageBreak(doc, y, rowHeight);
         if (rowIndex % 2 === 0) {
             doc.setFillColor(...COLORS.tableBg);
-            doc.rect(MARGIN + 5, y, CONTENT_WIDTH - 10, 10, 'F');
+            doc.rect(MARGIN + 5, y, CONTENT_WIDTH - 10, rowHeight, 'F');
         }
         doc.setTextColor(...COLORS.text);
         doc.setFontSize(9);
         row.forEach((cell, i) => {
-            doc.text(cell, MARGIN + 8 + i * colWidth, y + 7);
+            const lines = doc.splitTextToSize(cell, textWidth);
+            doc.text(lines, MARGIN + 5 + i * colWidth + cellPadding, y + 4.5);
         });
-        y += 10;
+        y += rowHeight;
     });
     return y + 5;
 }
@@ -226,31 +273,59 @@ export function drawFaqSection(doc: jsPDF, y: number, faqs: { q: string; a: stri
     return y;
 }
 
+// ===== FIX #2: Contact box với SĐT và email =====
 export function drawContactBox(doc: jsPDF, y: number, title: string, lines: string[]): number {
-    y = checkPageBreak(doc, y, 35);
+    y = checkPageBreak(doc, y, 50);
     y += 5;
-    const boxHeight = 10 + lines.length * 8 + 5;
+    const allLines = [...lines, '', 'Hotline: ' + CONTACT_PHONE, 'Email: ' + CONTACT_EMAIL];
+    const boxHeight = 10 + allLines.length * 6 + 8;
     doc.setFillColor(...COLORS.primary);
     doc.roundedRect(MARGIN + 10, y, CONTENT_WIDTH - 20, boxHeight, 5, 5, 'F');
+
+    // Logo nhỏ trong contact box
+    try {
+        doc.addImage(FAVICON_BASE64, 'PNG', PAGE_WIDTH / 2 - 5, y + 4, 10, 10);
+    } catch (_) { /* ignore */ }
+
     doc.setTextColor(...COLORS.white);
     doc.setFontSize(12);
-    doc.text(title, PAGE_WIDTH / 2, y + 10, { align: 'center' });
+    doc.text(title, PAGE_WIDTH / 2, y + 20, { align: 'center' });
     doc.setFontSize(9);
-    lines.forEach((line, i) => {
-        doc.text(line, PAGE_WIDTH / 2, y + 18 + i * 6, { align: 'center' });
+    let lineY = y + 28;
+    allLines.forEach((line) => {
+        if (line) {
+            doc.text(line, PAGE_WIDTH / 2, lineY, { align: 'center' });
+        }
+        lineY += 6;
     });
     return y + boxHeight + 5;
 }
 
+// ===== Footer với logo và thông tin liên hệ =====
 export function addPageNumbers(doc: jsPDF) {
     const totalPages = doc.getNumberOfPages();
+    const footerH = 14;
+    const footerTop = PAGE_HEIGHT - footerH;
+
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
         doc.setFillColor(...COLORS.primary);
-        doc.rect(0, PAGE_HEIGHT - 15, PAGE_WIDTH, 15, 'F');
+        doc.rect(0, footerTop, PAGE_WIDTH, footerH, 'F');
+
+        // Logo 6x6mm, căn giữa dọc trong footer
+        const logoSize = 6;
+        const logoY = footerTop + (footerH - logoSize) / 2;
+        try {
+            doc.addImage(FAVICON_BASE64, 'PNG', MARGIN, logoY, logoSize, logoSize);
+        } catch (_) { /* ignore */ }
+
+        // Text căn giữa dọc với logo
+        const textX = MARGIN + logoSize + 3;
+        const textMidY = footerTop + footerH / 2;
+
         doc.setTextColor(...COLORS.white);
-        doc.setFontSize(8);
-        doc.text('Sport Booking - Hệ thống đặt sân cầu lông online', MARGIN, PAGE_HEIGHT - 6);
-        doc.text(`Trang ${i}`, PAGE_WIDTH - MARGIN, PAGE_HEIGHT - 6, { align: 'right' });
+        doc.setFontSize(7);
+        doc.text('SportBooking | ' + CONTACT_PHONE + ' | ' + CONTACT_EMAIL, textX, textMidY + 0.8);
+        doc.text(`Trang ${i} / ${totalPages}`, PAGE_WIDTH - MARGIN, textMidY + 0.8, { align: 'right' });
     }
 }
