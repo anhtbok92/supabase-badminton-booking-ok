@@ -163,6 +163,25 @@ export function FixedBookingManager({ userProfile }: { userProfile: UserProfile 
                             </TooltipProvider>
                         </div>
                     </div>
+
+                    {/* Hướng dẫn các bước */}
+                    <div className="mt-6 bg-blue-50/50 border border-blue-100 p-4 rounded-lg flex flex-col md:flex-row gap-6 items-start md:items-center text-sm text-slate-600">
+                        <div className="flex items-start gap-3">
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-sm shadow-sm">1</div>
+                            <div className="space-y-1">
+                                <p className="font-semibold text-slate-800">Thêm cấu hình lịch</p>
+                                <p className="text-xs">Thiết lập trước các khung giờ khách quen cố định hàng tuần (Thứ, Giờ, Sân).</p>
+                            </div>
+                        </div>
+                        <div className="hidden md:flex h-6 w-[1px] bg-blue-200"></div>
+                        <div className="flex items-start gap-3">
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-sm shadow-sm">2</div>
+                            <div className="space-y-1">
+                                <p className="font-semibold text-slate-800">Tạo lịch tháng</p>
+                                <p className="text-xs">Vào ngày đầu tháng, bấm <strong>Tạo lịch tháng</strong> để hệ thống tự động sinh booking thực tế, tự động bỏ qua nếu sân đã bị đặt.</p>
+                            </div>
+                        </div>
+                    </div>
                 </CardHeader>
             </Card>
 
