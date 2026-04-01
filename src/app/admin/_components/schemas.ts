@@ -152,3 +152,22 @@ export const clubSubscriptionUpdateSchema = z.object({
     auto_renew: z.boolean().optional(),
 });
 export type ClubSubscriptionUpdateSchema = z.infer<typeof clubSubscriptionUpdateSchema>;
+
+// ============================================================
+// Fixed Monthly Booking Schema
+// ============================================================
+
+export const fixedMonthlyConfigSchema = z.object({
+  club_id: z.string().uuid('Club ID không hợp lệ'),
+  court_id: z.string().uuid('Sân không hợp lệ'),
+  day_of_week: z.coerce.number().min(0).max(6),
+  start_time: z.string().regex(/^(([0-1]?[0-9]|2[0-3]):[0-5][0-9]|24:00)$/, 'Sai định dạng giờ (HH:mm)'),
+  end_time: z.string().regex(/^(([0-1]?[0-9]|2[0-3]):[0-5][0-9]|24:00)$/, 'Sai định dạng giờ (HH:mm)'),
+  customer_name: z.string().min(1, 'Tên khách hàng không được để trống'),
+  customer_phone: z.string().min(1, 'Số điện thoại không được để trống'),
+  total_price: z.coerce.number().min(0, 'Giá phải lớn hơn hoặc bằng 0'),
+  is_active: z.boolean().default(true),
+  is_auto_renew: z.boolean().default(true),
+  note: z.string().optional(),
+});
+export type FixedMonthlyConfigSchema = z.infer<typeof fixedMonthlyConfigSchema>;

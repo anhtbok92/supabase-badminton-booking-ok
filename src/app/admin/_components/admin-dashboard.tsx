@@ -26,6 +26,7 @@ import { StatisticsManager } from './statistics-manager';
 import { SubscriptionPlanManager } from './subscription-plan-manager';
 import { ClubSubscriptionManager } from './club-subscription-manager';
 import { SubscriptionDashboard } from './subscription-dashboard';
+import { FixedBookingManager } from './fixed-booking-manager';
 
 export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
     const supabase = useSupabase();
@@ -39,6 +40,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
     const navItems = [
         { id: 'stats', label: 'Thống kê', icon: LayoutDashboard, roles: ['admin', 'club_owner'] },
         { id: 'schedule', label: 'Lịch sân', icon: CalendarClock, roles: ['admin', 'club_owner', 'staff'] },
+        { id: 'fixedBookings', label: 'Lịch cố định', icon: CalendarDays, roles: ['admin', 'club_owner', 'staff'] },
         { id: 'bookings', label: 'Quản lý Lịch đặt', icon: CalendarDays, roles: ['admin', 'club_owner', 'staff'] },
         { id: 'clubs', label: 'Quản lý Câu lạc bộ', icon: Building, roles: ['admin', 'club_owner'] },
         { id: 'staff', label: 'Quản lý Nhân viên', icon: Users, roles: ['admin', 'club_owner'] },
@@ -164,6 +166,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                                         onHighlightCleared={() => setHighlightedBookingId(null)}
                                     />
                                 )}
+                                {activeView === 'fixedBookings' && <FixedBookingManager userProfile={userProfile} />}
                                 {activeView === 'clubs' && <ClubManager userProfile={userProfile} />}
                                 {activeView === 'staff' && (isAdmin || isClubOwner) && <StaffManager userProfile={userProfile} />}
                                 {isAdmin && activeView === 'subscriptionDashboard' && <SubscriptionDashboard />}

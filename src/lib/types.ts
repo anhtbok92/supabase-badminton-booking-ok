@@ -113,6 +113,27 @@ export type ClubType = {
 };
 
 // ============================================================
+// Fixed Monthly Booking Types
+// ============================================================
+
+export type FixedMonthlyConfig = {
+  id: string;
+  club_id: string;
+  court_id: string;
+  day_of_week: number; // 0-6 (Sun-Sat)
+  start_time: string; // 'HH:mm'
+  end_time: string;   // 'HH:mm'
+  customer_name: string;
+  customer_phone: string;
+  total_price: number;
+  is_active: boolean;
+  is_auto_renew: boolean;
+  note?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+// ============================================================
 // Subscription Management Types
 // ============================================================
 
