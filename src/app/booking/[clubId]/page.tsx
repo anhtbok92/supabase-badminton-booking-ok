@@ -395,7 +395,7 @@ export default function BookingPage() {
         <div className="px-4 py-0 sm:py-2">
           <h3 className="text-[#0d1b12] dark:text-white text-sm sm:text-lg font-bold leading-tight tracking-[-0.015em]">Lịch sân cầu lông</h3>
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
-            Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0964.669.324
+            Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0982.949.974
           </p>
         </div>
       </div>
