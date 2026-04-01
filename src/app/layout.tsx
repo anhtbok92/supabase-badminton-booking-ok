@@ -3,6 +3,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { SupabaseProvider } from '@/supabase';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Sport Booking - Hệ thống Đặt sân Cầu lông',
@@ -29,10 +30,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased')}>
-        <SupabaseProvider>
-          {children}
-          <Toaster />
-        </SupabaseProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <SupabaseProvider>
+            {children}
+            <Toaster />
+          </SupabaseProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
