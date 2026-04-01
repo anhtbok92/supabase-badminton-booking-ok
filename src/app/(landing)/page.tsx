@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggle } from './_components/theme-toggle';
+import { PromoPopup } from './_components/promo-popup';
+import FloatingContact from '@/components/floating-contact';
 
 type PlanType = 'FREE' | 'BASIC' | 'PRO';
 
@@ -178,58 +180,28 @@ export default function LandingPage() {
         <section id="pricing" className="py-20 md:py-40 bg-[var(--lp-bg-alt)] border-t border-[var(--lp-border-light)]">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="text-center mb-12 md:mb-24">
-              <h2 className="font-headline text-3xl md:text-5xl lg:text-7xl font-black italic uppercase tracking-tighter mb-6">Gói Đăng Ký Đối Tác</h2>
-              <p className="text-[var(--lp-text-muted)] max-w-2xl mx-auto">Chọn giải pháp quản trị phù hợp nhất với quy mô CLB của bạn. Nâng cấp bất cứ lúc nào.</p>
+              <h2 className="font-headline text-3xl md:text-5xl lg:text-7xl font-black italic uppercase tracking-tighter mb-6">Dùng Thử Miễn Phí</h2>
+              <p className="text-[var(--lp-text-muted)] max-w-2xl mx-auto">Trải nghiệm toàn bộ tính năng PRO trong 3 tháng, hoàn toàn miễn phí. Không cần thẻ tín dụng.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch pt-4 md:pt-8">
-              {/* Plan 1 */}
-              <div className="bg-[var(--lp-bg-card)] backdrop-blur-md border border-[var(--lp-border-light)] p-8 md:p-12 rounded-xl flex flex-col hover:border-[var(--lp-accent-border)] transition-all">
-                <span className="font-headline text-[10px] font-bold text-[var(--lp-text-muted)] uppercase tracking-[0.3em] mb-4 block">Cơ bản</span>
-                <div className="text-3xl md:text-4xl font-headline font-black mb-8 md:mb-10">FREE<span className="text-sm font-normal text-[var(--lp-text-faint)] ml-2">/vĩnh viễn</span></div>
+            <div className="max-w-lg mx-auto">
+              <div className="bg-[var(--lp-accent-bg)] text-[#00440a] p-8 md:p-12 rounded-xl flex flex-col relative shadow-[0_40px_80px_var(--lp-glow)]">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00440a] text-[var(--lp-accent-bg)] px-4 py-1 rounded text-[9px] font-black uppercase tracking-[0.3em] whitespace-nowrap">ƯU ĐÃI ĐẶC BIỆT</div>
+                <span className="font-headline text-[10px] font-black uppercase tracking-[0.3em] mb-4 block opacity-60">Gói dùng thử</span>
+                <div className="text-4xl md:text-5xl font-headline font-black mb-2">MIỄN PHÍ</div>
+                <p className="text-sm font-bold opacity-70 mb-8 md:mb-10">Trọn bộ tính năng trong 3 tháng</p>
                 <div className="space-y-5 md:space-y-6 mb-8 md:mb-12 flex-grow">
-                  <div className="flex items-center gap-4 text-sm text-[var(--lp-text-secondary)]"><CheckCircle2 className="w-5 h-5 text-[var(--lp-accent)] shrink-0" /> <span>Tối đa 3 sân</span></div>
-                  <div className="flex items-center gap-4 text-sm text-[var(--lp-text-secondary)]"><CheckCircle2 className="w-5 h-5 text-[var(--lp-accent)] shrink-0" /> <span>100 lượt đặt/tháng</span></div>
-                  <div className="flex items-center gap-4 text-sm text-[var(--lp-text-secondary)]"><CheckCircle2 className="w-5 h-5 text-[var(--lp-accent)] shrink-0" /> <span>Tính năng cơ bản</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Không giới hạn số lượng sân</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Không giới hạn lượt đặt</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Dashboard thống kê chuyên sâu</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Quản lý đặt sân & lịch trình</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Đăng tin tức & khuyến mãi</span></div>
+                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Hỗ trợ kỹ thuật 24/7</span></div>
                 </div>
                 <button 
                   onClick={() => handlePlanSelect('FREE')}
-                  className="w-full py-4 border border-[var(--lp-border)] rounded-md font-headline font-black uppercase text-xs tracking-widest hover:border-[var(--lp-accent)] hover:text-[var(--lp-accent)] transition-all"
-                >
-                  Bắt đầu ngay
-                </button>
-              </div>
-              {/* Plan 2: RECOMMENDED */}
-              <div className="bg-[var(--lp-accent-bg)] text-[#00440a] p-8 md:p-12 rounded-xl flex flex-col relative md:scale-[1.08] z-10 shadow-[0_40px_80px_var(--lp-glow)]">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00440a] text-[var(--lp-accent-bg)] px-4 py-1 rounded text-[9px] font-black uppercase tracking-[0.3em] whitespace-nowrap">KHUYÊN DÙNG</div>
-                <span className="font-headline text-[10px] font-black uppercase tracking-[0.3em] mb-4 block opacity-60">Chuyên nghiệp</span>
-                <div className="text-4xl md:text-5xl font-headline font-black mb-8 md:mb-10">500.000<span className="text-sm font-bold opacity-60 ml-2">đ/tháng</span></div>
-                <div className="space-y-5 md:space-y-6 mb-8 md:mb-12 flex-grow">
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Tối đa 30 sân</span></div>
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>3.000 lượt đặt/tháng</span></div>
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Dashboard chuyên sâu (AI)</span></div>
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Hỗ trợ VIP 24/7</span></div>
-                </div>
-                <button 
-                  onClick={() => handlePlanSelect('PRO')}
                   className="w-full py-5 bg-[#00440a] text-white rounded-md font-headline font-black uppercase text-xs tracking-widest hover:opacity-90 transition-opacity"
                 >
-                  Chọn gói PRO
-                </button>
-              </div>
-              {/* Plan 3 */}
-              <div className="bg-[var(--lp-bg-card)] backdrop-blur-md border border-[var(--lp-border-light)] p-8 md:p-12 rounded-xl flex flex-col hover:border-[var(--lp-accent-border)] transition-all">
-                <span className="font-headline text-[10px] font-bold text-[var(--lp-text-muted)] uppercase tracking-[0.3em] mb-4 block">Mở rộng</span>
-                <div className="text-3xl md:text-4xl font-headline font-black mb-8 md:mb-10">200.000<span className="text-sm font-normal text-[var(--lp-text-faint)] ml-2">đ/tháng</span></div>
-                <div className="space-y-5 md:space-y-6 mb-8 md:mb-12 flex-grow">
-                  <div className="flex items-center gap-4 text-sm text-[var(--lp-text-secondary)]"><CheckCircle2 className="w-5 h-5 text-[var(--lp-accent)] shrink-0" /> <span>Tối đa 10 sân</span></div>
-                  <div className="flex items-center gap-4 text-sm text-[var(--lp-text-secondary)]"><CheckCircle2 className="w-5 h-5 text-[var(--lp-accent)] shrink-0" /> <span>1.000 lượt đặt/tháng</span></div>
-                  <div className="flex items-center gap-4 text-sm text-[var(--lp-text-secondary)]"><CheckCircle2 className="w-5 h-5 text-[var(--lp-accent)] shrink-0" /> <span>Báo cáo doanh thu nâng cao</span></div>
-                </div>
-                <button 
-                  onClick={() => handlePlanSelect('BASIC')}
-                  className="w-full py-4 border border-[var(--lp-border)] rounded-md font-headline font-black uppercase text-xs tracking-widest hover:border-[var(--lp-accent)] hover:text-[var(--lp-accent)] transition-all"
-                >
-                  Chọn gói Basic
+                  Đăng ký dùng thử ngay
                 </button>
               </div>
             </div>
@@ -315,6 +287,14 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Floating Contact - Mobile */}
+      <div className="md:hidden">
+        <FloatingContact />
+      </div>
+
+      {/* Promo Popup */}
+      <PromoPopup onRegister={() => handlePlanSelect('FREE')} />
 
       {/* Register Dialog */}
       <RegisterDialog 

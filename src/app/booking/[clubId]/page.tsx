@@ -75,15 +75,15 @@ function HorizontalDatePicker({
   }, []);
 
   return (
-    <div className="px-4 space-y-2">
-      <div className="flex items-center justify-between pb-1">
+    <div className="px-4 space-y-1">
+      <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold text-primary px-1">
           {format(selectedDate, "'Tháng' M, yyyy", { locale: vi })}
         </h3>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 gap-2 text-primary hover:bg-primary/10">
-              <CalendarIcon className="h-4 w-4" />
+            <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-primary hover:bg-primary/10">
+              <CalendarIcon className="h-3.5 w-3.5" />
               <span className="text-xs">Chọn ngày</span>
             </Button>
           </PopoverTrigger>
@@ -105,7 +105,7 @@ function HorizontalDatePicker({
         </Popover>
       </div>
       <ScrollArea className="w-full whitespace-nowrap">
-        <div className="flex gap-3 pb-2">
+        <div className="flex gap-2 pb-1">
           {dates.map((date) => {
             const isSelected = isSameDay(date, selectedDate);
             return (
@@ -113,18 +113,18 @@ function HorizontalDatePicker({
                 key={date.toISOString()}
                 onClick={() => onDateSelect(date)}
                 className={cn(
-                  "flex flex-col items-center justify-center min-w-[64px] h-20 rounded-xl border transition-colors",
+                  "flex flex-col items-center justify-center min-w-[48px] sm:min-w-[64px] h-14 sm:h-20 rounded-lg sm:rounded-xl border transition-colors",
                   isSelected
                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 border-primary"
                     : "bg-card hover:bg-muted"
                 )}
               >
-                <div className={cn("text-[10px] font-medium uppercase tracking-wider", isSelected ? "opacity-90" : "text-muted-foreground")}>
+                <div className={cn("text-[9px] sm:text-[10px] font-medium uppercase tracking-wider", isSelected ? "opacity-90" : "text-muted-foreground")}>
                   {format(date, 'eee', { locale: vi })}
                 </div>
-                <div className="text-xl font-bold">{format(date, 'd')}</div>
+                <div className="text-base sm:text-xl font-bold">{format(date, 'd')}</div>
                 {!isSelected && (
-                  <div className="text-[10px] text-muted-foreground font-medium opacity-60">
+                  <div className="text-[9px] sm:text-[10px] text-muted-foreground font-medium opacity-60">
                     T{format(date, 'M')}
                   </div>
                 )}
@@ -150,10 +150,10 @@ function StatusLegend() {
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 text-sm text-muted-foreground">
+    <div className="flex items-center gap-x-3 sm:gap-x-4 gap-y-1 px-4 text-xs sm:text-sm text-muted-foreground overflow-x-auto whitespace-nowrap">
       {legendItems.map(item => (
-        <div key={item.label} className="flex items-center gap-2">
-          <div className={cn('h-4 w-4 rounded-sm', item.className)} />
+        <div key={item.label} className="flex items-center gap-1.5 shrink-0">
+          <div className={cn('h-3 w-3 sm:h-4 sm:w-4 rounded-sm', item.className)} />
           <span>{item.label}</span>
         </div>
       ))}
@@ -390,11 +390,11 @@ export default function BookingPage() {
         </div>
       </header>
 
-      <div className="py-4 space-y-4 flex-shrink-0">
+      <div className="py-2 sm:py-4 space-y-2 sm:space-y-4 flex-shrink-0">
         <HorizontalDatePicker selectedDate={date} onDateSelect={setDate} />
-        <div className="px-4 py-2">
-          <h3 className="text-[#0d1b12] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Lịch sân cầu lông</h3>
-          <p className="text-sm text-muted-foreground mt-1">
+        <div className="px-4 py-0 sm:py-2">
+          <h3 className="text-[#0d1b12] dark:text-white text-sm sm:text-lg font-bold leading-tight tracking-[-0.015em]">Lịch sân cầu lông</h3>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
             Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0964.669.324
           </p>
         </div>
@@ -468,7 +468,7 @@ export default function BookingPage() {
         </ScrollArea>
       </div>
 
-      <div className="p-4 bg-muted/50 border-t mt-auto">
+      <div className="px-2 py-2 sm:p-4 bg-muted/50 border-t mt-auto">
         <StatusLegend />
       </div>
 
@@ -479,8 +479,87 @@ export default function BookingPage() {
       />
 
       {selectedSlots.length > 0 && (
-        <div className="sticky bottom-0 left-0 right-0 mt-auto bg-card/80 backdrop-blur-md p-4 border-t shadow-lg flex-shrink-0 pb-safe">
-          <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="sticky bottom-0 left-0 right-0 mt-auto bg-card/80 backdrop-blur-md border-t shadow-lg flex-shrink-0 pb-safe">
+          {/* Mobile: compact single row */}
+          <div className="flex sm:hidden items-center gap-2 p-3">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="h-10 gap-1.5 bg-primary/10 hover:bg-primary/20 border-primary/20 text-primary shrink-0">
+                  <ShoppingCart className="h-4 w-4" />
+                  <Badge variant="secondary" className="h-5 min-w-5 px-1 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full text-[10px]">{selectedSlots.length}</Badge>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl">
+                <SheetHeader>
+                  <SheetTitle className="font-headline">Chi tiết đặt sân</SheetTitle>
+                  <SheetDescription>{selectedSlots.length} suất đã chọn</SheetDescription>
+                </SheetHeader>
+                <ScrollArea className="h-[calc(60vh-10rem)] mt-4">
+                  <div className="space-y-3 pr-4">
+                    {Object.entries(slotsByDate).sort().map(([d, slots]) => (
+                      <div key={d} className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <CalendarIcon className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs font-bold text-muted-foreground">{format(new Date(d), 'dd/MM/yyyy')}</span>
+                        </div>
+                        <div className="space-y-3 pl-2">
+                          {(() => {
+                            const slotsByCourt: Record<string, string[]> = {};
+                            slots.forEach(s => {
+                              const cName = courts?.find(c => c.id === s.court_id)?.name || 'Sân ?';
+                              if (!slotsByCourt[cName]) slotsByCourt[cName] = [];
+                              slotsByCourt[cName].push(s.time);
+                            });
+                            return Object.entries(slotsByCourt).sort().map(([cName, cTimes]) => {
+                              const sorted = cTimes.sort();
+                              const ranges: { start: string, end: string, originalSlots: string[] }[] = [];
+                              if (sorted.length > 0) {
+                                let start = sorted[0]; let prev = sorted[0]; let currentRangeSlots = [sorted[0]];
+                                for (let i = 1; i <= sorted.length; i++) {
+                                  const current = sorted[i]; let isConsecutive = false;
+                                  if (current) { const [pH, pM] = prev.split(':').map(Number); const [cH, cM] = current.split(':').map(Number); if (cH * 60 + cM === pH * 60 + pM + 30) isConsecutive = true; }
+                                  if (!isConsecutive) { const [eH, eM] = prev.split(':').map(Number); let totalMins = eH * 60 + eM + 30; ranges.push({ start, end: `${Math.floor(totalMins / 60).toString().padStart(2, '0')}:${(totalMins % 60).toString().padStart(2, '0')}`, originalSlots: currentRangeSlots }); if (current) { start = current; prev = current; currentRangeSlots = [current]; } } else { prev = current; currentRangeSlots.push(current); }
+                                }
+                              }
+                              return (
+                                <div key={cName} className="space-y-1">
+                                  <div className="text-xs font-bold text-primary/70">{cName}</div>
+                                  <div className="flex flex-wrap gap-1">
+                                    {ranges.map((range, ridx) => (
+                                      <div key={ridx} className="flex items-center gap-1.5 text-xs bg-background border border-primary/20 rounded-full pl-2.5 pr-1.5 py-1 shadow-sm">
+                                        <span className="font-semibold text-primary">{range.start} - {range.end}</span>
+                                        <button onClick={() => { const courtId = slots.find(s => courts?.find(c => c.id === s.court_id)?.name === cName)?.court_id; if (courtId) { setSelectedSlots(prev => prev.filter(s => !(s.date === d && s.court_id === courtId && range.originalSlots.includes(s.time)))); } }} className="text-muted-foreground hover:text-destructive bg-muted/30 rounded-full p-0.5 transition-colors"><X className="h-3 w-3" /></button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            });
+                          })()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+                <div className="pt-3 border-t mt-3">
+                  <div className="flex justify-between items-center text-sm font-semibold mb-3">
+                    <span>Tổng cộng:</span>
+                    <span className="text-primary text-lg">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice)}</span>
+                  </div>
+                  <Link href={bookingUrl} className="w-full">
+                    <Button size="lg" className="w-full h-12 text-base rounded-xl shadow-lg shadow-primary/30">Tiếp tục<ChevronRight className="ml-2 h-5 w-5" /></Button>
+                  </Link>
+                </div>
+              </SheetContent>
+            </Sheet>
+            <p className="text-lg font-bold font-headline text-primary flex-1">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice)}</p>
+            <Link href={bookingUrl}>
+              <Button size="sm" className="h-10 px-5 rounded-xl shadow-lg shadow-primary/30 font-bold">Tiếp tục<ChevronRight className="ml-1 h-4 w-4" /></Button>
+            </Link>
+          </div>
+
+          {/* Desktop: full layout */}
+          <div className="hidden sm:flex container mx-auto p-4 flex-col sm:flex-row justify-between items-center gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Popover>
@@ -512,38 +591,17 @@ export default function BookingPage() {
                                   if (!slotsByCourt[cName]) slotsByCourt[cName] = [];
                                   slotsByCourt[cName].push(s.time);
                                 });
-
                                 return Object.entries(slotsByCourt).sort().map(([cName, cTimes]) => {
                                   const sorted = cTimes.sort();
                                   const ranges: { start: string, end: string, originalSlots: string[] }[] = [];
                                   if (sorted.length > 0) {
-                                    let start = sorted[0];
-                                    let prev = sorted[0];
-                                    let currentRangeSlots = [sorted[0]];
+                                    let start = sorted[0]; let prev = sorted[0]; let currentRangeSlots = [sorted[0]];
                                     for (let i = 1; i <= sorted.length; i++) {
-                                      const current = sorted[i];
-                                      let isConsecutive = false;
-                                      if (current) {
-                                        const [pH, pM] = prev.split(':').map(Number);
-                                        const [cH, cM] = current.split(':').map(Number);
-                                        if (cH * 60 + cM === pH * 60 + pM + 30) isConsecutive = true;
-                                      }
-                                      if (!isConsecutive) {
-                                        const [eH, eM] = prev.split(':').map(Number);
-                                        let totalMins = eH * 60 + eM + 30;
-                                        ranges.push({
-                                          start,
-                                          end: `${Math.floor(totalMins / 60).toString().padStart(2, '0')}:${(totalMins % 60).toString().padStart(2, '0')}`,
-                                          originalSlots: currentRangeSlots
-                                        });
-                                        if (current) { start = current; prev = current; currentRangeSlots = [current]; }
-                                      } else {
-                                        prev = current;
-                                        currentRangeSlots.push(current);
-                                      }
+                                      const current = sorted[i]; let isConsecutive = false;
+                                      if (current) { const [pH, pM] = prev.split(':').map(Number); const [cH, cM] = current.split(':').map(Number); if (cH * 60 + cM === pH * 60 + pM + 30) isConsecutive = true; }
+                                      if (!isConsecutive) { const [eH, eM] = prev.split(':').map(Number); let totalMins = eH * 60 + eM + 30; ranges.push({ start, end: `${Math.floor(totalMins / 60).toString().padStart(2, '0')}:${(totalMins % 60).toString().padStart(2, '0')}`, originalSlots: currentRangeSlots }); if (current) { start = current; prev = current; currentRangeSlots = [current]; } } else { prev = current; currentRangeSlots.push(current); }
                                     }
                                   }
-
                                   return (
                                     <div key={cName} className="space-y-1">
                                       <div className="text-[10px] font-bold text-primary/70">{cName}</div>
@@ -551,20 +609,7 @@ export default function BookingPage() {
                                         {ranges.map((range, ridx) => (
                                           <div key={ridx} className="flex items-center gap-1.5 text-[10px] bg-background border border-primary/20 rounded-full pl-2.5 pr-1.5 py-0.5 shadow-sm">
                                             <span className="font-semibold text-primary">{range.start} - {range.end}</span>
-                                            <button
-                                              onClick={() => {
-                                                // Remove all slots in this range
-                                                const courtId = slots.find(s => courts?.find(c => c.id === s.court_id)?.name === cName)?.court_id;
-                                                if (courtId) {
-                                                  setSelectedSlots(prev => prev.filter(s =>
-                                                    !(s.date === d && s.court_id === courtId && range.originalSlots.includes(s.time))
-                                                  ));
-                                                }
-                                              }}
-                                              className="text-muted-foreground hover:text-destructive bg-muted/30 rounded-full p-0.5 transition-colors"
-                                            >
-                                              <X className="h-2.5 w-2.5" />
-                                            </button>
+                                            <button onClick={() => { const courtId = slots.find(s => courts?.find(c => c.id === s.court_id)?.name === cName)?.court_id; if (courtId) { setSelectedSlots(prev => prev.filter(s => !(s.date === d && s.court_id === courtId && range.originalSlots.includes(s.time)))); } }} className="text-muted-foreground hover:text-destructive bg-muted/30 rounded-full p-0.5 transition-colors"><X className="h-2.5 w-2.5" /></button>
                                           </div>
                                         ))}
                                       </div>
