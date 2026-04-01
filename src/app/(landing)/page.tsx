@@ -13,7 +13,7 @@ import {
   ChevronRight,
   Monitor,
   LayoutDashboard,
-  Bell,
+  CalendarCheck,
   CheckCircle2,
   FileText,
   Smartphone,
@@ -51,7 +51,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-4">
             <a href="https://app.sportbooking.online/admin" className="px-6 py-2 rounded-full font-bold text-xs text-white hover:text-[#9cff93] transition-all">Đăng nhập</a>
-            <a href="#pricing" className="px-8 py-2 bg-[#9cff93] text-[#00440a] rounded-md font-headline font-black uppercase text-xs tracking-widest hover:shadow-[0_0_20px_rgba(156,255,147,0.4)] transition-all">Dùng thử</a>
+            <a href="https://app.sportbooking.online/splash" className="px-8 py-2 bg-[#9cff93] text-[#00440a] rounded-md font-headline font-black uppercase text-xs tracking-widest hover:shadow-[0_0_20px_rgba(156,255,147,0.4)] transition-all">Đặt sân ngay</a>
           </div>
         </div>
       </nav>
@@ -74,7 +74,7 @@ export default function LandingPage() {
                 Nền tảng đặt sân hiện đại số hàng đầu, kết nối cộng đồng vận động viên chuyên nghiệp. Quản lý thời gian, tối ưu hiệu suất và nâng tầm trải nghiệm thi đấu.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center xl:justify-start">
-                <a href="#pricing" className="px-10 py-5 bg-[#9cff93] text-[#00440a] rounded-md font-headline font-black uppercase tracking-widest hover:scale-105 transition-all text-center">
+                <a href="https://app.sportbooking.online/splash" className="px-10 py-5 bg-[#9cff93] text-[#00440a] rounded-md font-headline font-black uppercase tracking-widest hover:scale-105 transition-all text-center">
                   Bắt đầu ngay
                 </a>
                 <button 
@@ -118,7 +118,7 @@ export default function LandingPage() {
               {[
                 { icon: Rocket, title: 'Bắt đầu tức thì', desc: 'Quy trình đặt sân được tối ưu hóa chỉ trong 30 giây.' },
                 { icon: Clock, title: 'Lịch Trống Real-time', desc: 'Xem lịch trống chính xác, không lo bị trùng giờ hay chờ đợi vô ích.' },
-                { icon: Bell, title: 'Thông báo nhắc lịch', desc: 'Nhận SMS và thông báo nhắc nhở để bạn không bao giờ lỡ trận cầu.' },
+                { icon: CalendarCheck, title: 'Quản lý lịch đặt', desc: 'Theo dõi tất cả lịch đặt sân, trạng thái xác nhận và lịch sử giao dịch ngay trên app.' },
                 { icon: Smartphone, title: 'Mọi lúc mọi nơi', desc: 'Giao diện mobile friendly, đặt sân dễ dàng ngay trên smartphone của bạn.' }
               ].map((item, i) => (
                 <div key={i} className="bg-[#1a1919]/40 backdrop-blur-md border border-white/5 p-10 rounded-xl hover:bg-white/[0.03] transition-all group">
@@ -167,6 +167,33 @@ export default function LandingPage() {
                     <div>
                       <h4 className="font-headline font-black uppercase text-xl mb-3 tracking-tighter">Dashboard Thống Kê</h4>
                       <p className="text-white/50 leading-relaxed">Hệ thống báo cáo tự động về doanh thu, tỷ lệ lấp đầy sân và hành vi khách hàng giúp bạn ra quyết định chuẩn xác.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-6 items-start group">
+                    <div className="w-14 h-14 shrink-0 rounded-full bg-[#9cff93]/10 flex items-center justify-center border border-[#9cff93]/20 group-hover:bg-[#9cff93] group-hover:text-[#00440a] transition-all">
+                      <Zap className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-headline font-black uppercase text-xl mb-3 tracking-tighter">Tạo sân không giới hạn</h4>
+                      <p className="text-white/50 leading-relaxed">Thêm bao nhiêu sân tùy thích, tùy chỉnh tên, mô tả, hình ảnh và sắp xếp thứ tự hiển thị theo ý muốn.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-6 items-start group">
+                    <div className="w-14 h-14 shrink-0 rounded-full bg-[#9cff93]/10 flex items-center justify-center border border-[#9cff93]/20 group-hover:bg-[#9cff93] group-hover:text-[#00440a] transition-all">
+                      <Calendar className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-headline font-black uppercase text-xl mb-3 tracking-tighter">Quản lý đặt sân & lịch trình</h4>
+                      <p className="text-white/50 leading-relaxed">Xem lịch đặt theo ngày, xác nhận hoặc hủy booking nhanh chóng, xuất báo cáo PDF chỉ với một thao tác.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-6 items-start group">
+                    <div className="w-14 h-14 shrink-0 rounded-full bg-[#9cff93]/10 flex items-center justify-center border border-[#9cff93]/20 group-hover:bg-[#9cff93] group-hover:text-[#00440a] transition-all">
+                      <FileText className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-headline font-black uppercase text-xl mb-3 tracking-tighter">Đăng tin tức & khuyến mãi</h4>
+                      <p className="text-white/50 leading-relaxed">Tạo bài viết quảng bá CLB, thông báo sự kiện và chương trình ưu đãi để thu hút thêm khách hàng mới.</p>
                     </div>
                   </div>
                   <button 
