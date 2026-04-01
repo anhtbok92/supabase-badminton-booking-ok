@@ -10,18 +10,12 @@ export function middleware(request: NextRequest) {
     path === '/' || 
     path === '/privacy' || 
     path === '/terms' || 
+    path === '/splash' || 
     path === '/register-club' || 
     path === '/register-owner';
 
-  // Localhost: Sử dụng query param để test
+  // Localhost: Cho phép tất cả routes ở môi trường dev
   if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
-    const isAppMode = request.nextUrl.searchParams.get('app') === 'true';
-    
-    // Nếu không ở app mode và cố truy cập route khác (không phải landing/public)
-    if (!isAppMode && !isPublicRoute && !path.startsWith('/_next') && !path.startsWith('/api')) {
-      return NextResponse.redirect(new URL('/', request.url));
-    }
-    
     return NextResponse.next();
   }
   
