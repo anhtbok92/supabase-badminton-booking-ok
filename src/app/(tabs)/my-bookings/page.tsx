@@ -171,7 +171,7 @@ function GroupedBookingCard({ group }: { group: { id: string; clubName: string; 
             </CardContent>
             <CardFooter className="flex gap-2 bg-muted/50 p-3">
                 <Button variant="ghost" className="flex-1" asChild>
-                    <Link href={`/booking/${group.clubId}`}>Đặt lại</Link>
+                    <Link href={`/dat-san/${group.clubId}`}>Đặt lại</Link>
                 </Button>
                 <Button className="flex-1" asChild>
                     <Link href="/booking">Xem các CLB</Link>

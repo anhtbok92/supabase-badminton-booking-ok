@@ -146,7 +146,7 @@ function ClubDetailSheet({
               <p className="text-xl font-bold text-primary">{minPrice !== 'N/A' ? `${minPrice}đ` : 'Liên hệ'}<span className="text-sm font-normal text-muted-foreground"> /giờ</span></p>
             </div>
           </div>
-          <Link href={`/booking/${club.id}`} className="w-full">
+          <Link href={`/dat-san/${club.slug || club.id}`} className="w-full">
             <Button className="w-full text-lg h-12 rounded-xl shadow-lg shadow-primary/30" size="lg" onClick={() => onOpenChange(false)}>
               Đặt ngay
             </Button>

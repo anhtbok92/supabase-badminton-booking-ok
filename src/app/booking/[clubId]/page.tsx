@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -193,10 +193,10 @@ function CourtInfoModal({ isOpen, onClose, court }: { isOpen: boolean, onClose: 
 
 
 // Main Booking Page Component
-export default function BookingPage() {
+export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}) {
   const params = useParams();
   const router = useRouter();
-  const clubId = params.clubId as string;
+  const clubId = clubIdProp || (params.clubId as string);
 
   const [date, setDate] = useState<Date>(() => {
     const d = new Date();
@@ -205,6 +205,14 @@ export default function BookingPage() {
   });
 
   const { data: club, loading: clubLoading } = useSupabaseRow<Club>('clubs', clubId);
+
+  // Redirect /booking/:id to /dat-san/:slug if accessed directly (not via prop)
+  useEffect(() => {
+    if (!clubIdProp && club?.slug) {
+      router.replace(`/dat-san/${club.slug}`);
+    }
+  }, [club, clubIdProp, router]);
+
   const { data: courts, loading: courtsLoading } = useSupabaseQuery<Court>('courts', q => q.eq('club_id', clubId));
   const sortedCourts = useMemo(() => courts?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0)), [courts]);
 

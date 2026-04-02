@@ -8,18 +8,36 @@ import { getSeoMetadata } from '@/lib/seo';
 import { SeoHead } from '@/components/seo-head';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = await getSeoMetadata('app-home', {
-    title: 'Sport Booking - Hệ thống Đặt sân Cầu lông',
-    description: 'Đặt sân cầu lông yêu thích của bạn trực tuyến. Nhanh chóng, chính xác và chuyên nghiệp.',
-  });
-  return {
-    ...seo,
-    icons: {
-      icon: '/favicon.png',
-      shortcut: '/favicon.png',
-      apple: '/favicon.png',
-    },
-  };
+  try {
+    const seo = await getSeoMetadata('app-home', {
+      title: 'Sport Booking - Hệ thống Đặt sân Cầu lông',
+      description: 'Đặt sân cầu lông yêu thích của bạn trực tuyến. Nhanh chóng, chính xác và chuyên nghiệp.',
+    });
+    return {
+      ...seo,
+      icons: {
+        icon: [
+          { url: '/favicon.png', type: 'image/png' },
+          { url: '/icon.png', type: 'image/png' },
+        ],
+        shortcut: '/favicon.png',
+        apple: '/apple-icon.png',
+      },
+    };
+  } catch {
+    return {
+      title: 'Sport Booking - Hệ thống Đặt sân Cầu lông',
+      description: 'Đặt sân cầu lông yêu thích của bạn trực tuyến. Nhanh chóng, chính xác và chuyên nghiệp.',
+      icons: {
+        icon: [
+          { url: '/favicon.png', type: 'image/png' },
+          { url: '/icon.png', type: 'image/png' },
+        ],
+        shortcut: '/favicon.png',
+        apple: '/apple-icon.png',
+      },
+    };
+  }
 }
 
 export default function RootLayout({
@@ -30,7 +48,10 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
+        <link rel="icon" href="/icon.png" type="image/png" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
+        <link rel="shortcut icon" href="/favicon.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet" />

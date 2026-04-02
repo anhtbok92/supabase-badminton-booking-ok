@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlusCircle, Trash2, Pencil, UploadCloud, Copy } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, UploadCloud, Copy, QrCode } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -25,6 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { clubSchema, type ClubSchema } from './schemas';
 import { CourtManager } from './court-manager';
 import { BookingQuotaDisplay } from './booking-quota-display';
+import { ClubQrCodeDialog } from './club-qr-code';
 import dynamic from 'next/dynamic';
 
 const LocationPicker = dynamic(() => import('./location-picker').then(m => ({ default: m.LocationPicker })), { ssr: false, loading: () => <div className="h-[300px] rounded-lg border flex items-center justify-center text-muted-foreground text-sm">Đang tải bản đồ...</div> });
@@ -36,6 +37,7 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
     const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined);
     const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
     const [clubToDelete, setClubToDelete] = useState<Club | null>(null);
+    const [qrClub, setQrClub] = useState<Club | null>(null);
     const { toast } = useToast();
     const isAdmin = userProfile.role === 'admin';
 
@@ -89,6 +91,7 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
                                     <div className="flex items-center space-x-2 pr-4">
                                         <Switch checked={club.is_active ?? true} onCheckedChange={() => handleToggleActive(club)} onClick={(e) => e.stopPropagation()} disabled={!isAdmin} />
                                         <Button variant="ghost" size="icon" onClick={() => { setSelectedClub(club); setDialogOpen(true); }}><Pencil className="h-4 w-4" /></Button>
+                                        <Button variant="ghost" size="icon" onClick={() => setQrClub(club)} title="Mã QR đặt sân"><QrCode className="h-4 w-4" /></Button>
                                         {isAdmin && <Button variant="ghost" size="icon" onClick={() => handleDuplicate(club)} title="Nhân bản"><Copy className="h-4 w-4" /></Button>}
                                         {isAdmin && <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => { setClubToDelete(club); setDeleteAlertOpen(true); }}><Trash2 className="h-4 w-4" /></Button>}
                                     </div>
@@ -107,6 +110,7 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
             </CardContent>
             {dialogOpen && <ClubFormDialog key={selectedClub?.id || 'new'} isOpen={dialogOpen} setIsOpen={setDialogOpen} club={selectedClub} userRole={userProfile.role} onSuccess={refetch} />}
             {isAdmin && (<AlertDialog open={deleteAlertOpen} onOpenChange={setDeleteAlertOpen}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle><AlertDialogDescription>Thao tác này sẽ xóa vĩnh viễn câu lạc bộ.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Hủy</AlertDialogCancel><AlertDialogAction onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">Xóa</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>)}
+            {qrClub && <ClubQrCodeDialog club={qrClub} open={!!qrClub} onOpenChange={(open) => { if (!open) setQrClub(null); }} />}
         </Card>
     );
 }

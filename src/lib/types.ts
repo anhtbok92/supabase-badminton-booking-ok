@@ -11,6 +11,7 @@ export type Pricing = {
 export type Club = {
   id: string;
   name: string;
+  slug?: string;
   address: string;
   phone: string;
   rating?: number;
