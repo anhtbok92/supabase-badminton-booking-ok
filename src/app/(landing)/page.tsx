@@ -85,7 +85,7 @@ export default function LandingPage() {
               <div className="relative aspect-[4/5] rounded-xl overflow-hidden shadow-[0_40px_100px_var(--lp-glow)] group">
                 <img 
                   alt="Sport Action" 
-                  className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" 
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_RQ0ugdjLw_SmfNgMeF8KwvoBLeAiVIwRnJaMMfgsvYsjfW7HAQYL7Ifk6A5mh_E5Uj4K7oFQyX-m6P6lp89j1FjOca47qu3mqszIEsn11UeJR5_QQ19j4bGNPoBSRkSFfd9P5YtRMVb-IfB8kkoBSIxxrKB9AjJNYo3xe7XP8D96BNJrZo1TY3GfeAQ664Q7gSTDZdBDsjfVWDTVD5j8_A-eH7bAIJ1zBT2C1Keq89HJnTNiRpHB1clzpBynAVooZP1xpBTYkc7u"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--lp-bg)] via-transparent to-transparent"></div>
@@ -136,10 +136,10 @@ export default function LandingPage() {
               <div className="lg:col-span-12 xl:col-span-5 order-2 xl:order-1">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="aspect-square rounded-xl overflow-hidden bg-[var(--lp-border-light)] group relative">
-                    <img alt="Management" className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG7V0HgbfTNXpx4oqRQmO2NUacZ4eNgZ3vAbQ4a8lbGUrdvXujVboomedSVuV2JscZ0y81IJpnvRwU884tAMHkXDXPPdKQcBsCRMW8GHUG4KIypYvmz3x6113DfFjwD7OoCn9zK9wPdzafdGAOqQofpe1mBGE8Wq1gBrglhiHfAodRC-1NsIvQGYNdqqT3_8r5seM4JcgKFbuaxbhyMb2Es6TaJZ0f08egIJnT3bHjKk8_BGrUYJnvx805ey8aVFbdV5FAx7HYtSs" />
+                    <img alt="Management" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG7V0HgbfTNXpx4oqRQmO2NUacZ4eNgZ3vAbQ4a8lbGUrdvXujVboomedSVuV2JscZ0y81IJpnvRwU884tAMHkXDXPPdKQcBsCRMW8GHUG4KIypYvmz3x6113DfFjwD7OoCn9zK9wPdzafdGAOqQofpe1mBGE8Wq1gBrglhiHfAodRC-1NsIvQGYNdqqT3_8r5seM4JcgKFbuaxbhyMb2Es6TaJZ0f08egIJnT3bHjKk8_BGrUYJnvx805ey8aVFbdV5FAx7HYtSs" />
                   </div>
                   <div className="aspect-square rounded-xl overflow-hidden bg-[var(--lp-border-light)] mt-10 group relative">
-                    <img alt="Dashboard" className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSJ5uxmM5kEY-0G_9ARacJSU2iMpe4AFhdHrDdvPXF_In3euJeqW-j7MPuQIgQxauMjp8kU81z1KXbR1Bs1UUQtNp7UjPPakg7NBYAX_-cVc09GJYrP8StJJJSQpD2y74hfYuapdFkEMgUeMo1FfDUw608Sidzq8J_K9Eaank-W3XVaF3DEhtE8ICz4d0MhLzWC_1f2_gcRNHves92tKlW0Q6H3SytQ6mQ3cFc5vw-rA-6yZkU7rLaltm7KSs0gc_S51rc7VbbjYs" />
+                    <img alt="Dashboard" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSJ5uxmM5kEY-0G_9ARacJSU2iMpe4AFhdHrDdvPXF_In3euJeqW-j7MPuQIgQxauMjp8kU81z1KXbR1Bs1UUQtNp7UjPPakg7NBYAX_-cVc09GJYrP8StJJJSQpD2y74hfYuapdFkEMgUeMo1FfDUw608Sidzq8J_K9Eaank-W3XVaF3DEhtE8ICz4d0MhLzWC_1f2_gcRNHves92tKlW0Q6H3SytQ6mQ3cFc5vw-rA-6yZkU7rLaltm7KSs0gc_S51rc7VbbjYs" />
                   </div>
                 </div>
               </div>
