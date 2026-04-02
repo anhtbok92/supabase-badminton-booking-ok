@@ -6,7 +6,7 @@ import { useSupabase } from '@/supabase';
 import type { UserProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { LayoutDashboard, CalendarDays, Building, Newspaper, Tags, Users, Shapes, LogOut, Feather, CalendarClock, CreditCard, FileText } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, Building, Newspaper, Tags, Users, Shapes, LogOut, Feather, CalendarClock, CreditCard, FileText, Search } from 'lucide-react';
 import {
     SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarTrigger, SidebarInset,
     SidebarMenu, SidebarMenuItem, SidebarMenuButton,
@@ -28,6 +28,7 @@ import { ClubSubscriptionManager } from './club-subscription-manager';
 import { SubscriptionDashboard } from './subscription-dashboard';
 import { FixedBookingManager } from './fixed-booking-manager';
 import { UserGuideGenerator } from './user-guide-generator';
+import { SeoManager } from './seo-manager';
 
 export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
     const supabase = useSupabase();
@@ -53,6 +54,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         { id: 'tags', label: 'Quản lý Tags', icon: Tags, roles: ['admin'] },
         { id: 'owners', label: 'Quản lý Chủ Club', icon: Users, roles: ['admin'] },
         { id: 'userGuide', label: 'Tài liệu Hướng dẫn', icon: FileText, roles: ['admin'] },
+        { id: 'seo', label: 'Quản lý SEO', icon: Search, roles: ['admin'] },
     ];
 
     const currentViewLabel = navItems.find(item => item.id === activeView)?.label || 'Dashboard';
@@ -179,6 +181,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                                 {isAdmin && activeView === 'tags' && <TagManager />}
                                 {isAdmin && activeView === 'owners' && <ClubOwnerManager />}
                                 {isAdmin && activeView === 'userGuide' && <UserGuideGenerator />}
+                                {isAdmin && activeView === 'seo' && <SeoManager />}
                             </div>
                         )}
                     </div>

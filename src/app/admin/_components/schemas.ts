@@ -171,3 +171,6 @@ export const fixedMonthlyConfigSchema = z.object({
   note: z.string().optional(),
 });
 export type FixedMonthlyConfigSchema = z.infer<typeof fixedMonthlyConfigSchema>;
+
+// SEO Metadata Schema - re-export from shared file (usable in both client & server)
+export { seoMetadataSchema, type SeoMetadataSchema } from '@/lib/seo-schema';

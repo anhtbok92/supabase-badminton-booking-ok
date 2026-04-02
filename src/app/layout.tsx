@@ -4,16 +4,23 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { SupabaseProvider } from '@/supabase';
 import { ThemeProvider } from '@/components/theme-provider';
+import { getSeoMetadata } from '@/lib/seo';
+import { SeoHead } from '@/components/seo-head';
 
-export const metadata: Metadata = {
-  title: 'Sport Booking - Hệ thống Đặt sân Cầu lông',
-  description: 'Đặt sân cầu lông yêu thích của bạn trực tuyến. Nhanh chóng, chính xác và chuyên nghiệp.',
-  icons: {
-    icon: '/favicon.png',
-    shortcut: '/favicon.png',
-    apple: '/favicon.png',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoMetadata('app-home', {
+    title: 'Sport Booking - Hệ thống Đặt sân Cầu lông',
+    description: 'Đặt sân cầu lông yêu thích của bạn trực tuyến. Nhanh chóng, chính xác và chuyên nghiệp.',
+  });
+  return {
+    ...seo,
+    icons: {
+      icon: '/favicon.png',
+      shortcut: '/favicon.png',
+      apple: '/favicon.png',
+    },
+  };
+}
 
 export default function RootLayout({
   children,
@@ -28,6 +35,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <SeoHead pageSlug="app-home" />
       </head>
       <body className={cn('font-body antialiased')}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
