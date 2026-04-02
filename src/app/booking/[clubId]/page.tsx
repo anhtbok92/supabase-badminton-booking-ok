@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { format, getDay, addDays, isSameDay } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { Info, ChevronLeft, ChevronRight, ShoppingCart, X, Calendar as CalendarIcon } from 'lucide-react';
+import { Info, ChevronLeft, ChevronRight, ShoppingCart, X, Calendar as CalendarIcon, ZoomIn, ZoomOut } from 'lucide-react';
 
 import { Calendar } from '@/components/ui/calendar';
 
@@ -227,6 +227,15 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
   const [isCourtInfoModalOpen, setIsCourtInfoModalOpen] = useState(false);
   const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
 
+  // Zoom level for schedule grid (0.5x to 2x)
+  const ZOOM_STEPS = [0.5, 0.65, 0.8, 1, 1.2, 1.5];
+  const [zoomIndex, setZoomIndex] = useState(3); // default = 1x
+  const zoom = ZOOM_STEPS[zoomIndex];
+  const cellW = Math.round(80 * zoom);
+  const cellH = Math.round(64 * zoom);
+  const courtColW = Math.round(Math.max(64, 96 * zoom));
+  const timeFontSize = Math.max(8, Math.round(10 * zoom));
+
   // Removed clearing selected slots on date change to support multi-day booking
 
   const getSlotStatus = (courtId: string, time: string): SlotStatus => {
@@ -409,21 +418,37 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
       </div>
 
       <div className="flex-grow min-h-0">
-        <ScrollArea className="w-full h-full whitespace-nowrap">
+        {/* Zoom Controls */}
+        <div className="flex items-center justify-end gap-2 px-4 py-1.5 border-b bg-background/80 backdrop-blur-sm">
+          <ZoomOut className="h-3.5 w-3.5 text-muted-foreground" />
+          <input
+            type="range"
+            min={0}
+            max={ZOOM_STEPS.length - 1}
+            step={1}
+            value={zoomIndex}
+            onChange={e => setZoomIndex(Number(e.target.value))}
+            className="w-24 h-1.5 accent-primary cursor-pointer"
+          />
+          <ZoomIn className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-[10px] text-muted-foreground w-8 text-right">{Math.round(zoom * 100)}%</span>
+        </div>
+        <ScrollArea className="w-full h-[calc(100%-36px)] whitespace-nowrap">
           <div className="inline-block min-w-full">
             {/* Sticky Header */}
-            <div className="grid grid-cols-[96px,1fr] sticky top-0 bg-background z-20">
+            <div style={{ gridTemplateColumns: `${courtColW}px 1fr` }} className="grid sticky top-0 bg-background z-20">
               <div className="p-2 border-b border-r text-xs font-bold text-muted-foreground/80 text-center sticky left-0 bg-card z-10">Sân</div>
-              <div className="relative border-b h-12 bg-card overflow-visible">
+              <div className="relative border-b bg-card overflow-visible" style={{ height: `${Math.round(48 * Math.max(zoom, 0.8))}px` }}>
                 <div className="absolute inset-x-0 bottom-0 flex h-full">
                   {timeSlots.map((time, i) => (
                     <div
                       key={time}
-                      className="absolute text-[10px] font-bold text-muted-foreground flex flex-col items-center"
+                      className="absolute font-bold text-muted-foreground flex flex-col items-center"
                       style={{
-                        left: `${i * 80}px`,
+                        left: `${i * cellW}px`,
                         transform: 'translateX(-50%)',
-                        width: '40px'
+                        width: `${Math.round(cellW / 2)}px`,
+                        fontSize: `${timeFontSize}px`,
                       }}
                     >
                       <div className="h-4 w-px bg-border mt-2"></div>
@@ -436,9 +461,9 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
 
             {/* Court Rows */}
             {sortedCourts?.map(court => (
-              <div key={court.id} className="grid grid-cols-[96px,1fr] items-center">
-                <div className="font-semibold text-sm border-r text-center sticky left-0 bg-card h-full flex items-center justify-center z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
-                  <Button variant="ghost" className="w-full h-full text-left p-1 justify-center rounded-none hover:bg-muted/50 transition-colors" onClick={() => handleCourtClick(court)}>{court.name}</Button>
+              <div key={court.id} style={{ gridTemplateColumns: `${courtColW}px 1fr` }} className="grid items-center">
+                <div className="font-semibold text-sm border-r text-center sticky left-0 bg-card flex items-center justify-center z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]" style={{ height: `${cellH}px` }}>
+                  <Button variant="ghost" className="w-full h-full text-left p-1 justify-center rounded-none hover:bg-muted/50 transition-colors text-xs" onClick={() => handleCourtClick(court)}>{court.name}</Button>
                 </div>
                 <div className="flex">
                   {timeSlots.slice(0, 48).map(time => {
@@ -449,8 +474,9 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
                       <Button
                         key={time}
                         variant="outline"
+                        style={{ width: `${cellW}px`, height: `${cellH}px`, fontSize: `${Math.max(9, Math.round(12 * zoom))}px` }}
                         className={cn(
-                          'w-20 h-16 rounded-none border-l border-b flex-shrink-0 text-xs transition-all duration-200',
+                          'rounded-none border-l border-b flex-shrink-0 transition-all duration-200',
                           getStatusClass(status),
                           status === 'available' && 'hover:border-primary hover:z-10'
                         )}
