@@ -113,6 +113,23 @@ export type ClubType = {
   order?: number;
 };
 
+export type BlogPost = {
+  id: string;
+  title: string;
+  slug: string;
+  short_description: string;
+  content_html: string;
+  banner_image_url?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string[];
+  status: 'draft' | 'published';
+  author_id?: string;
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
+};
+
 // ============================================================
 // Fixed Monthly Booking Types
 // ============================================================

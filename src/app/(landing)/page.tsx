@@ -42,6 +42,7 @@ export default function LandingPage() {
             <a className="text-[var(--lp-accent)] font-headline font-bold uppercase text-xs tracking-widest border-b-2 border-[var(--lp-accent)] pb-1" href="#about">Giới thiệu</a>
             <a className="text-[var(--lp-text-secondary)] hover:text-[var(--lp-text)] transition-all font-headline font-bold uppercase text-xs tracking-widest" href="#features">Tính năng</a>
             <a className="text-[var(--lp-text-secondary)] hover:text-[var(--lp-text)] transition-all font-headline font-bold uppercase text-xs tracking-widest" href="#pricing">Bảng giá</a>
+            <Link className="text-[var(--lp-text-secondary)] hover:text-[var(--lp-text)] transition-all font-headline font-bold uppercase text-xs tracking-widest" href="/bai-viet">Bài viết</Link>
             <a className="text-[var(--lp-text-secondary)] hover:text-[var(--lp-text)] transition-all font-headline font-bold uppercase text-xs tracking-widest" href="#contact">Liên hệ</a>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
@@ -253,6 +254,7 @@ export default function LandingPage() {
                 <a href="#about" className="hover:text-[var(--lp-text)] transition-colors">Giới thiệu</a>
                 <a href="#features" className="hover:text-[var(--lp-text)] transition-colors">Tính năng</a>
                 <a href="#pricing" className="hover:text-[var(--lp-text)] transition-colors">Bảng giá</a>
+                <Link href="/bai-viet" className="hover:text-[var(--lp-text)] transition-colors">Bài viết</Link>
               </div>
             </div>
 
