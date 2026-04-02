@@ -5,14 +5,16 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   const path = request.nextUrl.pathname;
   
-  // Danh sách các route công khai (Landing Page, Privacy, Terms, Register)
+  // Danh sách các route công khai (Landing Page, Privacy, Terms, Register, Blog)
   const isPublicRoute = 
     path === '/' || 
     path === '/privacy' || 
     path === '/terms' || 
     path === '/splash' || 
     path === '/register-club' || 
-    path === '/register-owner';
+    path === '/register-owner' ||
+    path === '/bai-viet' ||
+    path.startsWith('/bai-viet/');
 
   // Localhost: Cho phép tất cả routes ở môi trường dev
   if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
