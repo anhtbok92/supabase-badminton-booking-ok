@@ -312,20 +312,17 @@ function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (
             <span className="text-[11px] font-black text-slate-800">{club.rating.toFixed(1)}</span>
           </div>
         )}
-
-        <div className="absolute bottom-4 left-4 right-4">
-            <h3 className="text-white font-headline text-xl font-black italic uppercase leading-none tracking-tight drop-shadow-md">
-                {club.name}
-            </h3>
-        </div>
       </div>
 
       <CardContent className="p-5">
-        <div className="flex items-center gap-2 mb-4">
-            <div className="bg-primary/10 p-1.5 rounded-lg">
+        <h3 className="text-slate-900 font-headline text-lg font-black uppercase italic leading-tight mb-2 line-clamp-2 drop-shadow-sm min-h-[3rem]">
+            {club.name}
+        </h3>
+        <div className="flex items-start gap-2 mb-4">
+            <div className="bg-primary/10 p-1.5 rounded-lg shrink-0 mt-0.5">
                 <MapPin className="h-4 w-4 text-primary" />
             </div>
-            <span className="text-xs text-slate-500 font-medium line-clamp-1">{club.address}</span>
+            <span className="text-xs text-slate-500 font-medium line-clamp-2 leading-relaxed">{club.address}</span>
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-zinc-50">
