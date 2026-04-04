@@ -101,6 +101,7 @@ export type NewTagSchema = z.infer<typeof newTagSchema>;
 export const clubTypeSchema = z.object({
     name: z.string().min(1, 'Tên loại không được để trống'),
     order: z.coerce.number().default(0),
+    color: z.string().default('#00e640').optional(),
 });
 export type ClubTypeSchema = z.infer<typeof clubTypeSchema>;
 

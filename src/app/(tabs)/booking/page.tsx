@@ -200,55 +200,76 @@ function SearchAndFilter({
   onSearchChange,
   activeType,
   onTypeChange,
+  clubTypes,
+  loading
 }: {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   activeType: string;
   onTypeChange: (type: string) => void;
+  clubTypes: ClubType[] | null;
+  loading: boolean;
 }) {
-  const { data: clubTypes, loading } = useSupabaseQuery<ClubType>('club_types');
   const sortedClubTypes = useMemo(() => clubTypes?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0)), [clubTypes]);
 
   return (
     <div className="px-4 py-4 space-y-4">
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
         <Input
-          placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
-          className="pl-12 rounded-xl h-14 text-base"
+          placeholder="Tìm theo tên hoặc địa chỉ..."
+          className="pl-12 rounded-2xl h-14 text-base border-zinc-200 shadow-sm focus:ring-primary/20 transition-all font-body"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
-      <div className="flex gap-3 overflow-x-auto -mx-4 px-4 pb-2" style={{ scrollbarWidth: 'none' }}>
-        <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
+      <div className="flex gap-2.5 overflow-x-auto -mx-4 px-4 pb-2 hide-scrollbar">
         <Button
-          className="shrink-0 shadow-sm rounded-xl h-10 px-4 data-[active=false]:hover:bg-background"
-          data-active={activeType === 'Tất cả'}
-          variant={activeType === 'Tất cả' ? 'default' : 'outline'}
+          className={cn(
+            "shrink-0 rounded-full h-9 px-5 text-xs font-bold uppercase tracking-wider transition-all border-2",
+            activeType === 'Tất cả' 
+              ? "bg-primary border-primary text-[#00440a] shadow-md" 
+              : "bg-white border-zinc-100 text-zinc-500 hover:border-zinc-200"
+          )}
           onClick={() => onTypeChange('Tất cả')}
         >
           Tất cả
         </Button>
-        {loading && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-10 w-24 rounded-xl" />)}
-        {sortedClubTypes?.map((type) => (
-          <Button
-            key={type.id}
-            variant={activeType === type.name ? 'default' : 'outline'}
-            onClick={() => onTypeChange(type.name)}
-            className="shrink-0 rounded-xl h-10 px-4 data-[active=false]:hover:bg-background"
-            data-active={activeType === type.name}
-          >
-            {type.name}
-          </Button>
-        ))}
+        {loading && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-9 w-24 rounded-full" />)}
+        {sortedClubTypes?.map((type) => {
+          const isActive = activeType === type.name;
+          const typeColor = type.color || '#00e640';
+          return (
+            <Button
+              key={type.id}
+              onClick={() => onTypeChange(type.name)}
+              className={cn(
+                "shrink-0 rounded-full h-9 px-5 text-xs font-bold uppercase tracking-wider transition-all border-2",
+                isActive 
+                  ? "text-white shadow-md shadow-inner" 
+                  : "bg-white border-zinc-100 text-zinc-500 hover:border-zinc-200"
+              )}
+              style={{
+                backgroundColor: isActive ? typeColor : undefined,
+                borderColor: isActive ? typeColor : undefined
+              }}
+            >
+              <div className="flex items-center gap-2">
+                {!isActive && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: typeColor }} />}
+                {type.name}
+              </div>
+            </Button>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function ClubCard({ club, onCardClick }: { club: Club; onCardClick: (club: Club) => void; }) {
+function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (club: Club) => void; clubTypes: ClubType[] | null; }) {
   const firstImageUrl = club.image_urls && club.image_urls.length > 0 ? club.image_urls[0] : `https://picsum.photos/seed/${club.id}/400/300`;
+  const clubTypeObj = clubTypes?.find(t => t.name === club.club_type);
+  const typeColor = clubTypeObj?.color || '#00e640';
 
   const getPriceRange = (pricing: Club['pricing']): string => {
     if (!pricing) return 'N/A';
@@ -264,41 +285,59 @@ function ClubCard({ club, onCardClick }: { club: Club; onCardClick: (club: Club)
 
   return (
     <Card
-      className="overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group rounded-xl border"
+      className="overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group rounded-3xl border border-zinc-100 bg-white"
       onClick={() => onCardClick(club)}
     >
-      <div className="relative w-full aspect-[16/9]">
+      <div className="relative w-full aspect-[16/10] overflow-hidden">
         <Image
           src={firstImageUrl}
-          alt={`${club.name} image`}
+          alt={`${club.name}`}
           fill
-          className="object-cover"
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          data-ai-hint="badminton court"
         />
-        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60" />
+        
+        {/* Floating Category Badge */}
+        <div 
+          className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-lg backdrop-blur-sm"
+          style={{ backgroundColor: `${typeColor}CC`, border: `1px solid ${typeColor}` }}
+        >
+          {club.club_type || 'Thể thao'}
+        </div>
+
+        {club.rating && club.rating > 0 && (
+          <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-lg">
+            <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+            <span className="text-[11px] font-black text-slate-800">{club.rating.toFixed(1)}</span>
+          </div>
+        )}
+
+        <div className="absolute bottom-4 left-4 right-4">
+            <h3 className="text-white font-headline text-xl font-black italic uppercase leading-none tracking-tight drop-shadow-md">
+                {club.name}
+            </h3>
+        </div>
       </div>
 
-      <CardContent className="p-4 space-y-3">
-        <div className="flex justify-between items-start">
-          <CardTitle className="font-headline text-lg leading-tight">{club.name}</CardTitle>
-          {club.rating && club.rating > 0 ? (
-            <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg shrink-0 ml-2">
-              <Star className="w-4 h-4 text-primary fill-primary" />
-              <span className="text-xs font-bold text-primary">{club.rating.toFixed(1)}</span>
+      <CardContent className="p-5">
+        <div className="flex items-center gap-2 mb-4">
+            <div className="bg-primary/10 p-1.5 rounded-lg">
+                <MapPin className="h-4 w-4 text-primary" />
             </div>
-          ) : null}
+            <span className="text-xs text-slate-500 font-medium line-clamp-1">{club.address}</span>
         </div>
-        <div className="flex items-end gap-3 justify-between">
-          <div className="space-y-1">
-            <CardDescription className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4 shrink-0" />
-              <span>{club.address}</span>
-            </CardDescription>
-            <p className="text-lg font-bold text-primary">{priceRange} <span className="text-xs text-muted-foreground font-normal">VND/giờ</span></p>
+
+        <div className="flex items-center justify-between pt-2 border-t border-zinc-50">
+          <div>
+            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest leading-none mb-1">Giá từ</p>
+            <p className="text-xl font-black text-primary italic leading-none">{priceRange} <span className="text-[10px] text-slate-400 font-bold uppercase not-italic">VND/H</span></p>
           </div>
-          <Button className="shrink-0 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform h-10 px-4 text-sm font-bold" onClick={(e) => { e.stopPropagation(); onCardClick(club); }}>
-            Đặt ngay
+          <Button 
+            className="rounded-xl bg-primary hover:bg-primary/90 text-[#00440a] shadow-md shadow-primary/20 active:scale-95 transition-all h-11 px-5 text-xs font-black uppercase tracking-widest" 
+            onClick={(e) => { e.stopPropagation(); onCardClick(club); }}
+          >
+            Chi tiết
           </Button>
         </div>
       </CardContent>
@@ -330,8 +369,11 @@ function ClubCardSkeleton() {
 // END: Re-used components
 
 
+import { cn } from '@/lib/utils';
+
 export default function BookingTabPage() {
-  const { data: clubs, loading } = useSupabaseQuery<Club>('clubs');
+  const { data: clubs, loading: clubsLoading } = useSupabaseQuery<Club>('clubs');
+  const { data: clubTypes, loading: typesLoading } = useSupabaseQuery<ClubType>('club_types');
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeClubType, setActiveClubType] = useState('Tất cả');
@@ -372,14 +414,21 @@ export default function BookingTabPage() {
         onSearchChange={setSearchTerm}
         activeType={activeClubType}
         onTypeChange={setActiveClubType}
+        clubTypes={clubTypes}
+        loading={typesLoading}
       />
       <div className="px-4 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {loading && Array.from({ length: 3 }).map((_, i) => <ClubCardSkeleton key={i} />)}
+          {clubsLoading && Array.from({ length: 3 }).map((_, i) => <ClubCardSkeleton key={i} />)}
           {filteredClubs?.map((club) => (
-            <ClubCard key={club.id} club={club} onCardClick={handleCardClick} />
+            <ClubCard 
+                key={club.id} 
+                club={club} 
+                onCardClick={handleCardClick} 
+                clubTypes={clubTypes} 
+            />
           ))}
-          {!loading && filteredClubs?.length === 0 && (
+          {!clubsLoading && filteredClubs?.length === 0 && (
             <p className="text-center text-muted-foreground col-span-full py-10">Không có câu lạc bộ nào phù hợp.</p>
           )}
         </div>

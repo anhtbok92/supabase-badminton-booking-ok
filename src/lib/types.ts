@@ -112,7 +112,9 @@ export type NewsTag = {
 export type ClubType = {
   id: string;
   name: string;
+  color?: string;
   order?: number;
+  created_at?: string;
 };
 
 export type BlogPost = {
