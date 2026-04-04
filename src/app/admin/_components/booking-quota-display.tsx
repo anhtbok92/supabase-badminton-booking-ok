@@ -15,6 +15,7 @@ interface BookingQuotaData {
   overage_count: number;
   overage_fee: number;
   usage_percentage: number;
+  month_label: string;
 }
 
 export function BookingQuotaDisplay({ clubId }: { clubId: string }) {
@@ -55,7 +56,7 @@ export function BookingQuotaDisplay({ clubId }: { clubId: string }) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Quota Booking tháng này</CardTitle>
+          <CardTitle className="text-base font-headline">Quota Booking</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <Skeleton className="h-4 w-full" />
@@ -70,7 +71,7 @@ export function BookingQuotaDisplay({ clubId }: { clubId: string }) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Quota Booking tháng này</CardTitle>
+          <CardTitle className="text-base font-headline">Quota Booking</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">Không thể tải thông tin quota</p>
@@ -79,18 +80,18 @@ export function BookingQuotaDisplay({ clubId }: { clubId: string }) {
     );
   }
 
-  const { current_count, max_allowed, overage_count, overage_fee, usage_percentage } = quotaData;
+  const { current_count, max_allowed, overage_count, overage_fee, usage_percentage, month_label } = quotaData;
   const isOverage = current_count > max_allowed;
   const isNearLimit = usage_percentage >= 80 && !isOverage;
 
   return (
-    <Card>
+    <Card className="bg-white/50 backdrop-blur-sm border-slate-200">
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2">
-          <TrendingUp className="h-4 w-4" />
-          Quota Booking tháng này
+        <CardTitle className="text-base flex items-center gap-2 font-headline">
+          <TrendingUp className="h-4 w-4 text-primary" />
+          Quota Booking {month_label}
         </CardTitle>
-        <CardDescription>Theo dõi số lượng booking đã sử dụng</CardDescription>
+        <CardDescription>Số lượng booking thực tế trong tháng này</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">

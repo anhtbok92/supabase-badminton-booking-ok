@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlusCircle, Trash2, Pencil, UploadCloud, Copy, QrCode } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, UploadCloud, Copy, QrCode, Info, Star } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -133,8 +133,8 @@ function PricingManager({ club }: { club: Club }) {
         <Card>
             <CardHeader><CardTitle>Thông tin giá</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-                <div><h4 className="font-semibold mb-2">Ngày thường</h4><Table><TableHeader><TableRow><TableHead>Khung thời gian</TableHead><TableHead className="text-right">Đơn giá/30 phút</TableHead></TableRow></TableHeader><TableBody>{pricing.weekday.map((tier, i) => (<TableRow key={i}><TableCell>{tier.timeRange.join(' - ')}</TableCell><TableCell className="text-right">{new Intl.NumberFormat('vi-VN').format(tier.price)} VND</TableCell></TableRow>))}</TableBody></Table></div>
-                <div><h4 className="font-semibold mb-2">Cuối tuần</h4><Table><TableHeader><TableRow><TableHead>Khung thời gian</TableHead><TableHead className="text-right">Đơn giá/30 phút</TableHead></TableRow></TableHeader><TableBody>{pricing.weekend.map((tier, i) => (<TableRow key={i}><TableCell>{tier.timeRange.join(' - ')}</TableCell><TableCell className="text-right">{new Intl.NumberFormat('vi-VN').format(tier.price)} VND</TableCell></TableRow>))}</TableBody></Table></div>
+                <div><h4 className="font-semibold mb-2">Ngày thường</h4><Table><TableHeader><TableRow><TableHead>Khung thời gian</TableHead><TableHead className="text-right">Ưu tiên</TableHead><TableHead className="text-right">Đơn giá/30p</TableHead></TableRow></TableHeader><TableBody>{pricing.weekday.map((tier, i) => (<TableRow key={i}><TableCell className="font-mono">{tier.timeRange.join(' - ')}</TableCell><TableCell className="text-right">{tier.is_priority && <Badge className="bg-amber-500 hover:bg-amber-600 border-none"><Star className="h-3 w-3 mr-1 fill-white" /> Ưu tiên</Badge>}</TableCell><TableCell className="text-right font-bold text-primary">{new Intl.NumberFormat('vi-VN').format(tier.price)} đ</TableCell></TableRow>))}</TableBody></Table></div>
+                <div><h4 className="font-semibold mb-2">Cuối tuần</h4><Table><TableHeader><TableRow><TableHead>Khung thời gian</TableHead><TableHead className="text-right">Ưu tiên</TableHead><TableHead className="text-right">Đơn giá/30p</TableHead></TableRow></TableHeader><TableBody>{pricing.weekend.map((tier, i) => (<TableRow key={i}><TableCell className="font-mono">{tier.timeRange.join(' - ')}</TableCell><TableCell className="text-right">{tier.is_priority && <Badge className="bg-amber-500 hover:bg-amber-600 border-none"><Star className="h-3 w-3 mr-1 fill-white" /> Ưu tiên</Badge>}</TableCell><TableCell className="text-right font-bold text-primary">{new Intl.NumberFormat('vi-VN').format(tier.price)} đ</TableCell></TableRow>))}</TableBody></Table></div>
             </CardContent>
         </Card>
     );
@@ -162,6 +162,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
             latitude: club?.latitude ?? 0, longitude: club?.longitude ?? 0, isActive: club?.is_active ?? true,
             paymentQrUrl: club?.payment_qr_url ?? '', priceListHtml: club?.price_list_html ?? '',
             priceListImageUrl: club?.price_list_image_url ?? '', mapVideoUrl: club?.map_video_url ?? '',
+            bookingPolicy: club?.booking_policy ?? 'Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0982.949.974',
         },
     });
 
@@ -190,6 +191,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
             latitude: values.latitude, longitude: values.longitude, is_active: values.isActive,
             payment_qr_url: paymentQrUrl, price_list_html: values.priceListHtml,
             price_list_image_url: priceListImageUrl, map_video_url: values.mapVideoUrl,
+            booking_policy: values.bookingPolicy,
         };
         if (isEditMode && club) {
             const { error } = await supabase.from('clubs').update(finalValues).eq('id', club.id);
@@ -242,6 +244,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                 <FormField control={form.control} name="isActive" render={({ field }) => (<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4"><div className="space-y-0.5"><FormLabel>Hiển thị Câu lạc bộ</FormLabel><FormDescriptionComponent>Nếu tắt, câu lạc bộ sẽ bị ẩn.</FormDescriptionComponent></div><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} disabled={!canEdit} /></FormControl></FormItem>)} />
                 <FormField control={form.control} name="servicesHtml" render={({ field }) => (<FormItem><FormLabel>Dịch vụ (HTML)</FormLabel><FormControl><Textarea {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="priceListHtml" render={({ field }) => (<FormItem><FormLabel>Bảng giá chi tiết (HTML)</FormLabel><FormControl><Textarea {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="bookingPolicy" render={({ field }) => (<FormItem><FormLabel>Chính sách đặt sân (Hiển thị ngay dưới tiêu đề)</FormLabel><FormControl><Input {...field} placeholder="VD: Khách vui lòng đặt 2 tiếng..." /></FormControl><FormDescriptionComponent>Thông báo ngắn gọn cho khách khi đặt sân.</FormDescriptionComponent><FormMessage /></FormItem>)} />
                 <div className="space-y-4 border p-4 rounded-lg bg-muted/20"><FormLabel className="text-base font-bold">Hình ảnh Bảng giá</FormLabel>
                     {priceListImageUrl ? (<div className="relative group w-full max-w-sm aspect-video border-2 border-primary/20 rounded-xl overflow-hidden shadow-md"><Image src={priceListImageUrl} alt="Price List" fill className="object-contain p-2 bg-white" /><Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100" onClick={() => setPriceListImageUrl('')}><Trash2 className="h-4 w-4" /></Button></div>)
                     : (<label className="flex flex-col items-center justify-center w-full max-w-sm h-32 border-2 border-dashed rounded-xl cursor-pointer hover:bg-secondary/50"><UploadCloud className="w-8 h-8 mb-2 text-primary/60" /><p className="text-sm font-medium">Tải lên ảnh Bảng giá</p><input type="file" className="hidden" accept="image/*" onChange={uploadSingleImage(setPriceListImageUrl, setUploadingPriceListImage, 'price-list')} disabled={uploadingPriceListImage} /></label>)}
@@ -259,9 +262,107 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                         {imageUrls.length < 10 && (<label className="flex flex-col items-center justify-center w-full h-full aspect-square border-2 border-dashed rounded-lg cursor-pointer hover:bg-secondary"><UploadCloud className="w-8 h-8 text-muted-foreground" /><input type="file" className="hidden" multiple accept="image/*" onChange={(e) => handleImageUpload(e.target.files)} disabled={uploadingFiles.length > 0} /></label>)}
                     </div>
                 </div>
+                <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl space-y-2">
+                    <h4 className="text-sm font-bold text-primary flex items-center gap-2">
+                        <Info className="h-4 w-4" /> Lưu ý về logic tính giá:
+                    </h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                        Hệ thống tự động tính giá theo nguyên tắc <strong>"Ưu tiên khung giờ cụ thể nhất"</strong>:
+                        <br />• <strong>Ưu tiên Thủ công:</strong> Khung giờ được đánh dấu "Ưu tiên" sẽ luôn được dùng trước.
+                        <br />• <strong>Thời lượng (Duration):</strong> Khung giờ ngắn hơn (VD: 18-20h) ưu tiên hơn khung dài (VD: 06-24h).
+                        <br />• <strong>Giá (Price):</strong> Nếu độ dài bằng nhau, khung giờ có giá cao hơn sẽ được chọn.
+                    </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><h3 className="font-semibold">Giá ngày thường</h3>{weekdayFields.map((field, index) => (<div key={field.id} className="flex gap-2 items-start p-2 border rounded-md"><div className="flex-grow space-y-2"><div className="flex gap-2"><FormField control={form.control} name={`pricing.weekday.${index}.timeRange.0`} render={({ field }) => (<FormItem className="flex-1"><FormLabel>Từ</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} /><FormField control={form.control} name={`pricing.weekday.${index}.timeRange.1`} render={({ field }) => (<FormItem className="flex-1"><FormLabel>Đến</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} /></div><FormField control={form.control} name={`pricing.weekday.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Đơn giá/30 phút</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)} /></div><Button type="button" variant="ghost" size="icon" className="text-destructive shrink-0" onClick={() => removeWeekday(index)}><Trash2 className="h-4 w-4" /></Button></div>))}<Button type="button" variant="outline" size="sm" onClick={() => appendWeekday({ timeRange: ['', ''], price: 0 })}>Thêm khung giờ</Button></div>
-                    <div className="space-y-2"><h3 className="font-semibold">Giá cuối tuần</h3>{weekendFields.map((field, index) => (<div key={field.id} className="flex gap-2 items-start p-2 border rounded-md"><div className="flex-grow space-y-2"><div className="flex gap-2"><FormField control={form.control} name={`pricing.weekend.${index}.timeRange.0`} render={({ field }) => (<FormItem className="flex-1"><FormLabel>Từ</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} /><FormField control={form.control} name={`pricing.weekend.${index}.timeRange.1`} render={({ field }) => (<FormItem className="flex-1"><FormLabel>Đến</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} /></div><FormField control={form.control} name={`pricing.weekend.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Đơn giá/30 phút</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)} /></div><Button type="button" variant="ghost" size="icon" className="text-destructive shrink-0" onClick={() => removeWeekend(index)}><Trash2 className="h-4 w-4" /></Button></div>))}<Button type="button" variant="outline" size="sm" onClick={() => appendWeekend({ timeRange: ['', ''], price: 0 })}>Thêm khung giờ</Button></div>
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-bold text-lg">Giá ngày thường</h3>
+                            <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={() => appendWeekday({ timeRange: ['05:00', '17:00'], price: 30000, is_priority: false })}>
+                                <PlusCircle className="mr-2 h-4 w-4" /> Thêm khung
+                            </Button>
+                        </div>
+                        <div className="space-y-3">
+                            {weekdayFields.map((field, index) => (
+                                <div key={field.id} className="p-4 border rounded-xl bg-white shadow-sm space-y-3 relative group">
+                                    <div className="flex justify-between items-center bg-slate-50 -m-4 mb-3 p-3 rounded-t-xl border-b">
+                                        <Badge variant="outline" className="bg-white">Khung #{index + 1}</Badge>
+                                        <div className="flex items-center gap-3">
+                                            <FormField control={form.control} name={`pricing.weekday.${index}.is_priority`} render={({ field }) => (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-bold uppercase text-slate-400">Ưu tiên</span>
+                                                    <Switch checked={field.value} onCheckedChange={field.onChange} className="scale-75" />
+                                                </div>
+                                            )} />
+                                            <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => removeWeekday(index)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <FormField control={form.control} name={`pricing.weekday.${index}.timeRange.0`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Từ</FormLabel><FormControl><Input {...field} className="h-8 font-mono" /></FormControl><FormMessage /></FormItem>)} />
+                                        <FormField control={form.control} name={`pricing.weekday.${index}.timeRange.1`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Đến</FormLabel><FormControl><Input {...field} className="h-8 font-mono" /></FormControl><FormMessage /></FormItem>)} />
+                                    </div>
+                                    <FormField control={form.control} name={`pricing.weekday.${index}.price`} render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs">Đơn giá/30 phút</FormLabel>
+                                            <FormControl>
+                                                <div className="relative">
+                                                    <Input type="number" {...field} className="h-9 pr-10 font-bold text-primary" />
+                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">đ</span>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-bold text-lg">Giá cuối tuần</h3>
+                            <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={() => appendWeekend({ timeRange: ['05:00', '22:00'], price: 40000, is_priority: false })}>
+                                <PlusCircle className="mr-2 h-4 w-4" /> Thêm khung
+                            </Button>
+                        </div>
+                        <div className="space-y-3">
+                            {weekendFields.map((field, index) => (
+                                <div key={field.id} className="p-4 border rounded-xl bg-white shadow-sm space-y-3 relative group">
+                                    <div className="flex justify-between items-center bg-slate-50 -m-4 mb-3 p-3 rounded-t-xl border-b">
+                                        <Badge variant="outline" className="bg-white">Khung #{index + 1}</Badge>
+                                        <div className="flex items-center gap-3">
+                                            <FormField control={form.control} name={`pricing.weekend.${index}.is_priority`} render={({ field }) => (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-bold uppercase text-slate-400">Ưu tiên</span>
+                                                    <Switch checked={field.value} onCheckedChange={field.onChange} className="scale-75" />
+                                                </div>
+                                            )} />
+                                            <Button type="button" variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => removeWeekend(index)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <FormField control={form.control} name={`pricing.weekend.${index}.timeRange.0`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Từ</FormLabel><FormControl><Input {...field} className="h-8 font-mono" /></FormControl><FormMessage /></FormItem>)} />
+                                        <FormField control={form.control} name={`pricing.weekend.${index}.timeRange.1`} render={({ field }) => (<FormItem><FormLabel className="text-xs">Đến</FormLabel><FormControl><Input {...field} className="h-8 font-mono" /></FormControl><FormMessage /></FormItem>)} />
+                                    </div>
+                                    <FormField control={form.control} name={`pricing.weekend.${index}.price`} render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs">Đơn giá/30 phút</FormLabel>
+                                            <FormControl>
+                                                <div className="relative">
+                                                    <Input type="number" {...field} className="h-9 pr-10 font-bold text-primary" />
+                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">đ</span>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || uploadingFiles.length > 0}>{form.formState.isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}</Button>
             </form></Form>

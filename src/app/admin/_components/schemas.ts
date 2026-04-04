@@ -46,6 +46,7 @@ export const priceTierSchema = z.object({
         z.string().regex(/^(([0-1]?[0-9]|2[0-3]):[0-5][0-9]|24:00)$/, 'Sai định dạng giờ (HH:mm)')
     ]),
     price: z.coerce.number().min(0, 'Giá phải lớn hơn 0'),
+    is_priority: z.boolean().default(false).optional(),
 });
 
 // Club
@@ -69,6 +70,7 @@ export const clubSchema = z.object({
     priceListHtml: z.string().optional(),
     priceListImageUrl: z.string().optional(),
     mapVideoUrl: z.string().optional(),
+    bookingPolicy: z.string().optional(),
 });
 export type ClubSchema = z.infer<typeof clubSchema>;
 

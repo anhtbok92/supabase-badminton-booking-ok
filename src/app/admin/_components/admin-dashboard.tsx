@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 import { useSupabase } from '@/supabase';
 import type { UserProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -12,6 +14,7 @@ import {
     SidebarMenu, SidebarMenuItem, SidebarMenuButton,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import { NotificationCenter } from './notification-center';
 import { ScheduleManager } from './schedule-manager';
@@ -36,6 +39,27 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
     const isAdmin = userProfile.role === 'admin';
     const isClubOwner = userProfile.role === 'club_owner';
     const isStaff = userProfile.role === 'staff';
+    const [managedClubName, setManagedClubName] = useState<string>('');
+    const [isClubNameLoading, setIsClubNameLoading] = useState(false);
+
+    useEffect(() => {
+        if ((isClubOwner || isStaff) && userProfile.managed_club_ids && userProfile.managed_club_ids.length > 0) {
+            setIsClubNameLoading(true);
+            const fetchClubName = async () => {
+                const { data, error } = await supabase
+                    .from('clubs')
+                    .select('name')
+                    .eq('id', userProfile.managed_club_ids![0])
+                    .single();
+                if (!error && data) {
+                    setManagedClubName(data.name);
+                }
+                setIsClubNameLoading(false);
+            };
+            fetchClubName();
+        }
+    }, [isClubOwner, isStaff, userProfile.managed_club_ids, supabase]);
+
 
     const [activeView, setActiveView] = useState(() => isStaff ? 'schedule' : 'stats');
     const [highlightedBookingId, setHighlightedBookingId] = useState<string | null>(null);
@@ -79,13 +103,30 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         <SidebarProvider>
             <Sidebar>
                 <SidebarHeader>
-                    <Link href="/" className="flex items-center gap-2 px-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                            <Feather className="h-6 w-6" />
+                    <Link href="/" className="flex items-center gap-3 px-3 py-6 border-b border-sidebar-border/50">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-primary-foreground overflow-hidden shadow-lg border border-primary/10">
+                            <Image src="/favicon.png" alt="Logo" width={44} height={44} className="object-cover scale-90" />
                         </div>
-                        <div className="flex flex-col">
-                            <h1 className="text-base font-bold">Admin Hub</h1>
-                            <p className="text-xs text-sidebar-foreground/70">{isAdmin ? 'Quản trị viên' : isClubOwner ? 'Chủ Câu lạc bộ' : 'Nhân viên'}</p>
+                        <div className="flex flex-col min-w-0">
+                            <span className="text-[10px] uppercase font-black tracking-[0.1em] text-primary leading-none mb-1">Sport Booking</span>
+                            {!isAdmin ? (
+                                isClubNameLoading ? (
+                                    <Skeleton className="h-4 w-24 mt-0.5" />
+                                ) : (
+                                    <h1 className="text-sm font-bold text-slate-800 leading-tight line-clamp-2">
+                                        {managedClubName || 'Câu lạc bộ'}
+                                    </h1>
+                                )
+                            ) : (
+                                <h1 className="text-sm font-bold text-slate-800 leading-tight">Administrator</h1>
+                            )}
+                            <p className="text-[9px] text-slate-400 font-medium mt-0.5 flex items-center gap-1">
+                                <span className={cn(
+                                    "h-1.5 w-1.5 rounded-full",
+                                    isAdmin ? "bg-red-500" : isClubOwner ? "bg-emerald-500" : "bg-blue-500"
+                                )} />
+                                {isAdmin ? 'Quản trị hệ thống' : isClubOwner ? 'Chủ sở hữu' : 'Nhân viên'}
+                            </p>
                         </div>
                     </Link>
                 </SidebarHeader>
@@ -122,9 +163,14 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                 <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b bg-background px-4 sm:px-6">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="md:hidden" />
-                        <Link href="/" className="flex items-center gap-2 md:hidden">
-                            <Feather className="h-6 w-6 text-primary" />
-                            <span className="font-bold">Admin Hub</span>
+                        <Link href="/" className="flex items-center gap-2 md:hidden overflow-hidden">
+                            <Image src="/favicon.png" alt="Logo" width={28} height={28} className="rounded-lg shadow-sm" />
+                            <div className="flex flex-col min-w-0">
+                                <span className="text-[8px] uppercase font-black tracking-wider text-primary leading-none">Sport Booking</span>
+                                <span className="font-bold text-xs line-clamp-2">
+                                    {isAdmin ? "Admin" : (managedClubName || "Loading...")}
+                                </span>
+                            </div>
                         </Link>
                         <h2 className="hidden md:block text-lg font-bold">{currentViewLabel}</h2>
                     </div>

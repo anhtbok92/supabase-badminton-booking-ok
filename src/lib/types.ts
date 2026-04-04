@@ -1,6 +1,7 @@
 export type PriceTier = {
   timeRange: [string, string];
   price: number;
+  is_priority?: boolean;
 };
 
 export type Pricing = {
@@ -36,6 +37,7 @@ export type Club = {
   created_at?: string;
   current_subscription_id?: string;
   subscription_status?: 'active' | 'expiring_soon' | 'expired';
+  booking_policy?: string;
 };
 
 export type Court = {

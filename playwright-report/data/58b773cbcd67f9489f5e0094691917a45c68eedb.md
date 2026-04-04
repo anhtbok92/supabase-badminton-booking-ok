@@ -1,0 +1,1943 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: booking.spec.ts >> Quy trình đặt sân (Booking Flow) >> Người dùng có thể vào trang đặt sân và chọn slot
+- Location: tests\booking.spec.ts:21:7
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByText('Tổng cộng')
+Expected: visible
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 10000ms
+  - waiting for getByText('Tổng cộng')
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - button "Quay lại" [ref=e5] [cursor=pointer]:
+          - img
+          - generic [ref=e6]: Quay lại
+        - heading "Sân Cầu Lông ABC Premium" [level=1] [ref=e7]
+        - button "Xem giá" [ref=e8] [cursor=pointer]:
+          - img
+          - generic [ref=e9]: Xem giá
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - heading "Tháng 4, 2026" [level=3] [ref=e13]
+          - button "Chọn ngày" [ref=e14] [cursor=pointer]:
+            - img
+            - generic [ref=e15]: Chọn ngày
+        - generic [ref=e19]:
+          - button "Thứ 7 4" [ref=e20] [cursor=pointer]:
+            - generic [ref=e21]: Thứ 7
+            - generic [ref=e22]: "4"
+          - button "CN 5 T4" [ref=e23] [cursor=pointer]:
+            - generic [ref=e24]: CN
+            - generic [ref=e25]: "5"
+            - generic [ref=e26]: T4
+          - button "Thứ 2 6 T4" [ref=e27] [cursor=pointer]:
+            - generic [ref=e28]: Thứ 2
+            - generic [ref=e29]: "6"
+            - generic [ref=e30]: T4
+          - button "Thứ 3 7 T4" [ref=e31] [cursor=pointer]:
+            - generic [ref=e32]: Thứ 3
+            - generic [ref=e33]: "7"
+            - generic [ref=e34]: T4
+          - button "Thứ 4 8 T4" [ref=e35] [cursor=pointer]:
+            - generic [ref=e36]: Thứ 4
+            - generic [ref=e37]: "8"
+            - generic [ref=e38]: T4
+          - button "Thứ 5 9 T4" [ref=e39] [cursor=pointer]:
+            - generic [ref=e40]: Thứ 5
+            - generic [ref=e41]: "9"
+            - generic [ref=e42]: T4
+          - button "Thứ 6 10 T4" [ref=e43] [cursor=pointer]:
+            - generic [ref=e44]: Thứ 6
+            - generic [ref=e45]: "10"
+            - generic [ref=e46]: T4
+          - button "Thứ 7 11 T4" [ref=e47] [cursor=pointer]:
+            - generic [ref=e48]: Thứ 7
+            - generic [ref=e49]: "11"
+            - generic [ref=e50]: T4
+          - button "CN 12 T4" [ref=e51] [cursor=pointer]:
+            - generic [ref=e52]: CN
+            - generic [ref=e53]: "12"
+            - generic [ref=e54]: T4
+          - button "Thứ 2 13 T4" [ref=e55] [cursor=pointer]:
+            - generic [ref=e56]: Thứ 2
+            - generic [ref=e57]: "13"
+            - generic [ref=e58]: T4
+          - button "Thứ 3 14 T4" [ref=e59] [cursor=pointer]:
+            - generic [ref=e60]: Thứ 3
+            - generic [ref=e61]: "14"
+            - generic [ref=e62]: T4
+          - button "Thứ 4 15 T4" [ref=e63] [cursor=pointer]:
+            - generic [ref=e64]: Thứ 4
+            - generic [ref=e65]: "15"
+            - generic [ref=e66]: T4
+          - button "Thứ 5 16 T4" [ref=e67] [cursor=pointer]:
+            - generic [ref=e68]: Thứ 5
+            - generic [ref=e69]: "16"
+            - generic [ref=e70]: T4
+          - button "Thứ 6 17 T4" [ref=e71] [cursor=pointer]:
+            - generic [ref=e72]: Thứ 6
+            - generic [ref=e73]: "17"
+            - generic [ref=e74]: T4
+          - button "Thứ 7 18 T4" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]: Thứ 7
+            - generic [ref=e77]: "18"
+            - generic [ref=e78]: T4
+          - button "CN 19 T4" [ref=e79] [cursor=pointer]:
+            - generic [ref=e80]: CN
+            - generic [ref=e81]: "19"
+            - generic [ref=e82]: T4
+          - button "Thứ 2 20 T4" [ref=e83] [cursor=pointer]:
+            - generic [ref=e84]: Thứ 2
+            - generic [ref=e85]: "20"
+            - generic [ref=e86]: T4
+          - button "Thứ 3 21 T4" [ref=e87] [cursor=pointer]:
+            - generic [ref=e88]: Thứ 3
+            - generic [ref=e89]: "21"
+            - generic [ref=e90]: T4
+          - button "Thứ 4 22 T4" [ref=e91] [cursor=pointer]:
+            - generic [ref=e92]: Thứ 4
+            - generic [ref=e93]: "22"
+            - generic [ref=e94]: T4
+          - button "Thứ 5 23 T4" [ref=e95] [cursor=pointer]:
+            - generic [ref=e96]: Thứ 5
+            - generic [ref=e97]: "23"
+            - generic [ref=e98]: T4
+          - button "Thứ 6 24 T4" [ref=e99] [cursor=pointer]:
+            - generic [ref=e100]: Thứ 6
+            - generic [ref=e101]: "24"
+            - generic [ref=e102]: T4
+          - button "Thứ 7 25 T4" [ref=e103] [cursor=pointer]:
+            - generic [ref=e104]: Thứ 7
+            - generic [ref=e105]: "25"
+            - generic [ref=e106]: T4
+          - button "CN 26 T4" [ref=e107] [cursor=pointer]:
+            - generic [ref=e108]: CN
+            - generic [ref=e109]: "26"
+            - generic [ref=e110]: T4
+          - button "Thứ 2 27 T4" [ref=e111] [cursor=pointer]:
+            - generic [ref=e112]: Thứ 2
+            - generic [ref=e113]: "27"
+            - generic [ref=e114]: T4
+          - button "Thứ 3 28 T4" [ref=e115] [cursor=pointer]:
+            - generic [ref=e116]: Thứ 3
+            - generic [ref=e117]: "28"
+            - generic [ref=e118]: T4
+          - button "Thứ 4 29 T4" [ref=e119] [cursor=pointer]:
+            - generic [ref=e120]: Thứ 4
+            - generic [ref=e121]: "29"
+            - generic [ref=e122]: T4
+          - button "Thứ 5 30 T4" [ref=e123] [cursor=pointer]:
+            - generic [ref=e124]: Thứ 5
+            - generic [ref=e125]: "30"
+            - generic [ref=e126]: T4
+          - button "Thứ 6 1 T5" [ref=e127] [cursor=pointer]:
+            - generic [ref=e128]: Thứ 6
+            - generic [ref=e129]: "1"
+            - generic [ref=e130]: T5
+          - button "Thứ 7 2 T5" [ref=e131] [cursor=pointer]:
+            - generic [ref=e132]: Thứ 7
+            - generic [ref=e133]: "2"
+            - generic [ref=e134]: T5
+          - button "CN 3 T5" [ref=e135] [cursor=pointer]:
+            - generic [ref=e136]: CN
+            - generic [ref=e137]: "3"
+            - generic [ref=e138]: T5
+          - button "Thứ 2 4 T5" [ref=e139] [cursor=pointer]:
+            - generic [ref=e140]: Thứ 2
+            - generic [ref=e141]: "4"
+            - generic [ref=e142]: T5
+          - button "Thứ 3 5 T5" [ref=e143] [cursor=pointer]:
+            - generic [ref=e144]: Thứ 3
+            - generic [ref=e145]: "5"
+            - generic [ref=e146]: T5
+          - button "Thứ 4 6 T5" [ref=e147] [cursor=pointer]:
+            - generic [ref=e148]: Thứ 4
+            - generic [ref=e149]: "6"
+            - generic [ref=e150]: T5
+          - button "Thứ 5 7 T5" [ref=e151] [cursor=pointer]:
+            - generic [ref=e152]: Thứ 5
+            - generic [ref=e153]: "7"
+            - generic [ref=e154]: T5
+          - button "Thứ 6 8 T5" [ref=e155] [cursor=pointer]:
+            - generic [ref=e156]: Thứ 6
+            - generic [ref=e157]: "8"
+            - generic [ref=e158]: T5
+          - button "Thứ 7 9 T5" [ref=e159] [cursor=pointer]:
+            - generic [ref=e160]: Thứ 7
+            - generic [ref=e161]: "9"
+            - generic [ref=e162]: T5
+          - button "CN 10 T5" [ref=e163] [cursor=pointer]:
+            - generic [ref=e164]: CN
+            - generic [ref=e165]: "10"
+            - generic [ref=e166]: T5
+          - button "Thứ 2 11 T5" [ref=e167] [cursor=pointer]:
+            - generic [ref=e168]: Thứ 2
+            - generic [ref=e169]: "11"
+            - generic [ref=e170]: T5
+          - button "Thứ 3 12 T5" [ref=e171] [cursor=pointer]:
+            - generic [ref=e172]: Thứ 3
+            - generic [ref=e173]: "12"
+            - generic [ref=e174]: T5
+          - button "Thứ 4 13 T5" [ref=e175] [cursor=pointer]:
+            - generic [ref=e176]: Thứ 4
+            - generic [ref=e177]: "13"
+            - generic [ref=e178]: T5
+          - button "Thứ 5 14 T5" [ref=e179] [cursor=pointer]:
+            - generic [ref=e180]: Thứ 5
+            - generic [ref=e181]: "14"
+            - generic [ref=e182]: T5
+          - button "Thứ 6 15 T5" [ref=e183] [cursor=pointer]:
+            - generic [ref=e184]: Thứ 6
+            - generic [ref=e185]: "15"
+            - generic [ref=e186]: T5
+          - button "Thứ 7 16 T5" [ref=e187] [cursor=pointer]:
+            - generic [ref=e188]: Thứ 7
+            - generic [ref=e189]: "16"
+            - generic [ref=e190]: T5
+          - button "CN 17 T5" [ref=e191] [cursor=pointer]:
+            - generic [ref=e192]: CN
+            - generic [ref=e193]: "17"
+            - generic [ref=e194]: T5
+          - button "Thứ 2 18 T5" [ref=e195] [cursor=pointer]:
+            - generic [ref=e196]: Thứ 2
+            - generic [ref=e197]: "18"
+            - generic [ref=e198]: T5
+          - button "Thứ 3 19 T5" [ref=e199] [cursor=pointer]:
+            - generic [ref=e200]: Thứ 3
+            - generic [ref=e201]: "19"
+            - generic [ref=e202]: T5
+          - button "Thứ 4 20 T5" [ref=e203] [cursor=pointer]:
+            - generic [ref=e204]: Thứ 4
+            - generic [ref=e205]: "20"
+            - generic [ref=e206]: T5
+          - button "Thứ 5 21 T5" [ref=e207] [cursor=pointer]:
+            - generic [ref=e208]: Thứ 5
+            - generic [ref=e209]: "21"
+            - generic [ref=e210]: T5
+          - button "Thứ 6 22 T5" [ref=e211] [cursor=pointer]:
+            - generic [ref=e212]: Thứ 6
+            - generic [ref=e213]: "22"
+            - generic [ref=e214]: T5
+          - button "Thứ 7 23 T5" [ref=e215] [cursor=pointer]:
+            - generic [ref=e216]: Thứ 7
+            - generic [ref=e217]: "23"
+            - generic [ref=e218]: T5
+          - button "CN 24 T5" [ref=e219] [cursor=pointer]:
+            - generic [ref=e220]: CN
+            - generic [ref=e221]: "24"
+            - generic [ref=e222]: T5
+          - button "Thứ 2 25 T5" [ref=e223] [cursor=pointer]:
+            - generic [ref=e224]: Thứ 2
+            - generic [ref=e225]: "25"
+            - generic [ref=e226]: T5
+          - button "Thứ 3 26 T5" [ref=e227] [cursor=pointer]:
+            - generic [ref=e228]: Thứ 3
+            - generic [ref=e229]: "26"
+            - generic [ref=e230]: T5
+          - button "Thứ 4 27 T5" [ref=e231] [cursor=pointer]:
+            - generic [ref=e232]: Thứ 4
+            - generic [ref=e233]: "27"
+            - generic [ref=e234]: T5
+          - button "Thứ 5 28 T5" [ref=e235] [cursor=pointer]:
+            - generic [ref=e236]: Thứ 5
+            - generic [ref=e237]: "28"
+            - generic [ref=e238]: T5
+          - button "Thứ 6 29 T5" [ref=e239] [cursor=pointer]:
+            - generic [ref=e240]: Thứ 6
+            - generic [ref=e241]: "29"
+            - generic [ref=e242]: T5
+          - button "Thứ 7 30 T5" [ref=e243] [cursor=pointer]:
+            - generic [ref=e244]: Thứ 7
+            - generic [ref=e245]: "30"
+            - generic [ref=e246]: T5
+          - button "CN 31 T5" [ref=e247] [cursor=pointer]:
+            - generic [ref=e248]: CN
+            - generic [ref=e249]: "31"
+            - generic [ref=e250]: T5
+          - button "Thứ 2 1 T6" [ref=e251] [cursor=pointer]:
+            - generic [ref=e252]: Thứ 2
+            - generic [ref=e253]: "1"
+            - generic [ref=e254]: T6
+          - button "Thứ 3 2 T6" [ref=e255] [cursor=pointer]:
+            - generic [ref=e256]: Thứ 3
+            - generic [ref=e257]: "2"
+            - generic [ref=e258]: T6
+          - button "Thứ 4 3 T6" [ref=e259] [cursor=pointer]:
+            - generic [ref=e260]: Thứ 4
+            - generic [ref=e261]: "3"
+            - generic [ref=e262]: T6
+          - button "Thứ 5 4 T6" [ref=e263] [cursor=pointer]:
+            - generic [ref=e264]: Thứ 5
+            - generic [ref=e265]: "4"
+            - generic [ref=e266]: T6
+          - button "Thứ 6 5 T6" [ref=e267] [cursor=pointer]:
+            - generic [ref=e268]: Thứ 6
+            - generic [ref=e269]: "5"
+            - generic [ref=e270]: T6
+          - button "Thứ 7 6 T6" [ref=e271] [cursor=pointer]:
+            - generic [ref=e272]: Thứ 7
+            - generic [ref=e273]: "6"
+            - generic [ref=e274]: T6
+          - button "CN 7 T6" [ref=e275] [cursor=pointer]:
+            - generic [ref=e276]: CN
+            - generic [ref=e277]: "7"
+            - generic [ref=e278]: T6
+          - button "Thứ 2 8 T6" [ref=e279] [cursor=pointer]:
+            - generic [ref=e280]: Thứ 2
+            - generic [ref=e281]: "8"
+            - generic [ref=e282]: T6
+          - button "Thứ 3 9 T6" [ref=e283] [cursor=pointer]:
+            - generic [ref=e284]: Thứ 3
+            - generic [ref=e285]: "9"
+            - generic [ref=e286]: T6
+          - button "Thứ 4 10 T6" [ref=e287] [cursor=pointer]:
+            - generic [ref=e288]: Thứ 4
+            - generic [ref=e289]: "10"
+            - generic [ref=e290]: T6
+          - button "Thứ 5 11 T6" [ref=e291] [cursor=pointer]:
+            - generic [ref=e292]: Thứ 5
+            - generic [ref=e293]: "11"
+            - generic [ref=e294]: T6
+          - button "Thứ 6 12 T6" [ref=e295] [cursor=pointer]:
+            - generic [ref=e296]: Thứ 6
+            - generic [ref=e297]: "12"
+            - generic [ref=e298]: T6
+          - button "Thứ 7 13 T6" [ref=e299] [cursor=pointer]:
+            - generic [ref=e300]: Thứ 7
+            - generic [ref=e301]: "13"
+            - generic [ref=e302]: T6
+          - button "CN 14 T6" [ref=e303] [cursor=pointer]:
+            - generic [ref=e304]: CN
+            - generic [ref=e305]: "14"
+            - generic [ref=e306]: T6
+          - button "Thứ 2 15 T6" [ref=e307] [cursor=pointer]:
+            - generic [ref=e308]: Thứ 2
+            - generic [ref=e309]: "15"
+            - generic [ref=e310]: T6
+          - button "Thứ 3 16 T6" [ref=e311] [cursor=pointer]:
+            - generic [ref=e312]: Thứ 3
+            - generic [ref=e313]: "16"
+            - generic [ref=e314]: T6
+          - button "Thứ 4 17 T6" [ref=e315] [cursor=pointer]:
+            - generic [ref=e316]: Thứ 4
+            - generic [ref=e317]: "17"
+            - generic [ref=e318]: T6
+          - button "Thứ 5 18 T6" [ref=e319] [cursor=pointer]:
+            - generic [ref=e320]: Thứ 5
+            - generic [ref=e321]: "18"
+            - generic [ref=e322]: T6
+          - button "Thứ 6 19 T6" [ref=e323] [cursor=pointer]:
+            - generic [ref=e324]: Thứ 6
+            - generic [ref=e325]: "19"
+            - generic [ref=e326]: T6
+          - button "Thứ 7 20 T6" [ref=e327] [cursor=pointer]:
+            - generic [ref=e328]: Thứ 7
+            - generic [ref=e329]: "20"
+            - generic [ref=e330]: T6
+          - button "CN 21 T6" [ref=e331] [cursor=pointer]:
+            - generic [ref=e332]: CN
+            - generic [ref=e333]: "21"
+            - generic [ref=e334]: T6
+          - button "Thứ 2 22 T6" [ref=e335] [cursor=pointer]:
+            - generic [ref=e336]: Thứ 2
+            - generic [ref=e337]: "22"
+            - generic [ref=e338]: T6
+          - button "Thứ 3 23 T6" [ref=e339] [cursor=pointer]:
+            - generic [ref=e340]: Thứ 3
+            - generic [ref=e341]: "23"
+            - generic [ref=e342]: T6
+          - button "Thứ 4 24 T6" [ref=e343] [cursor=pointer]:
+            - generic [ref=e344]: Thứ 4
+            - generic [ref=e345]: "24"
+            - generic [ref=e346]: T6
+          - button "Thứ 5 25 T6" [ref=e347] [cursor=pointer]:
+            - generic [ref=e348]: Thứ 5
+            - generic [ref=e349]: "25"
+            - generic [ref=e350]: T6
+          - button "Thứ 6 26 T6" [ref=e351] [cursor=pointer]:
+            - generic [ref=e352]: Thứ 6
+            - generic [ref=e353]: "26"
+            - generic [ref=e354]: T6
+          - button "Thứ 7 27 T6" [ref=e355] [cursor=pointer]:
+            - generic [ref=e356]: Thứ 7
+            - generic [ref=e357]: "27"
+            - generic [ref=e358]: T6
+          - button "CN 28 T6" [ref=e359] [cursor=pointer]:
+            - generic [ref=e360]: CN
+            - generic [ref=e361]: "28"
+            - generic [ref=e362]: T6
+          - button "Thứ 2 29 T6" [ref=e363] [cursor=pointer]:
+            - generic [ref=e364]: Thứ 2
+            - generic [ref=e365]: "29"
+            - generic [ref=e366]: T6
+          - button "Thứ 3 30 T6" [ref=e367] [cursor=pointer]:
+            - generic [ref=e368]: Thứ 3
+            - generic [ref=e369]: "30"
+            - generic [ref=e370]: T6
+          - button "Thứ 4 1 T7" [ref=e371] [cursor=pointer]:
+            - generic [ref=e372]: Thứ 4
+            - generic [ref=e373]: "1"
+            - generic [ref=e374]: T7
+          - button "Thứ 5 2 T7" [ref=e375] [cursor=pointer]:
+            - generic [ref=e376]: Thứ 5
+            - generic [ref=e377]: "2"
+            - generic [ref=e378]: T7
+          - button "Thứ 6 3 T7" [ref=e379] [cursor=pointer]:
+            - generic [ref=e380]: Thứ 6
+            - generic [ref=e381]: "3"
+            - generic [ref=e382]: T7
+          - button "Thứ 7 4 T7" [ref=e383] [cursor=pointer]:
+            - generic [ref=e384]: Thứ 7
+            - generic [ref=e385]: "4"
+            - generic [ref=e386]: T7
+          - button "CN 5 T7" [ref=e387] [cursor=pointer]:
+            - generic [ref=e388]: CN
+            - generic [ref=e389]: "5"
+            - generic [ref=e390]: T7
+          - button "Thứ 2 6 T7" [ref=e391] [cursor=pointer]:
+            - generic [ref=e392]: Thứ 2
+            - generic [ref=e393]: "6"
+            - generic [ref=e394]: T7
+          - button "Thứ 3 7 T7" [ref=e395] [cursor=pointer]:
+            - generic [ref=e396]: Thứ 3
+            - generic [ref=e397]: "7"
+            - generic [ref=e398]: T7
+          - button "Thứ 4 8 T7" [ref=e399] [cursor=pointer]:
+            - generic [ref=e400]: Thứ 4
+            - generic [ref=e401]: "8"
+            - generic [ref=e402]: T7
+          - button "Thứ 5 9 T7" [ref=e403] [cursor=pointer]:
+            - generic [ref=e404]: Thứ 5
+            - generic [ref=e405]: "9"
+            - generic [ref=e406]: T7
+          - button "Thứ 6 10 T7" [ref=e407] [cursor=pointer]:
+            - generic [ref=e408]: Thứ 6
+            - generic [ref=e409]: "10"
+            - generic [ref=e410]: T7
+          - button "Thứ 7 11 T7" [ref=e411] [cursor=pointer]:
+            - generic [ref=e412]: Thứ 7
+            - generic [ref=e413]: "11"
+            - generic [ref=e414]: T7
+          - button "CN 12 T7" [ref=e415] [cursor=pointer]:
+            - generic [ref=e416]: CN
+            - generic [ref=e417]: "12"
+            - generic [ref=e418]: T7
+          - button "Thứ 2 13 T7" [ref=e419] [cursor=pointer]:
+            - generic [ref=e420]: Thứ 2
+            - generic [ref=e421]: "13"
+            - generic [ref=e422]: T7
+          - button "Thứ 3 14 T7" [ref=e423] [cursor=pointer]:
+            - generic [ref=e424]: Thứ 3
+            - generic [ref=e425]: "14"
+            - generic [ref=e426]: T7
+          - button "Thứ 4 15 T7" [ref=e427] [cursor=pointer]:
+            - generic [ref=e428]: Thứ 4
+            - generic [ref=e429]: "15"
+            - generic [ref=e430]: T7
+          - button "Thứ 5 16 T7" [ref=e431] [cursor=pointer]:
+            - generic [ref=e432]: Thứ 5
+            - generic [ref=e433]: "16"
+            - generic [ref=e434]: T7
+          - button "Thứ 6 17 T7" [ref=e435] [cursor=pointer]:
+            - generic [ref=e436]: Thứ 6
+            - generic [ref=e437]: "17"
+            - generic [ref=e438]: T7
+          - button "Thứ 7 18 T7" [ref=e439] [cursor=pointer]:
+            - generic [ref=e440]: Thứ 7
+            - generic [ref=e441]: "18"
+            - generic [ref=e442]: T7
+          - button "CN 19 T7" [ref=e443] [cursor=pointer]:
+            - generic [ref=e444]: CN
+            - generic [ref=e445]: "19"
+            - generic [ref=e446]: T7
+          - button "Thứ 2 20 T7" [ref=e447] [cursor=pointer]:
+            - generic [ref=e448]: Thứ 2
+            - generic [ref=e449]: "20"
+            - generic [ref=e450]: T7
+          - button "Thứ 3 21 T7" [ref=e451] [cursor=pointer]:
+            - generic [ref=e452]: Thứ 3
+            - generic [ref=e453]: "21"
+            - generic [ref=e454]: T7
+          - button "Thứ 4 22 T7" [ref=e455] [cursor=pointer]:
+            - generic [ref=e456]: Thứ 4
+            - generic [ref=e457]: "22"
+            - generic [ref=e458]: T7
+          - button "Thứ 5 23 T7" [ref=e459] [cursor=pointer]:
+            - generic [ref=e460]: Thứ 5
+            - generic [ref=e461]: "23"
+            - generic [ref=e462]: T7
+          - button "Thứ 6 24 T7" [ref=e463] [cursor=pointer]:
+            - generic [ref=e464]: Thứ 6
+            - generic [ref=e465]: "24"
+            - generic [ref=e466]: T7
+          - button "Thứ 7 25 T7" [ref=e467] [cursor=pointer]:
+            - generic [ref=e468]: Thứ 7
+            - generic [ref=e469]: "25"
+            - generic [ref=e470]: T7
+          - button "CN 26 T7" [ref=e471] [cursor=pointer]:
+            - generic [ref=e472]: CN
+            - generic [ref=e473]: "26"
+            - generic [ref=e474]: T7
+          - button "Thứ 2 27 T7" [ref=e475] [cursor=pointer]:
+            - generic [ref=e476]: Thứ 2
+            - generic [ref=e477]: "27"
+            - generic [ref=e478]: T7
+          - button "Thứ 3 28 T7" [ref=e479] [cursor=pointer]:
+            - generic [ref=e480]: Thứ 3
+            - generic [ref=e481]: "28"
+            - generic [ref=e482]: T7
+          - button "Thứ 4 29 T7" [ref=e483] [cursor=pointer]:
+            - generic [ref=e484]: Thứ 4
+            - generic [ref=e485]: "29"
+            - generic [ref=e486]: T7
+          - button "Thứ 5 30 T7" [ref=e487] [cursor=pointer]:
+            - generic [ref=e488]: Thứ 5
+            - generic [ref=e489]: "30"
+            - generic [ref=e490]: T7
+          - button "Thứ 6 31 T7" [ref=e491] [cursor=pointer]:
+            - generic [ref=e492]: Thứ 6
+            - generic [ref=e493]: "31"
+            - generic [ref=e494]: T7
+          - button "Thứ 7 1 T8" [ref=e495] [cursor=pointer]:
+            - generic [ref=e496]: Thứ 7
+            - generic [ref=e497]: "1"
+            - generic [ref=e498]: T8
+          - button "CN 2 T8" [ref=e499] [cursor=pointer]:
+            - generic [ref=e500]: CN
+            - generic [ref=e501]: "2"
+            - generic [ref=e502]: T8
+          - button "Thứ 2 3 T8" [ref=e503] [cursor=pointer]:
+            - generic [ref=e504]: Thứ 2
+            - generic [ref=e505]: "3"
+            - generic [ref=e506]: T8
+          - button "Thứ 3 4 T8" [ref=e507] [cursor=pointer]:
+            - generic [ref=e508]: Thứ 3
+            - generic [ref=e509]: "4"
+            - generic [ref=e510]: T8
+          - button "Thứ 4 5 T8" [ref=e511] [cursor=pointer]:
+            - generic [ref=e512]: Thứ 4
+            - generic [ref=e513]: "5"
+            - generic [ref=e514]: T8
+          - button "Thứ 5 6 T8" [ref=e515] [cursor=pointer]:
+            - generic [ref=e516]: Thứ 5
+            - generic [ref=e517]: "6"
+            - generic [ref=e518]: T8
+          - button "Thứ 6 7 T8" [ref=e519] [cursor=pointer]:
+            - generic [ref=e520]: Thứ 6
+            - generic [ref=e521]: "7"
+            - generic [ref=e522]: T8
+          - button "Thứ 7 8 T8" [ref=e523] [cursor=pointer]:
+            - generic [ref=e524]: Thứ 7
+            - generic [ref=e525]: "8"
+            - generic [ref=e526]: T8
+          - button "CN 9 T8" [ref=e527] [cursor=pointer]:
+            - generic [ref=e528]: CN
+            - generic [ref=e529]: "9"
+            - generic [ref=e530]: T8
+          - button "Thứ 2 10 T8" [ref=e531] [cursor=pointer]:
+            - generic [ref=e532]: Thứ 2
+            - generic [ref=e533]: "10"
+            - generic [ref=e534]: T8
+          - button "Thứ 3 11 T8" [ref=e535] [cursor=pointer]:
+            - generic [ref=e536]: Thứ 3
+            - generic [ref=e537]: "11"
+            - generic [ref=e538]: T8
+          - button "Thứ 4 12 T8" [ref=e539] [cursor=pointer]:
+            - generic [ref=e540]: Thứ 4
+            - generic [ref=e541]: "12"
+            - generic [ref=e542]: T8
+          - button "Thứ 5 13 T8" [ref=e543] [cursor=pointer]:
+            - generic [ref=e544]: Thứ 5
+            - generic [ref=e545]: "13"
+            - generic [ref=e546]: T8
+          - button "Thứ 6 14 T8" [ref=e547] [cursor=pointer]:
+            - generic [ref=e548]: Thứ 6
+            - generic [ref=e549]: "14"
+            - generic [ref=e550]: T8
+          - button "Thứ 7 15 T8" [ref=e551] [cursor=pointer]:
+            - generic [ref=e552]: Thứ 7
+            - generic [ref=e553]: "15"
+            - generic [ref=e554]: T8
+          - button "CN 16 T8" [ref=e555] [cursor=pointer]:
+            - generic [ref=e556]: CN
+            - generic [ref=e557]: "16"
+            - generic [ref=e558]: T8
+          - button "Thứ 2 17 T8" [ref=e559] [cursor=pointer]:
+            - generic [ref=e560]: Thứ 2
+            - generic [ref=e561]: "17"
+            - generic [ref=e562]: T8
+          - button "Thứ 3 18 T8" [ref=e563] [cursor=pointer]:
+            - generic [ref=e564]: Thứ 3
+            - generic [ref=e565]: "18"
+            - generic [ref=e566]: T8
+          - button "Thứ 4 19 T8" [ref=e567] [cursor=pointer]:
+            - generic [ref=e568]: Thứ 4
+            - generic [ref=e569]: "19"
+            - generic [ref=e570]: T8
+          - button "Thứ 5 20 T8" [ref=e571] [cursor=pointer]:
+            - generic [ref=e572]: Thứ 5
+            - generic [ref=e573]: "20"
+            - generic [ref=e574]: T8
+          - button "Thứ 6 21 T8" [ref=e575] [cursor=pointer]:
+            - generic [ref=e576]: Thứ 6
+            - generic [ref=e577]: "21"
+            - generic [ref=e578]: T8
+          - button "Thứ 7 22 T8" [ref=e579] [cursor=pointer]:
+            - generic [ref=e580]: Thứ 7
+            - generic [ref=e581]: "22"
+            - generic [ref=e582]: T8
+          - button "CN 23 T8" [ref=e583] [cursor=pointer]:
+            - generic [ref=e584]: CN
+            - generic [ref=e585]: "23"
+            - generic [ref=e586]: T8
+          - button "Thứ 2 24 T8" [ref=e587] [cursor=pointer]:
+            - generic [ref=e588]: Thứ 2
+            - generic [ref=e589]: "24"
+            - generic [ref=e590]: T8
+          - button "Thứ 3 25 T8" [ref=e591] [cursor=pointer]:
+            - generic [ref=e592]: Thứ 3
+            - generic [ref=e593]: "25"
+            - generic [ref=e594]: T8
+          - button "Thứ 4 26 T8" [ref=e595] [cursor=pointer]:
+            - generic [ref=e596]: Thứ 4
+            - generic [ref=e597]: "26"
+            - generic [ref=e598]: T8
+          - button "Thứ 5 27 T8" [ref=e599] [cursor=pointer]:
+            - generic [ref=e600]: Thứ 5
+            - generic [ref=e601]: "27"
+            - generic [ref=e602]: T8
+          - button "Thứ 6 28 T8" [ref=e603] [cursor=pointer]:
+            - generic [ref=e604]: Thứ 6
+            - generic [ref=e605]: "28"
+            - generic [ref=e606]: T8
+          - button "Thứ 7 29 T8" [ref=e607] [cursor=pointer]:
+            - generic [ref=e608]: Thứ 7
+            - generic [ref=e609]: "29"
+            - generic [ref=e610]: T8
+          - button "CN 30 T8" [ref=e611] [cursor=pointer]:
+            - generic [ref=e612]: CN
+            - generic [ref=e613]: "30"
+            - generic [ref=e614]: T8
+          - button "Thứ 2 31 T8" [ref=e615] [cursor=pointer]:
+            - generic [ref=e616]: Thứ 2
+            - generic [ref=e617]: "31"
+            - generic [ref=e618]: T8
+          - button "Thứ 3 1 T9" [ref=e619] [cursor=pointer]:
+            - generic [ref=e620]: Thứ 3
+            - generic [ref=e621]: "1"
+            - generic [ref=e622]: T9
+          - button "Thứ 4 2 T9" [ref=e623] [cursor=pointer]:
+            - generic [ref=e624]: Thứ 4
+            - generic [ref=e625]: "2"
+            - generic [ref=e626]: T9
+          - button "Thứ 5 3 T9" [ref=e627] [cursor=pointer]:
+            - generic [ref=e628]: Thứ 5
+            - generic [ref=e629]: "3"
+            - generic [ref=e630]: T9
+          - button "Thứ 6 4 T9" [ref=e631] [cursor=pointer]:
+            - generic [ref=e632]: Thứ 6
+            - generic [ref=e633]: "4"
+            - generic [ref=e634]: T9
+          - button "Thứ 7 5 T9" [ref=e635] [cursor=pointer]:
+            - generic [ref=e636]: Thứ 7
+            - generic [ref=e637]: "5"
+            - generic [ref=e638]: T9
+          - button "CN 6 T9" [ref=e639] [cursor=pointer]:
+            - generic [ref=e640]: CN
+            - generic [ref=e641]: "6"
+            - generic [ref=e642]: T9
+          - button "Thứ 2 7 T9" [ref=e643] [cursor=pointer]:
+            - generic [ref=e644]: Thứ 2
+            - generic [ref=e645]: "7"
+            - generic [ref=e646]: T9
+          - button "Thứ 3 8 T9" [ref=e647] [cursor=pointer]:
+            - generic [ref=e648]: Thứ 3
+            - generic [ref=e649]: "8"
+            - generic [ref=e650]: T9
+          - button "Thứ 4 9 T9" [ref=e651] [cursor=pointer]:
+            - generic [ref=e652]: Thứ 4
+            - generic [ref=e653]: "9"
+            - generic [ref=e654]: T9
+          - button "Thứ 5 10 T9" [ref=e655] [cursor=pointer]:
+            - generic [ref=e656]: Thứ 5
+            - generic [ref=e657]: "10"
+            - generic [ref=e658]: T9
+          - button "Thứ 6 11 T9" [ref=e659] [cursor=pointer]:
+            - generic [ref=e660]: Thứ 6
+            - generic [ref=e661]: "11"
+            - generic [ref=e662]: T9
+          - button "Thứ 7 12 T9" [ref=e663] [cursor=pointer]:
+            - generic [ref=e664]: Thứ 7
+            - generic [ref=e665]: "12"
+            - generic [ref=e666]: T9
+          - button "CN 13 T9" [ref=e667] [cursor=pointer]:
+            - generic [ref=e668]: CN
+            - generic [ref=e669]: "13"
+            - generic [ref=e670]: T9
+          - button "Thứ 2 14 T9" [ref=e671] [cursor=pointer]:
+            - generic [ref=e672]: Thứ 2
+            - generic [ref=e673]: "14"
+            - generic [ref=e674]: T9
+          - button "Thứ 3 15 T9" [ref=e675] [cursor=pointer]:
+            - generic [ref=e676]: Thứ 3
+            - generic [ref=e677]: "15"
+            - generic [ref=e678]: T9
+          - button "Thứ 4 16 T9" [ref=e679] [cursor=pointer]:
+            - generic [ref=e680]: Thứ 4
+            - generic [ref=e681]: "16"
+            - generic [ref=e682]: T9
+          - button "Thứ 5 17 T9" [ref=e683] [cursor=pointer]:
+            - generic [ref=e684]: Thứ 5
+            - generic [ref=e685]: "17"
+            - generic [ref=e686]: T9
+          - button "Thứ 6 18 T9" [ref=e687] [cursor=pointer]:
+            - generic [ref=e688]: Thứ 6
+            - generic [ref=e689]: "18"
+            - generic [ref=e690]: T9
+          - button "Thứ 7 19 T9" [ref=e691] [cursor=pointer]:
+            - generic [ref=e692]: Thứ 7
+            - generic [ref=e693]: "19"
+            - generic [ref=e694]: T9
+          - button "CN 20 T9" [ref=e695] [cursor=pointer]:
+            - generic [ref=e696]: CN
+            - generic [ref=e697]: "20"
+            - generic [ref=e698]: T9
+          - button "Thứ 2 21 T9" [ref=e699] [cursor=pointer]:
+            - generic [ref=e700]: Thứ 2
+            - generic [ref=e701]: "21"
+            - generic [ref=e702]: T9
+          - button "Thứ 3 22 T9" [ref=e703] [cursor=pointer]:
+            - generic [ref=e704]: Thứ 3
+            - generic [ref=e705]: "22"
+            - generic [ref=e706]: T9
+          - button "Thứ 4 23 T9" [ref=e707] [cursor=pointer]:
+            - generic [ref=e708]: Thứ 4
+            - generic [ref=e709]: "23"
+            - generic [ref=e710]: T9
+          - button "Thứ 5 24 T9" [ref=e711] [cursor=pointer]:
+            - generic [ref=e712]: Thứ 5
+            - generic [ref=e713]: "24"
+            - generic [ref=e714]: T9
+          - button "Thứ 6 25 T9" [ref=e715] [cursor=pointer]:
+            - generic [ref=e716]: Thứ 6
+            - generic [ref=e717]: "25"
+            - generic [ref=e718]: T9
+          - button "Thứ 7 26 T9" [ref=e719] [cursor=pointer]:
+            - generic [ref=e720]: Thứ 7
+            - generic [ref=e721]: "26"
+            - generic [ref=e722]: T9
+          - button "CN 27 T9" [ref=e723] [cursor=pointer]:
+            - generic [ref=e724]: CN
+            - generic [ref=e725]: "27"
+            - generic [ref=e726]: T9
+          - button "Thứ 2 28 T9" [ref=e727] [cursor=pointer]:
+            - generic [ref=e728]: Thứ 2
+            - generic [ref=e729]: "28"
+            - generic [ref=e730]: T9
+          - button "Thứ 3 29 T9" [ref=e731] [cursor=pointer]:
+            - generic [ref=e732]: Thứ 3
+            - generic [ref=e733]: "29"
+            - generic [ref=e734]: T9
+          - button "Thứ 4 30 T9" [ref=e735] [cursor=pointer]:
+            - generic [ref=e736]: Thứ 4
+            - generic [ref=e737]: "30"
+            - generic [ref=e738]: T9
+          - button "Thứ 5 1 T10" [ref=e739] [cursor=pointer]:
+            - generic [ref=e740]: Thứ 5
+            - generic [ref=e741]: "1"
+            - generic [ref=e742]: T10
+          - button "Thứ 6 2 T10" [ref=e743] [cursor=pointer]:
+            - generic [ref=e744]: Thứ 6
+            - generic [ref=e745]: "2"
+            - generic [ref=e746]: T10
+          - button "Thứ 7 3 T10" [ref=e747] [cursor=pointer]:
+            - generic [ref=e748]: Thứ 7
+            - generic [ref=e749]: "3"
+            - generic [ref=e750]: T10
+          - button "CN 4 T10" [ref=e751] [cursor=pointer]:
+            - generic [ref=e752]: CN
+            - generic [ref=e753]: "4"
+            - generic [ref=e754]: T10
+          - button "Thứ 2 5 T10" [ref=e755] [cursor=pointer]:
+            - generic [ref=e756]: Thứ 2
+            - generic [ref=e757]: "5"
+            - generic [ref=e758]: T10
+          - button "Thứ 3 6 T10" [ref=e759] [cursor=pointer]:
+            - generic [ref=e760]: Thứ 3
+            - generic [ref=e761]: "6"
+            - generic [ref=e762]: T10
+          - button "Thứ 4 7 T10" [ref=e763] [cursor=pointer]:
+            - generic [ref=e764]: Thứ 4
+            - generic [ref=e765]: "7"
+            - generic [ref=e766]: T10
+          - button "Thứ 5 8 T10" [ref=e767] [cursor=pointer]:
+            - generic [ref=e768]: Thứ 5
+            - generic [ref=e769]: "8"
+            - generic [ref=e770]: T10
+          - button "Thứ 6 9 T10" [ref=e771] [cursor=pointer]:
+            - generic [ref=e772]: Thứ 6
+            - generic [ref=e773]: "9"
+            - generic [ref=e774]: T10
+          - button "Thứ 7 10 T10" [ref=e775] [cursor=pointer]:
+            - generic [ref=e776]: Thứ 7
+            - generic [ref=e777]: "10"
+            - generic [ref=e778]: T10
+          - button "CN 11 T10" [ref=e779] [cursor=pointer]:
+            - generic [ref=e780]: CN
+            - generic [ref=e781]: "11"
+            - generic [ref=e782]: T10
+          - button "Thứ 2 12 T10" [ref=e783] [cursor=pointer]:
+            - generic [ref=e784]: Thứ 2
+            - generic [ref=e785]: "12"
+            - generic [ref=e786]: T10
+          - button "Thứ 3 13 T10" [ref=e787] [cursor=pointer]:
+            - generic [ref=e788]: Thứ 3
+            - generic [ref=e789]: "13"
+            - generic [ref=e790]: T10
+          - button "Thứ 4 14 T10" [ref=e791] [cursor=pointer]:
+            - generic [ref=e792]: Thứ 4
+            - generic [ref=e793]: "14"
+            - generic [ref=e794]: T10
+          - button "Thứ 5 15 T10" [ref=e795] [cursor=pointer]:
+            - generic [ref=e796]: Thứ 5
+            - generic [ref=e797]: "15"
+            - generic [ref=e798]: T10
+          - button "Thứ 6 16 T10" [ref=e799] [cursor=pointer]:
+            - generic [ref=e800]: Thứ 6
+            - generic [ref=e801]: "16"
+            - generic [ref=e802]: T10
+          - button "Thứ 7 17 T10" [ref=e803] [cursor=pointer]:
+            - generic [ref=e804]: Thứ 7
+            - generic [ref=e805]: "17"
+            - generic [ref=e806]: T10
+          - button "CN 18 T10" [ref=e807] [cursor=pointer]:
+            - generic [ref=e808]: CN
+            - generic [ref=e809]: "18"
+            - generic [ref=e810]: T10
+          - button "Thứ 2 19 T10" [ref=e811] [cursor=pointer]:
+            - generic [ref=e812]: Thứ 2
+            - generic [ref=e813]: "19"
+            - generic [ref=e814]: T10
+          - button "Thứ 3 20 T10" [ref=e815] [cursor=pointer]:
+            - generic [ref=e816]: Thứ 3
+            - generic [ref=e817]: "20"
+            - generic [ref=e818]: T10
+          - button "Thứ 4 21 T10" [ref=e819] [cursor=pointer]:
+            - generic [ref=e820]: Thứ 4
+            - generic [ref=e821]: "21"
+            - generic [ref=e822]: T10
+          - button "Thứ 5 22 T10" [ref=e823] [cursor=pointer]:
+            - generic [ref=e824]: Thứ 5
+            - generic [ref=e825]: "22"
+            - generic [ref=e826]: T10
+          - button "Thứ 6 23 T10" [ref=e827] [cursor=pointer]:
+            - generic [ref=e828]: Thứ 6
+            - generic [ref=e829]: "23"
+            - generic [ref=e830]: T10
+          - button "Thứ 7 24 T10" [ref=e831] [cursor=pointer]:
+            - generic [ref=e832]: Thứ 7
+            - generic [ref=e833]: "24"
+            - generic [ref=e834]: T10
+          - button "CN 25 T10" [ref=e835] [cursor=pointer]:
+            - generic [ref=e836]: CN
+            - generic [ref=e837]: "25"
+            - generic [ref=e838]: T10
+          - button "Thứ 2 26 T10" [ref=e839] [cursor=pointer]:
+            - generic [ref=e840]: Thứ 2
+            - generic [ref=e841]: "26"
+            - generic [ref=e842]: T10
+          - button "Thứ 3 27 T10" [ref=e843] [cursor=pointer]:
+            - generic [ref=e844]: Thứ 3
+            - generic [ref=e845]: "27"
+            - generic [ref=e846]: T10
+          - button "Thứ 4 28 T10" [ref=e847] [cursor=pointer]:
+            - generic [ref=e848]: Thứ 4
+            - generic [ref=e849]: "28"
+            - generic [ref=e850]: T10
+          - button "Thứ 5 29 T10" [ref=e851] [cursor=pointer]:
+            - generic [ref=e852]: Thứ 5
+            - generic [ref=e853]: "29"
+            - generic [ref=e854]: T10
+          - button "Thứ 6 30 T10" [ref=e855] [cursor=pointer]:
+            - generic [ref=e856]: Thứ 6
+            - generic [ref=e857]: "30"
+            - generic [ref=e858]: T10
+          - button "Thứ 7 31 T10" [ref=e859] [cursor=pointer]:
+            - generic [ref=e860]: Thứ 7
+            - generic [ref=e861]: "31"
+            - generic [ref=e862]: T10
+          - button "CN 1 T11" [ref=e863] [cursor=pointer]:
+            - generic [ref=e864]: CN
+            - generic [ref=e865]: "1"
+            - generic [ref=e866]: T11
+          - button "Thứ 2 2 T11" [ref=e867] [cursor=pointer]:
+            - generic [ref=e868]: Thứ 2
+            - generic [ref=e869]: "2"
+            - generic [ref=e870]: T11
+          - button "Thứ 3 3 T11" [ref=e871] [cursor=pointer]:
+            - generic [ref=e872]: Thứ 3
+            - generic [ref=e873]: "3"
+            - generic [ref=e874]: T11
+          - button "Thứ 4 4 T11" [ref=e875] [cursor=pointer]:
+            - generic [ref=e876]: Thứ 4
+            - generic [ref=e877]: "4"
+            - generic [ref=e878]: T11
+          - button "Thứ 5 5 T11" [ref=e879] [cursor=pointer]:
+            - generic [ref=e880]: Thứ 5
+            - generic [ref=e881]: "5"
+            - generic [ref=e882]: T11
+          - button "Thứ 6 6 T11" [ref=e883] [cursor=pointer]:
+            - generic [ref=e884]: Thứ 6
+            - generic [ref=e885]: "6"
+            - generic [ref=e886]: T11
+          - button "Thứ 7 7 T11" [ref=e887] [cursor=pointer]:
+            - generic [ref=e888]: Thứ 7
+            - generic [ref=e889]: "7"
+            - generic [ref=e890]: T11
+          - button "CN 8 T11" [ref=e891] [cursor=pointer]:
+            - generic [ref=e892]: CN
+            - generic [ref=e893]: "8"
+            - generic [ref=e894]: T11
+          - button "Thứ 2 9 T11" [ref=e895] [cursor=pointer]:
+            - generic [ref=e896]: Thứ 2
+            - generic [ref=e897]: "9"
+            - generic [ref=e898]: T11
+          - button "Thứ 3 10 T11" [ref=e899] [cursor=pointer]:
+            - generic [ref=e900]: Thứ 3
+            - generic [ref=e901]: "10"
+            - generic [ref=e902]: T11
+          - button "Thứ 4 11 T11" [ref=e903] [cursor=pointer]:
+            - generic [ref=e904]: Thứ 4
+            - generic [ref=e905]: "11"
+            - generic [ref=e906]: T11
+          - button "Thứ 5 12 T11" [ref=e907] [cursor=pointer]:
+            - generic [ref=e908]: Thứ 5
+            - generic [ref=e909]: "12"
+            - generic [ref=e910]: T11
+          - button "Thứ 6 13 T11" [ref=e911] [cursor=pointer]:
+            - generic [ref=e912]: Thứ 6
+            - generic [ref=e913]: "13"
+            - generic [ref=e914]: T11
+          - button "Thứ 7 14 T11" [ref=e915] [cursor=pointer]:
+            - generic [ref=e916]: Thứ 7
+            - generic [ref=e917]: "14"
+            - generic [ref=e918]: T11
+          - button "CN 15 T11" [ref=e919] [cursor=pointer]:
+            - generic [ref=e920]: CN
+            - generic [ref=e921]: "15"
+            - generic [ref=e922]: T11
+          - button "Thứ 2 16 T11" [ref=e923] [cursor=pointer]:
+            - generic [ref=e924]: Thứ 2
+            - generic [ref=e925]: "16"
+            - generic [ref=e926]: T11
+          - button "Thứ 3 17 T11" [ref=e927] [cursor=pointer]:
+            - generic [ref=e928]: Thứ 3
+            - generic [ref=e929]: "17"
+            - generic [ref=e930]: T11
+          - button "Thứ 4 18 T11" [ref=e931] [cursor=pointer]:
+            - generic [ref=e932]: Thứ 4
+            - generic [ref=e933]: "18"
+            - generic [ref=e934]: T11
+          - button "Thứ 5 19 T11" [ref=e935] [cursor=pointer]:
+            - generic [ref=e936]: Thứ 5
+            - generic [ref=e937]: "19"
+            - generic [ref=e938]: T11
+          - button "Thứ 6 20 T11" [ref=e939] [cursor=pointer]:
+            - generic [ref=e940]: Thứ 6
+            - generic [ref=e941]: "20"
+            - generic [ref=e942]: T11
+          - button "Thứ 7 21 T11" [ref=e943] [cursor=pointer]:
+            - generic [ref=e944]: Thứ 7
+            - generic [ref=e945]: "21"
+            - generic [ref=e946]: T11
+          - button "CN 22 T11" [ref=e947] [cursor=pointer]:
+            - generic [ref=e948]: CN
+            - generic [ref=e949]: "22"
+            - generic [ref=e950]: T11
+          - button "Thứ 2 23 T11" [ref=e951] [cursor=pointer]:
+            - generic [ref=e952]: Thứ 2
+            - generic [ref=e953]: "23"
+            - generic [ref=e954]: T11
+          - button "Thứ 3 24 T11" [ref=e955] [cursor=pointer]:
+            - generic [ref=e956]: Thứ 3
+            - generic [ref=e957]: "24"
+            - generic [ref=e958]: T11
+          - button "Thứ 4 25 T11" [ref=e959] [cursor=pointer]:
+            - generic [ref=e960]: Thứ 4
+            - generic [ref=e961]: "25"
+            - generic [ref=e962]: T11
+          - button "Thứ 5 26 T11" [ref=e963] [cursor=pointer]:
+            - generic [ref=e964]: Thứ 5
+            - generic [ref=e965]: "26"
+            - generic [ref=e966]: T11
+          - button "Thứ 6 27 T11" [ref=e967] [cursor=pointer]:
+            - generic [ref=e968]: Thứ 6
+            - generic [ref=e969]: "27"
+            - generic [ref=e970]: T11
+          - button "Thứ 7 28 T11" [ref=e971] [cursor=pointer]:
+            - generic [ref=e972]: Thứ 7
+            - generic [ref=e973]: "28"
+            - generic [ref=e974]: T11
+          - button "CN 29 T11" [ref=e975] [cursor=pointer]:
+            - generic [ref=e976]: CN
+            - generic [ref=e977]: "29"
+            - generic [ref=e978]: T11
+          - button "Thứ 2 30 T11" [ref=e979] [cursor=pointer]:
+            - generic [ref=e980]: Thứ 2
+            - generic [ref=e981]: "30"
+            - generic [ref=e982]: T11
+          - button "Thứ 3 1 T12" [ref=e983] [cursor=pointer]:
+            - generic [ref=e984]: Thứ 3
+            - generic [ref=e985]: "1"
+            - generic [ref=e986]: T12
+          - button "Thứ 4 2 T12" [ref=e987] [cursor=pointer]:
+            - generic [ref=e988]: Thứ 4
+            - generic [ref=e989]: "2"
+            - generic [ref=e990]: T12
+          - button "Thứ 5 3 T12" [ref=e991] [cursor=pointer]:
+            - generic [ref=e992]: Thứ 5
+            - generic [ref=e993]: "3"
+            - generic [ref=e994]: T12
+          - button "Thứ 6 4 T12" [ref=e995] [cursor=pointer]:
+            - generic [ref=e996]: Thứ 6
+            - generic [ref=e997]: "4"
+            - generic [ref=e998]: T12
+          - button "Thứ 7 5 T12" [ref=e999] [cursor=pointer]:
+            - generic [ref=e1000]: Thứ 7
+            - generic [ref=e1001]: "5"
+            - generic [ref=e1002]: T12
+          - button "CN 6 T12" [ref=e1003] [cursor=pointer]:
+            - generic [ref=e1004]: CN
+            - generic [ref=e1005]: "6"
+            - generic [ref=e1006]: T12
+          - button "Thứ 2 7 T12" [ref=e1007] [cursor=pointer]:
+            - generic [ref=e1008]: Thứ 2
+            - generic [ref=e1009]: "7"
+            - generic [ref=e1010]: T12
+          - button "Thứ 3 8 T12" [ref=e1011] [cursor=pointer]:
+            - generic [ref=e1012]: Thứ 3
+            - generic [ref=e1013]: "8"
+            - generic [ref=e1014]: T12
+          - button "Thứ 4 9 T12" [ref=e1015] [cursor=pointer]:
+            - generic [ref=e1016]: Thứ 4
+            - generic [ref=e1017]: "9"
+            - generic [ref=e1018]: T12
+          - button "Thứ 5 10 T12" [ref=e1019] [cursor=pointer]:
+            - generic [ref=e1020]: Thứ 5
+            - generic [ref=e1021]: "10"
+            - generic [ref=e1022]: T12
+          - button "Thứ 6 11 T12" [ref=e1023] [cursor=pointer]:
+            - generic [ref=e1024]: Thứ 6
+            - generic [ref=e1025]: "11"
+            - generic [ref=e1026]: T12
+          - button "Thứ 7 12 T12" [ref=e1027] [cursor=pointer]:
+            - generic [ref=e1028]: Thứ 7
+            - generic [ref=e1029]: "12"
+            - generic [ref=e1030]: T12
+          - button "CN 13 T12" [ref=e1031] [cursor=pointer]:
+            - generic [ref=e1032]: CN
+            - generic [ref=e1033]: "13"
+            - generic [ref=e1034]: T12
+          - button "Thứ 2 14 T12" [ref=e1035] [cursor=pointer]:
+            - generic [ref=e1036]: Thứ 2
+            - generic [ref=e1037]: "14"
+            - generic [ref=e1038]: T12
+          - button "Thứ 3 15 T12" [ref=e1039] [cursor=pointer]:
+            - generic [ref=e1040]: Thứ 3
+            - generic [ref=e1041]: "15"
+            - generic [ref=e1042]: T12
+          - button "Thứ 4 16 T12" [ref=e1043] [cursor=pointer]:
+            - generic [ref=e1044]: Thứ 4
+            - generic [ref=e1045]: "16"
+            - generic [ref=e1046]: T12
+          - button "Thứ 5 17 T12" [ref=e1047] [cursor=pointer]:
+            - generic [ref=e1048]: Thứ 5
+            - generic [ref=e1049]: "17"
+            - generic [ref=e1050]: T12
+          - button "Thứ 6 18 T12" [ref=e1051] [cursor=pointer]:
+            - generic [ref=e1052]: Thứ 6
+            - generic [ref=e1053]: "18"
+            - generic [ref=e1054]: T12
+          - button "Thứ 7 19 T12" [ref=e1055] [cursor=pointer]:
+            - generic [ref=e1056]: Thứ 7
+            - generic [ref=e1057]: "19"
+            - generic [ref=e1058]: T12
+          - button "CN 20 T12" [ref=e1059] [cursor=pointer]:
+            - generic [ref=e1060]: CN
+            - generic [ref=e1061]: "20"
+            - generic [ref=e1062]: T12
+          - button "Thứ 2 21 T12" [ref=e1063] [cursor=pointer]:
+            - generic [ref=e1064]: Thứ 2
+            - generic [ref=e1065]: "21"
+            - generic [ref=e1066]: T12
+          - button "Thứ 3 22 T12" [ref=e1067] [cursor=pointer]:
+            - generic [ref=e1068]: Thứ 3
+            - generic [ref=e1069]: "22"
+            - generic [ref=e1070]: T12
+          - button "Thứ 4 23 T12" [ref=e1071] [cursor=pointer]:
+            - generic [ref=e1072]: Thứ 4
+            - generic [ref=e1073]: "23"
+            - generic [ref=e1074]: T12
+          - button "Thứ 5 24 T12" [ref=e1075] [cursor=pointer]:
+            - generic [ref=e1076]: Thứ 5
+            - generic [ref=e1077]: "24"
+            - generic [ref=e1078]: T12
+          - button "Thứ 6 25 T12" [ref=e1079] [cursor=pointer]:
+            - generic [ref=e1080]: Thứ 6
+            - generic [ref=e1081]: "25"
+            - generic [ref=e1082]: T12
+          - button "Thứ 7 26 T12" [ref=e1083] [cursor=pointer]:
+            - generic [ref=e1084]: Thứ 7
+            - generic [ref=e1085]: "26"
+            - generic [ref=e1086]: T12
+          - button "CN 27 T12" [ref=e1087] [cursor=pointer]:
+            - generic [ref=e1088]: CN
+            - generic [ref=e1089]: "27"
+            - generic [ref=e1090]: T12
+          - button "Thứ 2 28 T12" [ref=e1091] [cursor=pointer]:
+            - generic [ref=e1092]: Thứ 2
+            - generic [ref=e1093]: "28"
+            - generic [ref=e1094]: T12
+          - button "Thứ 3 29 T12" [ref=e1095] [cursor=pointer]:
+            - generic [ref=e1096]: Thứ 3
+            - generic [ref=e1097]: "29"
+            - generic [ref=e1098]: T12
+          - button "Thứ 4 30 T12" [ref=e1099] [cursor=pointer]:
+            - generic [ref=e1100]: Thứ 4
+            - generic [ref=e1101]: "30"
+            - generic [ref=e1102]: T12
+          - button "Thứ 5 31 T12" [ref=e1103] [cursor=pointer]:
+            - generic [ref=e1104]: Thứ 5
+            - generic [ref=e1105]: "31"
+            - generic [ref=e1106]: T12
+          - button "Thứ 6 1 T1" [ref=e1107] [cursor=pointer]:
+            - generic [ref=e1108]: Thứ 6
+            - generic [ref=e1109]: "1"
+            - generic [ref=e1110]: T1
+          - button "Thứ 7 2 T1" [ref=e1111] [cursor=pointer]:
+            - generic [ref=e1112]: Thứ 7
+            - generic [ref=e1113]: "2"
+            - generic [ref=e1114]: T1
+          - button "CN 3 T1" [ref=e1115] [cursor=pointer]:
+            - generic [ref=e1116]: CN
+            - generic [ref=e1117]: "3"
+            - generic [ref=e1118]: T1
+          - button "Thứ 2 4 T1" [ref=e1119] [cursor=pointer]:
+            - generic [ref=e1120]: Thứ 2
+            - generic [ref=e1121]: "4"
+            - generic [ref=e1122]: T1
+          - button "Thứ 3 5 T1" [ref=e1123] [cursor=pointer]:
+            - generic [ref=e1124]: Thứ 3
+            - generic [ref=e1125]: "5"
+            - generic [ref=e1126]: T1
+          - button "Thứ 4 6 T1" [ref=e1127] [cursor=pointer]:
+            - generic [ref=e1128]: Thứ 4
+            - generic [ref=e1129]: "6"
+            - generic [ref=e1130]: T1
+          - button "Thứ 5 7 T1" [ref=e1131] [cursor=pointer]:
+            - generic [ref=e1132]: Thứ 5
+            - generic [ref=e1133]: "7"
+            - generic [ref=e1134]: T1
+          - button "Thứ 6 8 T1" [ref=e1135] [cursor=pointer]:
+            - generic [ref=e1136]: Thứ 6
+            - generic [ref=e1137]: "8"
+            - generic [ref=e1138]: T1
+          - button "Thứ 7 9 T1" [ref=e1139] [cursor=pointer]:
+            - generic [ref=e1140]: Thứ 7
+            - generic [ref=e1141]: "9"
+            - generic [ref=e1142]: T1
+          - button "CN 10 T1" [ref=e1143] [cursor=pointer]:
+            - generic [ref=e1144]: CN
+            - generic [ref=e1145]: "10"
+            - generic [ref=e1146]: T1
+          - button "Thứ 2 11 T1" [ref=e1147] [cursor=pointer]:
+            - generic [ref=e1148]: Thứ 2
+            - generic [ref=e1149]: "11"
+            - generic [ref=e1150]: T1
+          - button "Thứ 3 12 T1" [ref=e1151] [cursor=pointer]:
+            - generic [ref=e1152]: Thứ 3
+            - generic [ref=e1153]: "12"
+            - generic [ref=e1154]: T1
+          - button "Thứ 4 13 T1" [ref=e1155] [cursor=pointer]:
+            - generic [ref=e1156]: Thứ 4
+            - generic [ref=e1157]: "13"
+            - generic [ref=e1158]: T1
+          - button "Thứ 5 14 T1" [ref=e1159] [cursor=pointer]:
+            - generic [ref=e1160]: Thứ 5
+            - generic [ref=e1161]: "14"
+            - generic [ref=e1162]: T1
+          - button "Thứ 6 15 T1" [ref=e1163] [cursor=pointer]:
+            - generic [ref=e1164]: Thứ 6
+            - generic [ref=e1165]: "15"
+            - generic [ref=e1166]: T1
+          - button "Thứ 7 16 T1" [ref=e1167] [cursor=pointer]:
+            - generic [ref=e1168]: Thứ 7
+            - generic [ref=e1169]: "16"
+            - generic [ref=e1170]: T1
+          - button "CN 17 T1" [ref=e1171] [cursor=pointer]:
+            - generic [ref=e1172]: CN
+            - generic [ref=e1173]: "17"
+            - generic [ref=e1174]: T1
+          - button "Thứ 2 18 T1" [ref=e1175] [cursor=pointer]:
+            - generic [ref=e1176]: Thứ 2
+            - generic [ref=e1177]: "18"
+            - generic [ref=e1178]: T1
+          - button "Thứ 3 19 T1" [ref=e1179] [cursor=pointer]:
+            - generic [ref=e1180]: Thứ 3
+            - generic [ref=e1181]: "19"
+            - generic [ref=e1182]: T1
+          - button "Thứ 4 20 T1" [ref=e1183] [cursor=pointer]:
+            - generic [ref=e1184]: Thứ 4
+            - generic [ref=e1185]: "20"
+            - generic [ref=e1186]: T1
+          - button "Thứ 5 21 T1" [ref=e1187] [cursor=pointer]:
+            - generic [ref=e1188]: Thứ 5
+            - generic [ref=e1189]: "21"
+            - generic [ref=e1190]: T1
+          - button "Thứ 6 22 T1" [ref=e1191] [cursor=pointer]:
+            - generic [ref=e1192]: Thứ 6
+            - generic [ref=e1193]: "22"
+            - generic [ref=e1194]: T1
+          - button "Thứ 7 23 T1" [ref=e1195] [cursor=pointer]:
+            - generic [ref=e1196]: Thứ 7
+            - generic [ref=e1197]: "23"
+            - generic [ref=e1198]: T1
+          - button "CN 24 T1" [ref=e1199] [cursor=pointer]:
+            - generic [ref=e1200]: CN
+            - generic [ref=e1201]: "24"
+            - generic [ref=e1202]: T1
+          - button "Thứ 2 25 T1" [ref=e1203] [cursor=pointer]:
+            - generic [ref=e1204]: Thứ 2
+            - generic [ref=e1205]: "25"
+            - generic [ref=e1206]: T1
+          - button "Thứ 3 26 T1" [ref=e1207] [cursor=pointer]:
+            - generic [ref=e1208]: Thứ 3
+            - generic [ref=e1209]: "26"
+            - generic [ref=e1210]: T1
+          - button "Thứ 4 27 T1" [ref=e1211] [cursor=pointer]:
+            - generic [ref=e1212]: Thứ 4
+            - generic [ref=e1213]: "27"
+            - generic [ref=e1214]: T1
+          - button "Thứ 5 28 T1" [ref=e1215] [cursor=pointer]:
+            - generic [ref=e1216]: Thứ 5
+            - generic [ref=e1217]: "28"
+            - generic [ref=e1218]: T1
+          - button "Thứ 6 29 T1" [ref=e1219] [cursor=pointer]:
+            - generic [ref=e1220]: Thứ 6
+            - generic [ref=e1221]: "29"
+            - generic [ref=e1222]: T1
+          - button "Thứ 7 30 T1" [ref=e1223] [cursor=pointer]:
+            - generic [ref=e1224]: Thứ 7
+            - generic [ref=e1225]: "30"
+            - generic [ref=e1226]: T1
+          - button "CN 31 T1" [ref=e1227] [cursor=pointer]:
+            - generic [ref=e1228]: CN
+            - generic [ref=e1229]: "31"
+            - generic [ref=e1230]: T1
+          - button "Thứ 2 1 T2" [ref=e1231] [cursor=pointer]:
+            - generic [ref=e1232]: Thứ 2
+            - generic [ref=e1233]: "1"
+            - generic [ref=e1234]: T2
+          - button "Thứ 3 2 T2" [ref=e1235] [cursor=pointer]:
+            - generic [ref=e1236]: Thứ 3
+            - generic [ref=e1237]: "2"
+            - generic [ref=e1238]: T2
+          - button "Thứ 4 3 T2" [ref=e1239] [cursor=pointer]:
+            - generic [ref=e1240]: Thứ 4
+            - generic [ref=e1241]: "3"
+            - generic [ref=e1242]: T2
+          - button "Thứ 5 4 T2" [ref=e1243] [cursor=pointer]:
+            - generic [ref=e1244]: Thứ 5
+            - generic [ref=e1245]: "4"
+            - generic [ref=e1246]: T2
+          - button "Thứ 6 5 T2" [ref=e1247] [cursor=pointer]:
+            - generic [ref=e1248]: Thứ 6
+            - generic [ref=e1249]: "5"
+            - generic [ref=e1250]: T2
+          - button "Thứ 7 6 T2" [ref=e1251] [cursor=pointer]:
+            - generic [ref=e1252]: Thứ 7
+            - generic [ref=e1253]: "6"
+            - generic [ref=e1254]: T2
+          - button "CN 7 T2" [ref=e1255] [cursor=pointer]:
+            - generic [ref=e1256]: CN
+            - generic [ref=e1257]: "7"
+            - generic [ref=e1258]: T2
+          - button "Thứ 2 8 T2" [ref=e1259] [cursor=pointer]:
+            - generic [ref=e1260]: Thứ 2
+            - generic [ref=e1261]: "8"
+            - generic [ref=e1262]: T2
+          - button "Thứ 3 9 T2" [ref=e1263] [cursor=pointer]:
+            - generic [ref=e1264]: Thứ 3
+            - generic [ref=e1265]: "9"
+            - generic [ref=e1266]: T2
+          - button "Thứ 4 10 T2" [ref=e1267] [cursor=pointer]:
+            - generic [ref=e1268]: Thứ 4
+            - generic [ref=e1269]: "10"
+            - generic [ref=e1270]: T2
+          - button "Thứ 5 11 T2" [ref=e1271] [cursor=pointer]:
+            - generic [ref=e1272]: Thứ 5
+            - generic [ref=e1273]: "11"
+            - generic [ref=e1274]: T2
+          - button "Thứ 6 12 T2" [ref=e1275] [cursor=pointer]:
+            - generic [ref=e1276]: Thứ 6
+            - generic [ref=e1277]: "12"
+            - generic [ref=e1278]: T2
+          - button "Thứ 7 13 T2" [ref=e1279] [cursor=pointer]:
+            - generic [ref=e1280]: Thứ 7
+            - generic [ref=e1281]: "13"
+            - generic [ref=e1282]: T2
+          - button "CN 14 T2" [ref=e1283] [cursor=pointer]:
+            - generic [ref=e1284]: CN
+            - generic [ref=e1285]: "14"
+            - generic [ref=e1286]: T2
+          - button "Thứ 2 15 T2" [ref=e1287] [cursor=pointer]:
+            - generic [ref=e1288]: Thứ 2
+            - generic [ref=e1289]: "15"
+            - generic [ref=e1290]: T2
+          - button "Thứ 3 16 T2" [ref=e1291] [cursor=pointer]:
+            - generic [ref=e1292]: Thứ 3
+            - generic [ref=e1293]: "16"
+            - generic [ref=e1294]: T2
+          - button "Thứ 4 17 T2" [ref=e1295] [cursor=pointer]:
+            - generic [ref=e1296]: Thứ 4
+            - generic [ref=e1297]: "17"
+            - generic [ref=e1298]: T2
+          - button "Thứ 5 18 T2" [ref=e1299] [cursor=pointer]:
+            - generic [ref=e1300]: Thứ 5
+            - generic [ref=e1301]: "18"
+            - generic [ref=e1302]: T2
+          - button "Thứ 6 19 T2" [ref=e1303] [cursor=pointer]:
+            - generic [ref=e1304]: Thứ 6
+            - generic [ref=e1305]: "19"
+            - generic [ref=e1306]: T2
+          - button "Thứ 7 20 T2" [ref=e1307] [cursor=pointer]:
+            - generic [ref=e1308]: Thứ 7
+            - generic [ref=e1309]: "20"
+            - generic [ref=e1310]: T2
+          - button "CN 21 T2" [ref=e1311] [cursor=pointer]:
+            - generic [ref=e1312]: CN
+            - generic [ref=e1313]: "21"
+            - generic [ref=e1314]: T2
+          - button "Thứ 2 22 T2" [ref=e1315] [cursor=pointer]:
+            - generic [ref=e1316]: Thứ 2
+            - generic [ref=e1317]: "22"
+            - generic [ref=e1318]: T2
+          - button "Thứ 3 23 T2" [ref=e1319] [cursor=pointer]:
+            - generic [ref=e1320]: Thứ 3
+            - generic [ref=e1321]: "23"
+            - generic [ref=e1322]: T2
+          - button "Thứ 4 24 T2" [ref=e1323] [cursor=pointer]:
+            - generic [ref=e1324]: Thứ 4
+            - generic [ref=e1325]: "24"
+            - generic [ref=e1326]: T2
+          - button "Thứ 5 25 T2" [ref=e1327] [cursor=pointer]:
+            - generic [ref=e1328]: Thứ 5
+            - generic [ref=e1329]: "25"
+            - generic [ref=e1330]: T2
+          - button "Thứ 6 26 T2" [ref=e1331] [cursor=pointer]:
+            - generic [ref=e1332]: Thứ 6
+            - generic [ref=e1333]: "26"
+            - generic [ref=e1334]: T2
+          - button "Thứ 7 27 T2" [ref=e1335] [cursor=pointer]:
+            - generic [ref=e1336]: Thứ 7
+            - generic [ref=e1337]: "27"
+            - generic [ref=e1338]: T2
+          - button "CN 28 T2" [ref=e1339] [cursor=pointer]:
+            - generic [ref=e1340]: CN
+            - generic [ref=e1341]: "28"
+            - generic [ref=e1342]: T2
+          - button "Thứ 2 1 T3" [ref=e1343] [cursor=pointer]:
+            - generic [ref=e1344]: Thứ 2
+            - generic [ref=e1345]: "1"
+            - generic [ref=e1346]: T3
+          - button "Thứ 3 2 T3" [ref=e1347] [cursor=pointer]:
+            - generic [ref=e1348]: Thứ 3
+            - generic [ref=e1349]: "2"
+            - generic [ref=e1350]: T3
+          - button "Thứ 4 3 T3" [ref=e1351] [cursor=pointer]:
+            - generic [ref=e1352]: Thứ 4
+            - generic [ref=e1353]: "3"
+            - generic [ref=e1354]: T3
+          - button "Thứ 5 4 T3" [ref=e1355] [cursor=pointer]:
+            - generic [ref=e1356]: Thứ 5
+            - generic [ref=e1357]: "4"
+            - generic [ref=e1358]: T3
+          - button "Thứ 6 5 T3" [ref=e1359] [cursor=pointer]:
+            - generic [ref=e1360]: Thứ 6
+            - generic [ref=e1361]: "5"
+            - generic [ref=e1362]: T3
+          - button "Thứ 7 6 T3" [ref=e1363] [cursor=pointer]:
+            - generic [ref=e1364]: Thứ 7
+            - generic [ref=e1365]: "6"
+            - generic [ref=e1366]: T3
+          - button "CN 7 T3" [ref=e1367] [cursor=pointer]:
+            - generic [ref=e1368]: CN
+            - generic [ref=e1369]: "7"
+            - generic [ref=e1370]: T3
+          - button "Thứ 2 8 T3" [ref=e1371] [cursor=pointer]:
+            - generic [ref=e1372]: Thứ 2
+            - generic [ref=e1373]: "8"
+            - generic [ref=e1374]: T3
+          - button "Thứ 3 9 T3" [ref=e1375] [cursor=pointer]:
+            - generic [ref=e1376]: Thứ 3
+            - generic [ref=e1377]: "9"
+            - generic [ref=e1378]: T3
+          - button "Thứ 4 10 T3" [ref=e1379] [cursor=pointer]:
+            - generic [ref=e1380]: Thứ 4
+            - generic [ref=e1381]: "10"
+            - generic [ref=e1382]: T3
+          - button "Thứ 5 11 T3" [ref=e1383] [cursor=pointer]:
+            - generic [ref=e1384]: Thứ 5
+            - generic [ref=e1385]: "11"
+            - generic [ref=e1386]: T3
+          - button "Thứ 6 12 T3" [ref=e1387] [cursor=pointer]:
+            - generic [ref=e1388]: Thứ 6
+            - generic [ref=e1389]: "12"
+            - generic [ref=e1390]: T3
+          - button "Thứ 7 13 T3" [ref=e1391] [cursor=pointer]:
+            - generic [ref=e1392]: Thứ 7
+            - generic [ref=e1393]: "13"
+            - generic [ref=e1394]: T3
+          - button "CN 14 T3" [ref=e1395] [cursor=pointer]:
+            - generic [ref=e1396]: CN
+            - generic [ref=e1397]: "14"
+            - generic [ref=e1398]: T3
+          - button "Thứ 2 15 T3" [ref=e1399] [cursor=pointer]:
+            - generic [ref=e1400]: Thứ 2
+            - generic [ref=e1401]: "15"
+            - generic [ref=e1402]: T3
+          - button "Thứ 3 16 T3" [ref=e1403] [cursor=pointer]:
+            - generic [ref=e1404]: Thứ 3
+            - generic [ref=e1405]: "16"
+            - generic [ref=e1406]: T3
+          - button "Thứ 4 17 T3" [ref=e1407] [cursor=pointer]:
+            - generic [ref=e1408]: Thứ 4
+            - generic [ref=e1409]: "17"
+            - generic [ref=e1410]: T3
+          - button "Thứ 5 18 T3" [ref=e1411] [cursor=pointer]:
+            - generic [ref=e1412]: Thứ 5
+            - generic [ref=e1413]: "18"
+            - generic [ref=e1414]: T3
+          - button "Thứ 6 19 T3" [ref=e1415] [cursor=pointer]:
+            - generic [ref=e1416]: Thứ 6
+            - generic [ref=e1417]: "19"
+            - generic [ref=e1418]: T3
+          - button "Thứ 7 20 T3" [ref=e1419] [cursor=pointer]:
+            - generic [ref=e1420]: Thứ 7
+            - generic [ref=e1421]: "20"
+            - generic [ref=e1422]: T3
+          - button "CN 21 T3" [ref=e1423] [cursor=pointer]:
+            - generic [ref=e1424]: CN
+            - generic [ref=e1425]: "21"
+            - generic [ref=e1426]: T3
+          - button "Thứ 2 22 T3" [ref=e1427] [cursor=pointer]:
+            - generic [ref=e1428]: Thứ 2
+            - generic [ref=e1429]: "22"
+            - generic [ref=e1430]: T3
+          - button "Thứ 3 23 T3" [ref=e1431] [cursor=pointer]:
+            - generic [ref=e1432]: Thứ 3
+            - generic [ref=e1433]: "23"
+            - generic [ref=e1434]: T3
+          - button "Thứ 4 24 T3" [ref=e1435] [cursor=pointer]:
+            - generic [ref=e1436]: Thứ 4
+            - generic [ref=e1437]: "24"
+            - generic [ref=e1438]: T3
+          - button "Thứ 5 25 T3" [ref=e1439] [cursor=pointer]:
+            - generic [ref=e1440]: Thứ 5
+            - generic [ref=e1441]: "25"
+            - generic [ref=e1442]: T3
+          - button "Thứ 6 26 T3" [ref=e1443] [cursor=pointer]:
+            - generic [ref=e1444]: Thứ 6
+            - generic [ref=e1445]: "26"
+            - generic [ref=e1446]: T3
+          - button "Thứ 7 27 T3" [ref=e1447] [cursor=pointer]:
+            - generic [ref=e1448]: Thứ 7
+            - generic [ref=e1449]: "27"
+            - generic [ref=e1450]: T3
+          - button "CN 28 T3" [ref=e1451] [cursor=pointer]:
+            - generic [ref=e1452]: CN
+            - generic [ref=e1453]: "28"
+            - generic [ref=e1454]: T3
+          - button "Thứ 2 29 T3" [ref=e1455] [cursor=pointer]:
+            - generic [ref=e1456]: Thứ 2
+            - generic [ref=e1457]: "29"
+            - generic [ref=e1458]: T3
+          - button "Thứ 3 30 T3" [ref=e1459] [cursor=pointer]:
+            - generic [ref=e1460]: Thứ 3
+            - generic [ref=e1461]: "30"
+            - generic [ref=e1462]: T3
+          - button "Thứ 4 31 T3" [ref=e1463] [cursor=pointer]:
+            - generic [ref=e1464]: Thứ 4
+            - generic [ref=e1465]: "31"
+            - generic [ref=e1466]: T3
+          - button "Thứ 5 1 T4" [ref=e1467] [cursor=pointer]:
+            - generic [ref=e1468]: Thứ 5
+            - generic [ref=e1469]: "1"
+            - generic [ref=e1470]: T4
+          - button "Thứ 6 2 T4" [ref=e1471] [cursor=pointer]:
+            - generic [ref=e1472]: Thứ 6
+            - generic [ref=e1473]: "2"
+            - generic [ref=e1474]: T4
+          - button "Thứ 7 3 T4" [ref=e1475] [cursor=pointer]:
+            - generic [ref=e1476]: Thứ 7
+            - generic [ref=e1477]: "3"
+            - generic [ref=e1478]: T4
+      - generic [ref=e1479]:
+        - heading "Lịch sân cầu lông" [level=3] [ref=e1480]
+        - paragraph [ref=e1481]: Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0982.949.974
+    - generic [ref=e1482]:
+      - generic [ref=e1483]:
+        - img [ref=e1484]
+        - slider [ref=e1487] [cursor=pointer]: "3"
+        - img [ref=e1488]
+        - generic [ref=e1491]: 100%
+      - generic [ref=e1495]:
+        - generic [ref=e1496]:
+          - generic [ref=e1497]: Sân
+          - generic [ref=e1499]:
+            - generic [ref=e1502]: 00:00
+            - generic [ref=e1505]: 00:30
+            - generic [ref=e1508]: 01:00
+            - generic [ref=e1511]: 01:30
+            - generic [ref=e1514]: 02:00
+            - generic [ref=e1517]: 02:30
+            - generic [ref=e1520]: 03:00
+            - generic [ref=e1523]: 03:30
+            - generic [ref=e1526]: 04:00
+            - generic [ref=e1529]: 04:30
+            - generic [ref=e1532]: 05:00
+            - generic [ref=e1535]: 05:30
+            - generic [ref=e1538]: 06:00
+            - generic [ref=e1541]: 06:30
+            - generic [ref=e1544]: 07:00
+            - generic [ref=e1547]: 07:30
+            - generic [ref=e1550]: 08:00
+            - generic [ref=e1553]: 08:30
+            - generic [ref=e1556]: 09:00
+            - generic [ref=e1559]: 09:30
+            - generic [ref=e1562]: 10:00
+            - generic [ref=e1565]: 10:30
+            - generic [ref=e1568]: 11:00
+            - generic [ref=e1571]: 11:30
+            - generic [ref=e1574]: 12:00
+            - generic [ref=e1577]: 12:30
+            - generic [ref=e1580]: 13:00
+            - generic [ref=e1583]: 13:30
+            - generic [ref=e1586]: 14:00
+            - generic [ref=e1589]: 14:30
+            - generic [ref=e1592]: 15:00
+            - generic [ref=e1595]: 15:30
+            - generic [ref=e1598]: 16:00
+            - generic [ref=e1601]: 16:30
+            - generic [ref=e1604]: 17:00
+            - generic [ref=e1607]: 17:30
+            - generic [ref=e1610]: 18:00
+            - generic [ref=e1613]: 18:30
+            - generic [ref=e1616]: 19:00
+            - generic [ref=e1619]: 19:30
+            - generic [ref=e1622]: 20:00
+            - generic [ref=e1625]: 20:30
+            - generic [ref=e1628]: 21:00
+            - generic [ref=e1631]: 21:30
+            - generic [ref=e1634]: 22:00
+            - generic [ref=e1637]: 22:30
+            - generic [ref=e1640]: 23:00
+            - generic [ref=e1643]: 23:30
+            - generic [ref=e1646]: 24:00
+        - generic [ref=e1647]:
+          - button "Sân 1" [ref=e1649] [cursor=pointer]
+          - generic [ref=e1650]:
+            - button [ref=e1651]
+            - button [ref=e1652]
+            - button [ref=e1653]
+            - button [ref=e1654]
+            - button [ref=e1655]
+            - button [ref=e1656]
+            - button [ref=e1657]
+            - button [ref=e1658]
+            - button [ref=e1659]
+            - button [ref=e1660]
+            - button [ref=e1661]
+            - button [ref=e1662]
+            - button [ref=e1663]
+            - button [ref=e1664]
+            - button [ref=e1665]
+            - button [ref=e1666]
+            - button [ref=e1667]
+            - button [ref=e1668]
+            - button [ref=e1669]
+            - button [ref=e1670]
+            - button [ref=e1671]
+            - button [ref=e1672]
+            - button [ref=e1673]
+            - button [ref=e1674]
+            - button [ref=e1675]
+            - button [ref=e1676]
+            - button [ref=e1677]
+            - button [ref=e1678]
+            - button [ref=e1679]
+            - button [ref=e1680]
+            - button [ref=e1681]
+            - button [ref=e1682]
+            - button [ref=e1683]
+            - button [ref=e1684]
+            - button [ref=e1685]
+            - button [ref=e1686]
+            - button [ref=e1687]
+            - button [ref=e1688]
+            - button [ref=e1689]
+            - button [ref=e1690]
+            - button [ref=e1691]
+            - button [ref=e1692]
+            - button [ref=e1693]
+            - button "40k" [active] [ref=e1694] [cursor=pointer]:
+              - generic [ref=e1696]: 40k
+            - button "40k" [ref=e1698] [cursor=pointer]:
+              - generic [ref=e1700]: 40k
+            - button "40k" [ref=e1701] [cursor=pointer]:
+              - generic [ref=e1703]: 40k
+            - button "40k" [ref=e1704] [cursor=pointer]:
+              - generic [ref=e1706]: 40k
+            - button "40k" [ref=e1707] [cursor=pointer]:
+              - generic [ref=e1709]: 40k
+        - generic [ref=e1710]:
+          - button "Sân 2" [ref=e1712] [cursor=pointer]
+          - generic [ref=e1713]:
+            - button [ref=e1714]
+            - button [ref=e1715]
+            - button [ref=e1716]
+            - button [ref=e1717]
+            - button [ref=e1718]
+            - button [ref=e1719]
+            - button [ref=e1720]
+            - button [ref=e1721]
+            - button [ref=e1722]
+            - button [ref=e1723]
+            - button [ref=e1724]
+            - button [ref=e1725]
+            - button [ref=e1726]
+            - button [ref=e1727]
+            - button [ref=e1728]
+            - button [ref=e1729]
+            - button [ref=e1730]
+            - button [ref=e1731]
+            - button [ref=e1732]
+            - button [ref=e1733]
+            - button [ref=e1734]
+            - button [ref=e1735]
+            - button [ref=e1736]
+            - button [ref=e1737]
+            - button [ref=e1738]
+            - button [ref=e1739]
+            - button [ref=e1740]
+            - button [ref=e1741]
+            - button [ref=e1742]
+            - button [ref=e1743]
+            - button [ref=e1744]
+            - button [ref=e1745]
+            - button [ref=e1746]
+            - button [ref=e1747]
+            - button [ref=e1748]
+            - button [ref=e1749]
+            - button [ref=e1750]
+            - button [ref=e1751]
+            - button [ref=e1752]
+            - button [ref=e1753]
+            - button [ref=e1754]
+            - button [ref=e1755]
+            - button [ref=e1756]
+            - button "40k" [ref=e1757] [cursor=pointer]:
+              - generic [ref=e1759]: 40k
+            - button "40k" [ref=e1760] [cursor=pointer]:
+              - generic [ref=e1762]: 40k
+            - button "40k" [ref=e1763] [cursor=pointer]:
+              - generic [ref=e1765]: 40k
+            - button "40k" [ref=e1766] [cursor=pointer]:
+              - generic [ref=e1768]: 40k
+            - button "40k" [ref=e1769] [cursor=pointer]:
+              - generic [ref=e1771]: 40k
+        - generic [ref=e1772]:
+          - button "Sân 3" [ref=e1774] [cursor=pointer]
+          - generic [ref=e1775]:
+            - button [ref=e1776]
+            - button [ref=e1777]
+            - button [ref=e1778]
+            - button [ref=e1779]
+            - button [ref=e1780]
+            - button [ref=e1781]
+            - button [ref=e1782]
+            - button [ref=e1783]
+            - button [ref=e1784]
+            - button [ref=e1785]
+            - button [ref=e1786]
+            - button [ref=e1787]
+            - button [ref=e1788]
+            - button [ref=e1789]
+            - button [ref=e1790]
+            - button [ref=e1791]
+            - button [ref=e1792]
+            - button [ref=e1793]
+            - button [ref=e1794]
+            - button [ref=e1795]
+            - button [ref=e1796]
+            - button [ref=e1797]
+            - button [ref=e1798]
+            - button [ref=e1799]
+            - button [ref=e1800]
+            - button [ref=e1801]
+            - button [ref=e1802]
+            - button [ref=e1803]
+            - button [ref=e1804]
+            - button [ref=e1805]
+            - button [ref=e1806]
+            - button [ref=e1807]
+            - button [ref=e1808]
+            - button [ref=e1809]
+            - button [ref=e1810]
+            - button [ref=e1811]
+            - button [ref=e1812]
+            - button [ref=e1813]
+            - button [ref=e1814]
+            - button [ref=e1815]
+            - button [ref=e1816]
+            - button [ref=e1817]
+            - button [ref=e1818]
+            - button "40k" [ref=e1819] [cursor=pointer]:
+              - generic [ref=e1821]: 40k
+            - button "40k" [ref=e1822] [cursor=pointer]:
+              - generic [ref=e1824]: 40k
+            - button "40k" [ref=e1825] [cursor=pointer]:
+              - generic [ref=e1827]: 40k
+            - button "40k" [ref=e1828] [cursor=pointer]:
+              - generic [ref=e1830]: 40k
+            - button "40k" [ref=e1831] [cursor=pointer]:
+              - generic [ref=e1833]: 40k
+        - generic [ref=e1834]:
+          - button "Sân 4" [ref=e1836] [cursor=pointer]
+          - generic [ref=e1837]:
+            - button [ref=e1838]
+            - button [ref=e1839]
+            - button [ref=e1840]
+            - button [ref=e1841]
+            - button [ref=e1842]
+            - button [ref=e1843]
+            - button [ref=e1844]
+            - button [ref=e1845]
+            - button [ref=e1846]
+            - button [ref=e1847]
+            - button [ref=e1848]
+            - button [ref=e1849]
+            - button [ref=e1850]
+            - button [ref=e1851]
+            - button [ref=e1852]
+            - button [ref=e1853]
+            - button [ref=e1854]
+            - button [ref=e1855]
+            - button [ref=e1856]
+            - button [ref=e1857]
+            - button [ref=e1858]
+            - button [ref=e1859]
+            - button [ref=e1860]
+            - button [ref=e1861]
+            - button [ref=e1862]
+            - button [ref=e1863]
+            - button [ref=e1864]
+            - button [ref=e1865]
+            - button [ref=e1866]
+            - button [ref=e1867]
+            - button [ref=e1868]
+            - button [ref=e1869]
+            - button [ref=e1870]
+            - button [ref=e1871]
+            - button [ref=e1872]
+            - button [ref=e1873]
+            - button [ref=e1874]
+            - button [ref=e1875]
+            - button [ref=e1876]
+            - button [ref=e1877]
+            - button [ref=e1878]
+            - button [ref=e1879]
+            - button [ref=e1880]
+            - button "40k" [ref=e1881] [cursor=pointer]:
+              - generic [ref=e1883]: 40k
+            - button "40k" [ref=e1884] [cursor=pointer]:
+              - generic [ref=e1886]: 40k
+            - button "40k" [ref=e1887] [cursor=pointer]:
+              - generic [ref=e1889]: 40k
+            - button "40k" [ref=e1890] [cursor=pointer]:
+              - generic [ref=e1892]: 40k
+            - button "40k" [ref=e1893] [cursor=pointer]:
+              - generic [ref=e1895]: 40k
+        - generic [ref=e1896]:
+          - button "Sân 5" [ref=e1898] [cursor=pointer]
+          - generic [ref=e1899]:
+            - button [ref=e1900]
+            - button [ref=e1901]
+            - button [ref=e1902]
+            - button [ref=e1903]
+            - button [ref=e1904]
+            - button [ref=e1905]
+            - button [ref=e1906]
+            - button [ref=e1907]
+            - button [ref=e1908]
+            - button [ref=e1909]
+            - button [ref=e1910]
+            - button [ref=e1911]
+            - button [ref=e1912]
+            - button [ref=e1913]
+            - button [ref=e1914]
+            - button [ref=e1915]
+            - button [ref=e1916]
+            - button [ref=e1917]
+            - button [ref=e1918]
+            - button [ref=e1919]
+            - button [ref=e1920]
+            - button [ref=e1921]
+            - button [ref=e1922]
+            - button [ref=e1923]
+            - button [ref=e1924]
+            - button [ref=e1925]
+            - button [ref=e1926]
+            - button [ref=e1927]
+            - button [ref=e1928]
+            - button [ref=e1929]
+            - button [ref=e1930]
+            - button [ref=e1931]
+            - button [ref=e1932]
+            - button [ref=e1933]
+            - button [ref=e1934]
+            - button [ref=e1935]
+            - button [ref=e1936]
+            - button [ref=e1937]
+            - button [ref=e1938]
+            - button [ref=e1939]
+            - button [ref=e1940]
+            - button [ref=e1941]
+            - button [ref=e1942]
+            - button "40k" [ref=e1943] [cursor=pointer]:
+              - generic [ref=e1945]: 40k
+            - button "40k" [ref=e1946] [cursor=pointer]:
+              - generic [ref=e1948]: 40k
+            - button "40k" [ref=e1949] [cursor=pointer]:
+              - generic [ref=e1951]: 40k
+            - button "40k" [ref=e1952] [cursor=pointer]:
+              - generic [ref=e1954]: 40k
+            - button "40k" [ref=e1955] [cursor=pointer]:
+              - generic [ref=e1957]: 40k
+    - generic [ref=e1964]:
+      - generic [ref=e1967]: Đã chọn
+      - generic [ref=e1970]: Trống
+      - generic [ref=e1973]: Đã đặt
+      - generic [ref=e1976]: Khóa
+      - generic [ref=e1979]: Sự kiện
+    - generic [ref=e1981]:
+      - generic [ref=e1982]:
+        - button "Giỏ hàng 1" [ref=e1984] [cursor=pointer]:
+          - img
+          - generic [ref=e1985]: Giỏ hàng
+          - generic [ref=e1986]: "1"
+        - paragraph [ref=e1987]: 40.000 ₫
+      - link "Tiếp tục" [ref=e1988] [cursor=pointer]:
+        - /url: /payment?clubId=5e101707-f057-498f-a777-52c692a16e20&date=2026-04-04&slots=%5B%7B%22court_id%22%3A%22ef80ebf1-3d28-4c70-849d-2a662edccfca%22%2C%22time%22%3A%2221%3A30%22%2C%22date%22%3A%222026-04-04%22%7D%5D
+        - button "Tiếp tục" [ref=e1989]:
+          - text: Tiếp tục
+          - img
+  - region "Notifications (F8)":
+    - list
+  - button "Open Next.js Dev Tools" [ref=e1995] [cursor=pointer]:
+    - img [ref=e1996]
+  - alert [ref=e1999]
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from '@playwright/test';
+  2  | 
+  3  | test.describe('Quy trình đặt sân (Booking Flow)', () => {
+  4  | 
+  5  |   test('Người dùng có thể xem danh sách câu lạc bộ và mở chi tiết', async ({ page }) => {
+  6  |     await page.goto('/booking');
+  7  |     
+  8  |     // Đợi danh sách câu lạc bộ tải xong (Skeletion biến mất)
+  9  |     await page.waitForSelector('.grid-cols-1 .overflow-hidden', { state: 'visible', timeout: 15000 });
+  10 |     
+  11 |     // Click vào thẻ câu lạc bộ đầu tiên
+  12 |     const firstClub = page.locator('.grid-cols-1 .overflow-hidden').first();
+  13 |     await firstClub.click();
+  14 |     
+  15 |     // Đợi Sheet chi tiết xuất hiện hoàn toàn
+  16 |     // Nút "Đặt ngay" trong Sheet nằm trong một dialog (SheetContent)
+  17 |     const sheetOrderBtn = page.locator('div[role="dialog"] button:has-text("Đặt ngay")');
+  18 |     await expect(sheetOrderBtn).toBeVisible({ timeout: 10000 });
+  19 |   });
+  20 | 
+  21 |   test('Người dùng có thể vào trang đặt sân và chọn slot', async ({ page }) => {
+  22 |     await page.goto('/booking');
+  23 |     await page.waitForSelector('.grid-cols-1 .overflow-hidden', { state: 'visible', timeout: 15000 });
+  24 |     
+  25 |     // Click nút "Đặt ngay" trực tiếp trên thẻ CLB để mở Sheet
+  26 |     const cardOrderBtn = page.locator('.grid-cols-1 .overflow-hidden').first().getByRole('button', { name: 'Đặt ngay' });
+  27 |     await cardOrderBtn.click();
+  28 |     
+  29 |     // Click nút "Đặt ngay" trong Sheet để vào trang chọn sân
+  30 |     const sheetOrderBtn = page.locator('div[role="dialog"] button:has-text("Đặt ngay")');
+  31 |     await sheetOrderBtn.click();
+  32 |     
+  33 |     // Đợi trang trang chọn sân tải nội dung
+  34 |     await expect(page.getByText('Lịch sân cầu lông')).toBeVisible({ timeout: 15000 });
+  35 |     
+  36 |     // Chờ bảng lịch sân xuất hiện
+  37 |     await page.waitForSelector('button:has-text("k")', { state: 'attached', timeout: 10000 });
+  38 |     
+  39 |     // Tìm một slot còn trống và click
+  40 |     const availableSlot = page.locator('button:has-text("k")').first();
+  41 |     if (await availableSlot.isVisible()) {
+  42 |       await availableSlot.click();
+  43 |       
+  44 |       // Kiểm tra xem giỏ hàng/nút Tiếp tục có hiện lên không
+> 45 |       await expect(page.getByText('Tổng cộng')).toBeVisible({ timeout: 10000 });
+     |                                                 ^ Error: expect(locator).toBeVisible() failed
+  46 |       await expect(page.getByRole('button', { name: 'Tiếp tục' })).toBeVisible();
+  47 |     }
+  48 |   });
+  49 | 
+  50 |   test('Kiểm tra bộ lọc câu lạc bộ', async ({ page }) => {
+  51 |     await page.goto('/booking');
+  52 |     
+  53 |     const searchInput = page.getByPlaceholder('Tìm kiếm theo tên hoặc địa chỉ...');
+  54 |     await expect(searchInput).toBeVisible();
+  55 |     
+  56 |     await searchInput.fill('NonExistentClubNameXYZ');
+  57 |     await expect(page.getByText('Không có câu lạc bộ nào phù hợp.')).toBeVisible({ timeout: 10000 });
+  58 |   });
+  59 | });
+  60 | 
+```

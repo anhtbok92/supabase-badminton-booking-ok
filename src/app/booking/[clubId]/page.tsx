@@ -31,12 +31,40 @@ function getPriceForSlot(time: string, date: Date | string, pricing?: Club['pric
   const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
   const relevantTiers = isWeekend ? pricing.weekend : pricing.weekday;
 
-  if (!relevantTiers) return 0;
+  if (!relevantTiers || relevantTiers.length === 0) return 0;
 
   const [h, m] = time.split(':').map(Number);
   const slotValue = h * 60 + m;
 
-  for (const tier of relevantTiers) {
+  // Sort tiers:
+  // 1. Shorter duration first (more specific time frame)
+  // 2. Higher price first (if durations are equal)
+  const sortedTiers = [...relevantTiers].sort((a, b) => {
+    // 1. Manually set priority takes precedence
+    if (a.is_priority && !b.is_priority) return -1;
+    if (!a.is_priority && b.is_priority) return 1;
+
+    const getMinutes = (timeStr: string) => {
+      const [sh, sm] = timeStr.split(':').map(Number);
+      return (sh === 24 || (sh === 0 && sm === 0)) ? 1440 : sh * 60 + sm;
+    };
+    
+    const startA = getMinutes(a.timeRange[0]);
+    const endA = getMinutes(a.timeRange[1]);
+    const durationA = (endA <= startA) ? (1440 - startA + endA) : (endA - startA);
+
+    const startB = getMinutes(b.timeRange[0]);
+    const endB = getMinutes(b.timeRange[1]);
+    const durationB = (endB <= startB) ? (1440 - startB + endB) : (endB - startB);
+
+    // 2. Shorter duration takes precedence
+    if (durationA !== durationB) return durationA - durationB;
+    
+    // 3. Higher price takes precedence
+    return b.price - a.price;
+  });
+
+  for (const tier of sortedTiers) {
     if (!tier.timeRange || tier.timeRange.length < 2) continue;
 
     const [sh, sm] = tier.timeRange[0].split(':').map(Number);
@@ -45,13 +73,10 @@ function getPriceForSlot(time: string, date: Date | string, pricing?: Club['pric
     const [eh, em] = tier.timeRange[1].split(':').map(Number);
     let endValue = eh * 60 + em;
 
-    // If end time is 00:00 or 24:00, and it's after the start time, it means end of day (1440 mins)
     if ((endValue === 0 || eh === 24) && startValue > 0) {
       endValue = 1440;
     }
 
-    // Allow slots up to and including the last 30-min slot before endValue
-    // For example, if endValue is 1440 (24:00), allow slot 1410 (23:30)
     if (slotValue >= startValue && slotValue < endValue) {
       return tier.price;
     }
@@ -412,7 +437,7 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
         <div className="px-4 py-0 sm:py-2">
           <h3 className="text-[#0d1b12] dark:text-white text-sm sm:text-lg font-bold leading-tight tracking-[-0.015em]">Lịch sân cầu lông</h3>
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
-            Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0982.949.974
+            {club.booking_policy || 'Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0982.949.974'}
           </p>
         </div>
       </div>

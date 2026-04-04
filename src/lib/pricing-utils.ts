@@ -10,23 +10,38 @@ export function getPriceForSlot(time: string, date: Date, pricing?: Club['pricin
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
     const relevantTiers = isWeekend ? pricing.weekend : pricing.weekday;
 
-    if (!relevantTiers) return 0;
+    if (!relevantTiers || relevantTiers.length === 0) return 0;
 
     const [h, m] = time.split(':').map(Number);
     const slotValue = h * 60 + m;
 
-    for (const tier of relevantTiers) {
+    const sortedTiers = [...relevantTiers].sort((a, b) => {
+        // 1. Manually set priority takes precedence
+        if (a.is_priority && !b.is_priority) return -1;
+        if (!a.is_priority && b.is_priority) return 1;
+
+        const getMinutes = (timeStr: string) => {
+            const [sh, sm] = timeStr.split(':').map(Number);
+            return (sh === 24 || (sh === 0 && sm === 0)) ? 1440 : sh * 60 + sm;
+        };
+        const durationA = getMinutes(a.timeRange[1]) - getMinutes(a.timeRange[0]);
+        const durationB = getMinutes(b.timeRange[1]) - getMinutes(b.timeRange[0]);
+        
+        // 2. Shorter duration (more specific) takes precedence
+        if (durationA !== durationB) return durationA - durationB;
+        
+        // 3. Higher price takes precedence
+        return b.price - a.price;
+    });
+
+    for (const tier of sortedTiers) {
         if (!tier.timeRange || tier.timeRange.length < 2) continue;
 
         const [sh, sm] = tier.timeRange[0].split(':').map(Number);
         const startValue = sh * 60 + sm;
-
         const [eh, em] = tier.timeRange[1].split(':').map(Number);
         let endValue = eh * 60 + em;
-
-        if (eh === 24 || (eh === 0 && endValue <= startValue)) {
-            endValue = 1440;
-        }
+        if ((eh === 24 || (eh === 0 && endValue <= startValue)) && startValue > 0) endValue = 1440;
 
         if (slotValue >= startValue && slotValue < endValue) {
             return tier.price;
