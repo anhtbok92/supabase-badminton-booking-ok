@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS public.fixed_monthly_configs (
   is_active BOOLEAN DEFAULT TRUE,
   is_auto_renew BOOLEAN DEFAULT TRUE,
   note TEXT,
+  start_month TEXT, -- Format 'YYYY-MM'
+  last_generated_month TEXT, -- Format 'YYYY-MM'
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -192,6 +194,12 @@ BEGIN
 
     v_curr_date := v_curr_date + INTERVAL '1 day';
   END LOOP;
+
+  -- Update last_generated_month for all active configs of this club
+  -- (We assume if the function was called for a month, that month is now 'generated')
+  UPDATE public.fixed_monthly_configs
+  SET last_generated_month = p_year_month
+  WHERE club_id = p_club_id AND is_active = TRUE;
 
   RETURN QUERY SELECT v_created_count, v_skipped_count, v_details;
 END;

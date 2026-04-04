@@ -147,6 +147,8 @@ export type FixedMonthlyConfig = {
   is_active: boolean;
   is_auto_renew: boolean;
   note?: string;
+  start_month?: string;
+  last_generated_month?: string;
   created_at?: string;
   updated_at?: string;
 };

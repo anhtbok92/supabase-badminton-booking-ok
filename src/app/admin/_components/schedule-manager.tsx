@@ -12,6 +12,7 @@ dayjs.locale('vi');
 import { useSupabase, useSupabaseQuery } from '@/supabase';
 import type { UserBooking, Club, Court, UserProfile } from '@/lib/types';
 import { timeSlots } from '@/lib/data';
+import { getPriceForSlot } from '@/lib/pricing-utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,37 +26,7 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-// Price calculation utility for Schedule
-export function getPriceForSlot(time: string, date: Date, pricing?: Club['pricing']): number {
-    if (!pricing) return 0;
-    const dayOfWeek = getDay(date);
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    const relevantTiers = isWeekend ? pricing.weekend : pricing.weekday;
-
-    if (!relevantTiers) return 0;
-
-    const [h, m] = time.split(':').map(Number);
-    const slotValue = h * 60 + m;
-
-    for (const tier of relevantTiers) {
-        if (!tier.timeRange || tier.timeRange.length < 2) continue;
-
-        const [sh, sm] = tier.timeRange[0].split(':').map(Number);
-        const startValue = sh * 60 + sm;
-
-        const [eh, em] = tier.timeRange[1].split(':').map(Number);
-        let endValue = eh * 60 + em;
-
-        if (eh === 24 || (eh === 0 && endValue <= startValue)) {
-            endValue = 1440;
-        }
-
-        if (slotValue >= startValue && slotValue < endValue) {
-            return tier.price;
-        }
-    }
-    return 0;
-}
+// (Removed local getPriceForSlot - now in pricing-utils.ts)
 
 function StatusLegend() {
     const legendItems = [

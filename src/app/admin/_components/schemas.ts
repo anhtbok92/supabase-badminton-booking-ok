@@ -169,6 +169,7 @@ export const fixedMonthlyConfigSchema = z.object({
   is_active: z.boolean().default(true),
   is_auto_renew: z.boolean().default(true),
   note: z.string().optional(),
+  start_month: z.string().regex(/^\d{4}-\d{2}$/, 'Tháng không hợp lệ (YYYY-MM)').optional(),
 });
 export type FixedMonthlyConfigSchema = z.infer<typeof fixedMonthlyConfigSchema>;
 
