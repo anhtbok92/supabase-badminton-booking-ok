@@ -19,35 +19,52 @@ import {
   Settings,
 } from 'lucide-react';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 // New component for list items
 const AccountListItem = ({
   icon,
   label,
   href,
+  disabled = false,
 }: {
   icon: React.ElementType;
   label: string;
   href?: string;
+  disabled?: boolean;
 }) => {
   const Icon = icon;
   const content = (
-    <div className="flex items-center gap-4 px-4 min-h-[56px] justify-between active:bg-secondary/50 transition-colors cursor-pointer">
-      <div className="flex items-center gap-4">
-        <div className="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
+    <div className={cn(
+        "flex items-center gap-4 px-4 min-h-[56px] justify-between transition-colors",
+        disabled ? "opacity-50 cursor-not-allowed bg-muted/5" : "active:bg-secondary/50 cursor-pointer"
+    )}>
+      <div className="flex items-center gap-4 min-w-0">
+        <div className={cn(
+            "flex items-center justify-center rounded-lg shrink-0 size-10",
+            disabled ? "bg-muted text-muted-foreground" : "text-primary bg-primary/10"
+        )}>
           <Icon className="h-5 w-5" />
         </div>
-        <p className="text-card-foreground text-base font-normal leading-normal flex-1">
-          {label}
-        </p>
+        <div className="flex flex-col min-w-0">
+            <p className={cn(
+                "text-base font-normal leading-tight truncate",
+                disabled ? "text-muted-foreground" : "text-card-foreground"
+            )}>
+              {label}
+            </p>
+            {disabled && <p className="text-[10px] font-black uppercase tracking-widest text-primary/70 mt-0.5" data-ai-hint="coming soon">Sắp ra mắt</p>}
+        </div>
       </div>
-      <div className="shrink-0">
-        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-      </div>
+      {!disabled && (
+        <div className="shrink-0">
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </div>
+      )}
     </div>
   );
 
-  if (href) {
+  if (href && !disabled) {
     return <Link href={href}>{content}</Link>;
   }
   return content;
@@ -116,21 +133,21 @@ function LoggedInView({ user, userProfile }: { user: any; userProfile: UserProfi
       <div className="px-4 space-y-2">
         <h3 className="text-muted-foreground text-sm font-bold uppercase tracking-wider px-2 pt-4 pb-1">Cài đặt tài khoản</h3>
         <div className="bg-card rounded-xl overflow-hidden border">
-          <AccountListItem icon={UserIcon} label="Thông tin cá nhân" />
-          <div className="border-t"><AccountListItem icon={ShieldCheck} label="Đổi mật khẩu" /></div>
-          <div className="border-t"><AccountListItem icon={CreditCard} label="Phương thức thanh toán" /></div>
+          <AccountListItem icon={UserIcon} label="Thông tin cá nhân (Sắp ra mắt)" disabled />
+          <div className="border-t"><AccountListItem icon={ShieldCheck} label="Đổi mật khẩu (Sắp ra mắt)" disabled /></div>
+          <div className="border-t"><AccountListItem icon={CreditCard} label="Phương thức thanh toán (Sắp ra mắt)" disabled /></div>
         </div>
 
         <h3 className="text-muted-foreground text-sm font-bold uppercase tracking-wider px-2 pt-6 pb-1">Hoạt động</h3>
         <div className="bg-card rounded-xl overflow-hidden border">
           <AccountListItem icon={CalendarDays} label="Lịch sử đặt sân" href="/my-bookings" />
-          <div className="border-t"><AccountListItem icon={Ticket} label="Ưu đãi của tôi" /></div>
+          <div className="border-t"><AccountListItem icon={Ticket} label="Ưu đãi của tôi (Sắp ra mắt)" disabled /></div>
         </div>
 
         <h3 className="text-muted-foreground text-sm font-bold uppercase tracking-wider px-2 pt-6 pb-1">Hỗ trợ</h3>
         <div className="bg-card rounded-xl overflow-hidden border">
-          <AccountListItem icon={HelpCircle} label="Trung tâm trợ giúp" />
-          <div className="border-t"><AccountListItem icon={Info} label="Về chúng tôi" /></div>
+          <AccountListItem icon={HelpCircle} label="Trung tâm trợ giúp (Sắp ra mắt)" disabled />
+          <div className="border-t"><AccountListItem icon={Info} label="Về chúng tôi (Sắp ra mắt)" disabled /></div>
         </div>
 
         <h3 className="text-muted-foreground text-sm font-bold uppercase tracking-wider px-2 pt-6 pb-1">Hợp tác</h3>
