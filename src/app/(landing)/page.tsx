@@ -254,7 +254,7 @@ export default function LandingPage() {
                             {plan.overage_fee_per_booking > 0 && (
                                 <div className="flex items-center gap-3 text-sm font-black">
                                     <CheckCircle2 className="w-5 h-5 shrink-0" /> 
-                                    <span>Phí vượt: {formatPrice(plan.overage_fee_per_booking)}/booking</span>
+                                    <span>Phí vượt: {formatPrice(plan.overage_fee_per_booking)}đ/booking</span>
                                 </div>
                             )}
                             
