@@ -14,7 +14,9 @@ export function middleware(request: NextRequest) {
     path === '/register-club' || 
     path === '/register-owner' ||
     path === '/bai-viet' ||
-    path.startsWith('/bai-viet/');
+    path.startsWith('/bai-viet/') ||
+    path === '/robots.txt' ||
+    path === '/sitemap.xml';
 
   // Localhost: Cho phép tất cả routes ở môi trường dev
   if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
@@ -65,6 +67,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon\\.ico|favicon\\.png|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$|.*\\.jfif$).*)',
+    '/((?!api|_next/static|_next/image|favicon\\.ico|favicon\\.png|robots\\.txt|sitemap\\.xml|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$|.*\\.jfif$).*)',
   ],
 };

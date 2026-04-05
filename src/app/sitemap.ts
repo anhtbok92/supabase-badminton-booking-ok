@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@/supabase/server';
 
+export const revalidate = 3600; // Revalidate every hour
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
   const baseUrl = 'https://sportbooking.online';
