@@ -17,7 +17,6 @@ export async function SeoHead({ pageSlug }: { pageSlug: string }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(seo.structured_data) }}
         />
       )}
-      {/* Custom head tags are handled via metadata API - this is for structured data only */}
     </>
   );
 }

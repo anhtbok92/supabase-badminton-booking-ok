@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSupabase } from '@/supabase';
@@ -16,7 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Globe, Share2, Settings2, Eye, RefreshCw, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { seoMetadataSchema, type SeoMetadataSchema } from './schemas';
+import { seoMetadataSchema, type SeoMetadataSchema, seoGlobalSchema, type SeoGlobalSchema } from './schemas';
 import { analyzeSeo, getSeoScore, SeoScoreBadge, ScoreIcon, GooglePreview, SocialPreview } from './seo-analysis';
 
 type SeoPage = SeoMetadataSchema & { id?: string; updated_at?: string };
@@ -39,6 +39,13 @@ export function SeoManager() {
   const [addPageOpen, setAddPageOpen] = useState(false);
   const [newPageSlug, setNewPageSlug] = useState('');
   const [newPageName, setNewPageName] = useState('');
+  const [globalSettings, setGlobalSettings] = useState<SeoGlobalSchema | null>(null);
+  const [loadingGlobal, setLoadingGlobal] = useState(false);
+
+  const globalForm = useForm<SeoGlobalSchema>({ 
+    resolver: zodResolver(seoGlobalSchema), 
+    defaultValues: { robots_txt: '', google_site_verification: '', fb_app_id: '', site_name: 'Sport Booking' } 
+  });
 
   const form = useForm<SeoMetadataSchema>({ resolver: zodResolver(seoMetadataSchema), defaultValues: DEFAULT_SEO });
   const watchedValues = form.watch();
@@ -52,7 +59,20 @@ export function SeoManager() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchPages(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const fetchGlobalSettings = useCallback(async () => {
+    setLoadingGlobal(true);
+    const { data } = await supabase.from('site_settings').select('*').eq('key', 'seo_global').single();
+    if (data) {
+        setGlobalSettings(data.value);
+        globalForm.reset(data.value);
+    }
+    setLoadingGlobal(false);
+  }, [supabase, globalForm]);
+
+  useEffect(() => { 
+    fetchPages(); 
+    fetchGlobalSettings();
+  }, [fetchGlobalSettings]); 
 
   const selectPage = (page: SeoPage) => {
     setSelectedPage(page);
@@ -80,6 +100,21 @@ export function SeoManager() {
     setSaving(false);
   };
 
+  const saveGlobalSettings = async (values: SeoGlobalSchema) => {
+    setSaving(true);
+    const { error } = await supabase
+        .from('site_settings')
+        .upsert({ key: 'seo_global', value: values, updated_at: new Date().toISOString() });
+    
+    if (!error) {
+        toast({ title: 'Đã lưu', description: 'Cấu hình SEO chung đã được cập nhật.' });
+        setGlobalSettings(values);
+    } else {
+        toast({ title: 'Lỗi', description: 'Không thể lưu cấu hình.', variant: 'destructive' });
+    }
+    setSaving(false);
+  };
+
   if (loading) return <Card><CardHeader><CardTitle>Quản lý SEO</CardTitle></CardHeader><CardContent><div className="space-y-4">{[1,2,3].map(i => <Skeleton key={i} className="h-16 w-full" />)}</div></CardContent></Card>;
 
   // Page list view
@@ -87,23 +122,79 @@ export function SeoManager() {
     <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <div><CardTitle className="flex items-center gap-2"><Search className="h-5 w-5" /> Quản lý SEO</CardTitle><CardDescription>Tối ưu SEO cho từng trang giống Yoast SEO. Chọn trang để bắt đầu.</CardDescription></div>
-          <Button onClick={() => setAddPageOpen(true)} size="sm"><Plus className="h-4 w-4 mr-1" /> Thêm trang</Button>
+            <div><CardTitle className="flex items-center gap-2"><Search className="h-5 w-5" /> Quản lý SEO</CardTitle><CardDescription>Tối ưu SEO cho từng trang giống Yoast SEO. Chọn trang để bắt đầu.</CardDescription></div>
+            <div className="flex gap-2">
+                <Button onClick={() => setAddPageOpen(true)} size="sm" variant="outline"><Plus className="h-4 w-4 mr-1" /> Thêm trang</Button>
+            </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {pages.map(page => {
-            const score = getSeoScore(analyzeSeo(page as SeoMetadataSchema, ''));
-            return (
-              <button key={page.page_slug} onClick={() => selectPage(page)} className="text-left p-4 border rounded-lg hover:border-primary hover:shadow-md transition-all">
-                <div className="flex items-center justify-between mb-2"><h3 className="font-semibold text-sm">{page.page_name}</h3><SeoScoreBadge score={score} /></div>
-                <p className="text-xs text-muted-foreground mb-1">/{page.page_slug}</p>
-                <p className="text-xs text-muted-foreground line-clamp-2">{page.meta_description || 'Chưa có mô tả'}</p>
-              </button>
-            );
-          })}
-        </div>
+        <Tabs defaultValue="pages">
+            <TabsList className="mb-4">
+                <TabsTrigger value="pages">Theo trang</TabsTrigger>
+                <TabsTrigger value="global">Cấu hình chung</TabsTrigger>
+            </TabsList>
+            <TabsContent value="pages">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {pages.map(page => {
+                    const score = getSeoScore(analyzeSeo(page as SeoMetadataSchema, ''));
+                    return (
+                    <button key={page.page_slug} onClick={() => selectPage(page)} className="text-left p-4 border rounded-lg hover:border-primary hover:shadow-md transition-all">
+                        <div className="flex items-center justify-between mb-2"><h3 className="font-semibold text-sm">{page.page_name}</h3><SeoScoreBadge score={score} /></div>
+                        <p className="text-xs text-muted-foreground mb-1">/{page.page_slug}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{page.meta_description || 'Chưa có mô tả'}</p>
+                    </button>
+                    );
+                })}
+                </div>
+            </TabsContent>
+            <TabsContent value="global">
+                {loadingGlobal ? <div className="space-y-4"><Skeleton className="h-32 w-full" /><Skeleton className="h-10 w-full" /></div> : (
+                    <Form {...globalForm}>
+                        <form onSubmit={globalForm.handleSubmit(saveGlobalSettings)} className="space-y-6 max-w-2xl">
+                            <FormField 
+                                control={globalForm.control} 
+                                name="site_name" 
+                                render={({ field }) => (
+                                    <FormItem><FormLabel>Tên Site</FormLabel><FormControl><Input placeholder="Sport Booking" {...field} /></FormControl><FormMessage /></FormItem>
+                                )} 
+                            />
+                            <FormField 
+                                control={globalForm.control} 
+                                name="robots_txt" 
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Robots.txt</FormLabel>
+                                        <FormControl><Textarea className="font-mono text-xs min-h-[150px]" placeholder="User-agent: *\nAllow: /" {...field} /></FormControl>
+                                        <FormDescription>Cấu hình bots công cụ tìm kiếm cho toàn bộ website</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} 
+                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField 
+                                    control={globalForm.control} 
+                                    name="google_site_verification" 
+                                    render={({ field }) => (
+                                        <FormItem><FormLabel>Google Verification Code</FormLabel><FormControl><Input placeholder="ID từ Google Search Console" {...field} /></FormControl><FormMessage /></FormItem>
+                                    )} 
+                                />
+                                <FormField 
+                                    control={globalForm.control} 
+                                    name="fb_app_id" 
+                                    render={({ field }) => (
+                                        <FormItem><FormLabel>Facebook App ID</FormLabel><FormControl><Input placeholder="ID ứng dụng Facebook" {...field} /></FormControl><FormMessage /></FormItem>
+                                    )} 
+                                />
+                            </div>
+                            <Button type="submit" disabled={saving}>
+                                {saving ? <><RefreshCw className="h-4 w-4 mr-1 animate-spin" /> Đang lưu...</> : 'Lưu cấu hình chung'}
+                            </Button>
+                        </form>
+                    </Form>
+                )}
+            </TabsContent>
+        </Tabs>
       </CardContent>
       <Dialog open={addPageOpen} onOpenChange={setAddPageOpen}>
         <DialogContent>

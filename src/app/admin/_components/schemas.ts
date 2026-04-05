@@ -193,5 +193,13 @@ export const promoPopupSchema = z.object({
 });
 export type PromoPopupSchema = z.infer<typeof promoPopupSchema>;
 
+export const seoGlobalSchema = z.object({
+    robots_txt: z.string().optional(),
+    google_site_verification: z.string().optional(),
+    fb_app_id: z.string().optional(),
+    site_name: z.string().optional(),
+});
+export type SeoGlobalSchema = z.infer<typeof seoGlobalSchema>;
+
 // SEO Metadata Schema - re-export from shared file (usable in both client & server)
 export { seoMetadataSchema, type SeoMetadataSchema } from '@/lib/seo-schema';

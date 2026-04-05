@@ -1,10 +1,22 @@
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { getSeoMetadata } from '@/lib/seo';
+import { SeoHead } from '@/components/seo-head';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getSeoMetadata('terms', {
+    title: 'Điều khoản dịch vụ',
+    description: 'Điều khoản và điều kiện sử dụng dịch vụ Sport Booking.',
+  });
+}
+
 
 export default function TermsPage() {
     return (
         <div className="container max-w-4xl mx-auto p-8 space-y-8 font-body">
+            <SeoHead pageSlug="terms" />
             <div className="flex items-center gap-4 mb-8">
                 <Button variant="ghost" size="icon" asChild>
                     <Link href="/">

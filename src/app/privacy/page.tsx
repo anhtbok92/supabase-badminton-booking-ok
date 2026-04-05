@@ -1,10 +1,22 @@
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { getSeoMetadata } from '@/lib/seo';
+import { SeoHead } from '@/components/seo-head';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getSeoMetadata('privacy', {
+    title: 'Chính sách bảo mật',
+    description: 'Chính sách bảo mật và quyền riêng tư của Sport Booking.',
+  });
+}
+
 
 export default function PrivacyPage() {
     return (
         <div className="container max-w-4xl mx-auto p-8 space-y-8 font-body">
+            <SeoHead pageSlug="privacy" />
             <div className="flex items-center gap-4 mb-8">
                 <Button variant="ghost" size="icon" asChild>
                     <Link href="/">
