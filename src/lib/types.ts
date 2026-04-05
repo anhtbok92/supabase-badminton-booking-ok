@@ -166,6 +166,7 @@ export type SubscriptionPlanFeatures = {
   support: 'email' | 'priority';
   analytics?: boolean;
   custom_features?: boolean;
+  extra_features?: string;
 };
 
 export type SubscriptionPlan = {
@@ -220,6 +221,24 @@ export type BookingQuotaCheck = {
   overage_count: number;
   overage_fee: number;
   usage_percentage: number;
+};
+
+export type PromoPopupConfig = {
+  is_active: boolean;
+  badge?: string;
+  title: string;
+  description?: string;
+  cta_text?: string;
+  sub_text?: string;
+  delay_ms?: number;
+  features: string[];
+};
+
+export type SiteSetting = {
+  key: string;
+  value: any;
+  created_at: string;
+  updated_at: string;
 };
 
 // ============================================================

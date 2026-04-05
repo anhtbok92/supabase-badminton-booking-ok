@@ -18,16 +18,34 @@ import Link from 'next/link';
 import { ThemeToggle } from './_components/theme-toggle';
 import { PromoPopup } from './_components/promo-popup';
 import FloatingContact from '@/components/floating-contact';
-
-type PlanType = 'FREE' | 'BASIC' | 'PRO';
+import { useSupabase, useSupabaseQuery } from '@/supabase';
+import type { SubscriptionPlan } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function LandingPage() {
+  const supabase = useSupabase();
+  const { data: plans, loading } = useSupabaseQuery<SubscriptionPlan>('subscription_plans', (query) => 
+    query.eq('is_active', true).order('monthly_price', { ascending: true })
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<PlanType>('FREE');
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
 
-  const handlePlanSelect = (plan: PlanType) => {
+  const handlePlanSelect = (plan: SubscriptionPlan) => {
     setSelectedPlan(plan);
     setDialogOpen(true);
+  };
+
+  const handleDemoClick = () => {
+    const freePlan = plans?.find(p => p.name === 'FREE');
+    if (freePlan) {
+      handlePlanSelect(freePlan);
+    } else {
+      setDialogOpen(true);
+    }
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('vi-VN').format(price);
   };
 
   return (
@@ -75,7 +93,7 @@ export default function LandingPage() {
                   Bắt đầu ngay
                 </a>
                 <button 
-                  onClick={() => handlePlanSelect('FREE')}
+                  onClick={handleDemoClick}
                   className="px-10 py-5 border border-[var(--lp-border)] text-[var(--lp-text)] rounded-md font-headline font-black uppercase tracking-widest hover:border-[var(--lp-accent)] hover:text-[var(--lp-accent)] transition-all text-center"
                 >
                   Xem Demo
@@ -166,7 +184,10 @@ export default function LandingPage() {
                     </div>
                   ))}
                   <button 
-                    onClick={() => handlePlanSelect('BASIC')}
+                    onClick={() => {
+                        const basicPlan = plans?.find(p => p.name === 'BASIC') || plans?.[0];
+                        if (basicPlan) handlePlanSelect(basicPlan);
+                    }}
                     className="mt-4 px-10 py-5 bg-[var(--lp-owner-btn-bg)] border border-[var(--lp-owner-btn-border)] text-[var(--lp-accent)] rounded-md font-headline font-bold uppercase tracking-widest hover:bg-[var(--lp-accent-bg)] hover:text-[#00440a] transition-all"
                   >
                     Đăng Ký Chủ Sân
@@ -178,33 +199,86 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-20 md:py-40 bg-[var(--lp-bg-alt)] border-t border-[var(--lp-border-light)]">
+        <section id="pricing" className="py-20 md:py-40 bg-[var(--lp-bg-alt)] border-t border-[var(--lp-border-light)] overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="text-center mb-12 md:mb-24">
-              <h2 className="font-headline text-3xl md:text-5xl lg:text-7xl font-black italic uppercase tracking-tighter mb-6">Dùng Thử Miễn Phí</h2>
-              <p className="text-[var(--lp-text-muted)] max-w-2xl mx-auto">Trải nghiệm toàn bộ tính năng PRO trong 3 tháng, hoàn toàn miễn phí. Không cần thẻ tín dụng.</p>
+              <h2 className="font-headline text-3xl md:text-5xl lg:text-7xl font-black italic uppercase tracking-tighter mb-6">Bảng giá dịch vụ</h2>
+              <p className="text-[var(--lp-text-muted)] max-w-2xl mx-auto">Chọn gói dịch vụ phù hợp với quy mô và nhu cầu phát triển CLB của bạn.</p>
             </div>
-            <div className="max-w-lg mx-auto">
-              <div className="bg-[var(--lp-accent-bg)] text-[#00440a] p-8 md:p-12 rounded-xl flex flex-col relative shadow-[0_40px_80px_var(--lp-glow)]">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00440a] text-[var(--lp-accent-bg)] px-4 py-1 rounded text-[9px] font-black uppercase tracking-[0.3em] whitespace-nowrap">ƯU ĐÃI ĐẶC BIỆT</div>
-                <span className="font-headline text-[10px] font-black uppercase tracking-[0.3em] mb-4 block opacity-60">Gói dùng thử</span>
-                <div className="text-4xl md:text-5xl font-headline font-black mb-2">MIỄN PHÍ</div>
-                <p className="text-sm font-bold opacity-70 mb-8 md:mb-10">Trọn bộ tính năng trong 3 tháng</p>
-                <div className="space-y-5 md:space-y-6 mb-8 md:mb-12 flex-grow">
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Không giới hạn số lượng sân</span></div>
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Không giới hạn lượt đặt</span></div>
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Dashboard thống kê chuyên sâu</span></div>
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Quản lý đặt sân & lịch trình</span></div>
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Đăng tin tức & khuyến mãi</span></div>
-                  <div className="flex items-center gap-4 text-sm font-black"><CheckCircle2 className="w-6 h-6 shrink-0" /> <span>Hỗ trợ kỹ thuật 24/7</span></div>
-                </div>
-                <button 
-                  onClick={() => handlePlanSelect('FREE')}
-                  className="w-full py-5 bg-[#00440a] text-white rounded-md font-headline font-black uppercase text-xs tracking-widest hover:opacity-90 transition-opacity"
-                >
-                  Đăng ký dùng thử ngay
-                </button>
-              </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {loading && Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="bg-[var(--lp-bg-card)] p-8 rounded-xl border border-[var(--lp-border-light)]">
+                        <Skeleton className="h-8 w-3/4 mb-4" />
+                        <Skeleton className="h-12 w-1/2 mb-8" />
+                        <div className="space-y-4">
+                            {Array.from({ length: 5 }).map((_, j) => (
+                                <Skeleton key={j} className="h-4 w-full" />
+                            ))}
+                        </div>
+                    </div>
+                ))}
+
+                {!loading && plans?.map((plan) => (
+                    <div 
+                        key={plan.id} 
+                        className={`p-8 md:p-10 rounded-xl flex flex-col relative transition-all hover:scale-[1.02] ${
+                            plan.name === 'PRO' 
+                            ? 'bg-[var(--lp-accent-bg)] text-[#00440a] shadow-[0_40px_80px_var(--lp-glow)] border-none' 
+                            : 'bg-[var(--lp-bg-card)] border border-[var(--lp-border-light)]'
+                        }`}
+                    >
+                        {plan.name === 'PRO' && (
+                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00440a] text-[var(--lp-accent-bg)] px-4 py-1 rounded text-[9px] font-black uppercase tracking-[0.3em] whitespace-nowrap">PHỔ BIẾN NHẤT</div>
+                        )}
+                        <span className={`font-headline text-[10px] font-black uppercase tracking-[0.3em] mb-4 block ${plan.name === 'PRO' ? 'opacity-60' : 'text-[var(--lp-accent)]'}`}>
+                            {plan.display_name}
+                        </span>
+                        <div className="flex items-baseline gap-1 mb-2">
+                            <span className="text-4xl md:text-5xl font-headline font-black">{plan.monthly_price === 0 ? 'MIỄN PHÍ' : formatPrice(plan.monthly_price)}</span>
+                            {plan.monthly_price > 0 && <span className="text-xs font-bold opacity-70">VNĐ/tháng</span>}
+                        </div>
+                        <p className={`text-sm font-bold mb-8 md:mb-10 ${plan.name === 'PRO' ? 'opacity-70' : 'text-[var(--lp-text-muted)]'}`}>
+                            {plan.monthly_price === 0 ? 'Dùng thử không giới hạn' : `Thanh toán năm: ${formatPrice(plan.yearly_price)} VNĐ`}
+                        </p>
+                        
+                        <div className="space-y-4 md:space-y-5 mb-8 md:mb-12 flex-grow">
+                            <div className="flex items-center gap-3 text-sm font-black">
+                                <CheckCircle2 className="w-5 h-5 shrink-0" /> 
+                                <span>Tối đa {plan.max_courts} sân</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-sm font-black">
+                                <CheckCircle2 className="w-5 h-5 shrink-0" /> 
+                                <span>Tối đa {plan.max_bookings_per_month.toLocaleString()} booking/tháng</span>
+                            </div>
+                            {plan.overage_fee_per_booking > 0 && (
+                                <div className="flex items-center gap-3 text-sm font-black">
+                                    <CheckCircle2 className="w-5 h-5 shrink-0" /> 
+                                    <span>Phí vượt: {formatPrice(plan.overage_fee_per_booking)}/booking</span>
+                                </div>
+                            )}
+                            
+                            {/* Extra features from freetext */}
+                            {plan.features?.extra_features?.split('\n').filter(line => line.trim()).map((feature, i) => (
+                                <div key={i} className="flex items-center gap-3 text-sm font-black">
+                                    <CheckCircle2 className="w-5 h-5 shrink-0" /> 
+                                    <span>{feature.replace(/^[-\*\+]\s*/, '')}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button 
+                            onClick={() => handlePlanSelect(plan)}
+                            className={`w-full py-5 rounded-md font-headline font-black uppercase text-xs tracking-widest transition-all ${
+                                plan.name === 'PRO'
+                                ? 'bg-[#00440a] text-white hover:opacity-90'
+                                : 'bg-[var(--lp-accent-bg)] text-[#00440a] hover:shadow-[0_0_20px_var(--lp-accent-glow)]'
+                            }`}
+                        >
+                            {plan.name === 'FREE' ? 'Đăng ký dùng thử' : 'Đăng ký ngay'}
+                        </button>
+                    </div>
+                ))}
             </div>
           </div>
         </section>
@@ -217,7 +291,10 @@ export default function LandingPage() {
                 <h2 className="font-headline text-2xl sm:text-4xl md:text-6xl font-black italic uppercase mb-6 md:mb-8">Sẵn sàng để <span className="text-[var(--lp-accent)]">LÀM CHỦ</span> sân chơi?</h2>
                 <p className="text-[var(--lp-text-muted)] text-base md:text-xl mb-8 md:mb-12 max-w-2xl mx-auto">Chuyển đổi số ngay hôm nay. Không cần thẻ tín dụng, đăng ký trong 1 phút.</p>
                 <button 
-                  onClick={() => handlePlanSelect('PRO')}
+                  onClick={() => {
+                      const proPlan = plans?.find(p => p.name === 'PRO') || plans?.[plans.length - 1];
+                      if (proPlan) handlePlanSelect(proPlan);
+                  }}
                   className="px-8 md:px-12 py-4 md:py-6 bg-[var(--lp-accent-bg)] text-[#00440a] rounded-md font-headline font-black uppercase tracking-[0.2em] shadow-[0_0_30px_var(--lp-glow)] hover:scale-105 transition-all text-base md:text-xl"
                 >
                   Dùng thử ngay
@@ -296,7 +373,10 @@ export default function LandingPage() {
       </div>
 
       {/* Promo Popup */}
-      <PromoPopup onRegister={() => handlePlanSelect('FREE')} />
+      <PromoPopup onRegister={() => {
+           const freePlan = plans?.find(p => p.name === 'FREE');
+           if (freePlan) handlePlanSelect(freePlan);
+      }} />
 
       {/* Register Dialog */}
       <RegisterDialog 

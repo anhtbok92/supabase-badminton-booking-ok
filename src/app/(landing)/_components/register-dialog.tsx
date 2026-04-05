@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import type { SubscriptionPlan } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,23 +25,17 @@ const registerOwnerSchema = z.object({
 
 type RegisterOwnerFormValues = z.infer<typeof registerOwnerSchema>;
 
-const PLANS = {
-    FREE: { name: 'FREE', displayName: 'Gói Dùng Thử 3 Tháng', price: 0, maxCourts: 'Không giới hạn', maxBookings: 'Không giới hạn' },
-    BASIC: { name: 'BASIC', displayName: 'Gói Mở rộng', price: 200000, maxCourts: '10', maxBookings: '1.000' },
-    PRO: { name: 'PRO', displayName: 'Gói Chuyên nghiệp', price: 500000, maxCourts: '30', maxBookings: '3.000' },
-};
-
 interface RegisterDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    selectedPlan: keyof typeof PLANS;
+    selectedPlan: SubscriptionPlan | null;
 }
 
 export function RegisterDialog({ open, onOpenChange, selectedPlan }: RegisterDialogProps) {
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const planInfo = PLANS[selectedPlan];
+    if (!selectedPlan && open) return null; // Or some fallback UI
 
     const form = useForm<RegisterOwnerFormValues>({
         resolver: zodResolver(registerOwnerSchema),
@@ -66,7 +61,7 @@ export function RegisterDialog({ open, onOpenChange, selectedPlan }: RegisterDia
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...values,
-                    planName: selectedPlan,
+                    planName: selectedPlan?.name,
                 }),
             });
 
@@ -102,9 +97,9 @@ export function RegisterDialog({ open, onOpenChange, selectedPlan }: RegisterDia
                 <DialogHeader className="mb-4 md:mb-6">
                     <DialogTitle className="text-xl md:text-3xl font-headline font-black italic uppercase tracking-tighter">Đăng ký đối tác chủ sân</DialogTitle>
                     <DialogDescription className="text-[var(--lp-text-muted)] pt-2 font-body italic">
-                        Gói đã chọn: <span className="font-headline font-bold text-[var(--lp-accent)] uppercase tracking-widest">{planInfo.displayName}</span> - {planInfo.price === 0 ? 'MIỄN PHÍ' : `${planInfo.price.toLocaleString('vi-VN')} VNĐ/tháng`}
+                        Gói đã chọn: <span className="font-headline font-bold text-[var(--lp-accent)] uppercase tracking-widest">{selectedPlan?.display_name}</span> - {selectedPlan?.monthly_price === 0 ? 'MIỄN PHÍ' : `${selectedPlan?.monthly_price.toLocaleString('vi-VN')} VNĐ/tháng`}
                         <br />
-                        <span className="font-bold text-[var(--lp-text-secondary)]">{planInfo.maxCourts}</span> sân • <span className="font-bold text-[var(--lp-text-secondary)]">{planInfo.maxBookings}</span> lượt đặt/tháng
+                        <span className="font-bold text-[var(--lp-text-secondary)]">{selectedPlan?.max_courts}</span> sân • <span className="font-bold text-[var(--lp-text-secondary)]">{selectedPlan?.max_bookings_per_month.toLocaleString()}</span> lượt đặt/tháng
                     </DialogDescription>
                 </DialogHeader>
 

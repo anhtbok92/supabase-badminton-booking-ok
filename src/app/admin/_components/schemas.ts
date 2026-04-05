@@ -115,6 +115,7 @@ export const subscriptionPlanFeaturesSchema = z.object({
     support: z.enum(['email', 'priority']),
     analytics: z.boolean().optional(),
     custom_features: z.boolean().optional(),
+    extra_features: z.string().optional(),
 });
 export type SubscriptionPlanFeaturesSchema = z.infer<typeof subscriptionPlanFeaturesSchema>;
 
@@ -175,6 +176,22 @@ export const fixedMonthlyConfigSchema = z.object({
   start_month: z.string().regex(/^\d{4}-\d{2}$/, 'Tháng không hợp lệ (YYYY-MM)').optional(),
 });
 export type FixedMonthlyConfigSchema = z.infer<typeof fixedMonthlyConfigSchema>;
+
+// ============================================================
+// Site Settings Schemas
+// ============================================================
+
+export const promoPopupSchema = z.object({
+    is_active: z.boolean().default(true),
+    badge: z.string().optional(),
+    title: z.string().min(1, 'Tiêu đề không được để trống'),
+    description: z.string().optional(),
+    cta_text: z.string().optional(),
+    sub_text: z.string().optional(),
+    delay_ms: z.coerce.number().min(0).default(1500),
+    features: z.string().optional(),
+});
+export type PromoPopupSchema = z.infer<typeof promoPopupSchema>;
 
 // SEO Metadata Schema - re-export from shared file (usable in both client & server)
 export { seoMetadataSchema, type SeoMetadataSchema } from '@/lib/seo-schema';

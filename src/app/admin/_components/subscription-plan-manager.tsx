@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { subscriptionPlanSchema, type SubscriptionPlanSchema } from './schemas';
 
 export function SubscriptionPlanManager() {
@@ -274,6 +275,7 @@ function PlanFormDialog({
                 support: 'email',
                 analytics: false,
                 custom_features: false,
+                extra_features: '',
             },
         },
     });
@@ -288,8 +290,9 @@ function PlanFormDialog({
             yearly_price: values.yearly_price,
             overage_fee_per_booking: values.overage_fee_per_booking,
             is_active: values.is_active,
-            features: values.features || {
-                support: 'email',
+            features: {
+                ...values.features,
+                support: values.features?.support || 'email',
             },
         };
 
@@ -453,6 +456,24 @@ function PlanFormDialog({
                                     <FormLabel>Phí vượt mức/booking (VND)</FormLabel>
                                     <FormControl>
                                         <Input type="number" min="0" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="features.extra_features"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Đặc điểm ưu đãi khác (Phân tách bằng dấu xuống dòng)</FormLabel>
+                                    <FormControl>
+                                        <Textarea 
+                                            placeholder="- Hỗ trợ Zalo riêng\n- Ưu tiên hiển thị\n- Tặng 1 tháng khi đăng ký năm" 
+                                            className="min-h-[100px]"
+                                            {...field} 
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
