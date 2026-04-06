@@ -104,12 +104,12 @@ Triển khai hệ thống multi-tenant subdomain cho Sport Booking, cho phép m�
     - Vercel: add `*.sportbooking.online` as project domain
     - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 10. Next.js configuration update
-  - [ ] 10.1 Update `next.config.ts` to add `serverActions.allowedOrigins` for wildcard subdomain support
+- [x] 10. Next.js configuration update
+  - [x] 10.1 Update `next.config.ts` to add `serverActions.allowedOrigins` for wildcard subdomain support
     - Add `*.sportbooking.online` pattern to allowed origins
     - _Requirements: 6.3_
 
-- [ ] 11. Final checkpoint - Ensure all tests pass
+- [x] 11. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
