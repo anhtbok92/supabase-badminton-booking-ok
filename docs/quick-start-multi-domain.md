@@ -33,10 +33,24 @@ git commit -m "Add multi-domain support"
 git push
 ```
 
+## Bước 4: Cấu hình Wildcard Domain (cho subdomain riêng từng club)
+
+1. Tại DNS provider, thêm record:
+   ```
+   Type: CNAME
+   Name: *
+   Value: cname.vercel-dns.com
+   ```
+2. Vào Vercel → Settings → Domains → Add: `*.sportbooking.online`
+3. Đợi verify (5-10 phút)
+
+Chi tiết đầy đủ xem tại: [docs/multi-domain-setup.md](./multi-domain-setup.md#bước-4-cấu-hình-wildcard-domain-cho-multi-tenant-subdomain)
+
 ## Kết quả
 
 - ✅ `sportbooking.online` → Landing page
 - ✅ `app.sportbooking.online` → App đặt lịch
+- ✅ `{club}.sportbooking.online` → App với branding riêng của club
 - ✅ Button trên landing page dẫn đến app
 
 ## Test
@@ -44,5 +58,6 @@ git push
 1. Mở https://sportbooking.online → Thấy landing page
 2. Click button → Chuyển đến https://app.sportbooking.online
 3. Mở https://app.sportbooking.online → Vào app luôn
+4. Mở https://caulonglinhdam.sportbooking.online → Vào app với branding club
 
 Xong! 🎉

@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Feather, Menu, User as UserIcon, LogOut } from 'lucide-react';
 
-import { useSupabase, useUser } from '@/supabase';
+import { useSupabase, useUser, useSupabaseRow } from '@/supabase';
+import { useTenant } from '@/hooks/use-tenant';
+import type { Club } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -85,14 +88,28 @@ function UserNav() {
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const tenant = useTenant();
+  const { data: club } = useSupabaseRow<Club>(tenant ? 'clubs' : null, tenant?.clubId ?? null);
+
+  const clubLogo = club?.image_urls?.[0] ?? null;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <Feather className="h-7 w-7 text-primary" />
+          {tenant && clubLogo ? (
+            <Image
+              src={clubLogo}
+              alt={tenant.clubName}
+              width={28}
+              height={28}
+              className="h-7 w-7 rounded-md object-cover"
+            />
+          ) : (
+            <Feather className="h-7 w-7 text-primary" />
+          )}
           <span className="text-xl font-bold font-headline tracking-tight">
-            Hub Cầu Lông
+            {tenant ? tenant.clubName : 'Hub Cầu Lông'}
           </span>
         </Link>
         

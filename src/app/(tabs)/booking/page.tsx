@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
@@ -367,14 +367,41 @@ function ClubCardSkeleton() {
 
 
 import { cn } from '@/lib/utils';
+import { useTenant } from '@/hooks/use-tenant';
+import { useRouter } from 'next/navigation';
 
 export default function BookingTabPage() {
+  const tenant = useTenant();
+  const router = useRouter();
   const { data: clubs, loading: clubsLoading } = useSupabaseQuery<Club>('clubs');
   const { data: clubTypes, loading: typesLoading } = useSupabaseQuery<ClubType>('club_types');
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeClubType, setActiveClubType] = useState('Tất cả');
   const [searchTerm, setSearchTerm] = useState('');
+
+  // When tenant context is present, skip club selection and go directly to the club's booking page
+  const tenantClub = useMemo(() => {
+    if (!tenant || !clubs) return null;
+    return clubs.find(c => c.id === tenant.clubId) ?? null;
+  }, [tenant, clubs]);
+
+  useEffect(() => {
+    if (tenantClub) {
+      const slug = tenantClub.slug || tenantClub.id;
+      router.replace(`/dat-san/${slug}`);
+    }
+  }, [tenantClub, router]);
+
+  // Show loading while redirecting to tenant club's booking page
+  if (tenant && !tenantClub) {
+    return (
+      <div className="px-4 py-8">
+        <Skeleton className="h-8 w-48 mb-4" />
+        <Skeleton className="h-64 w-full rounded-xl" />
+      </div>
+    );
+  }
 
   const filteredClubs = useMemo(() => {
     if (!clubs) return [];

@@ -38,6 +38,7 @@ export type Club = {
   current_subscription_id?: string;
   subscription_status?: 'active' | 'expiring_soon' | 'expired';
   booking_policy?: string;
+  custom_subdomain?: string | null;
 };
 
 export type Court = {

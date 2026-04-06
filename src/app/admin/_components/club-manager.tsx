@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlusCircle, Trash2, Pencil, UploadCloud, Copy, QrCode, Info, Star } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, UploadCloud, Copy, QrCode, Info, Star, Globe } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -23,6 +23,14 @@ import { uploadFile } from '@/lib/upload';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { clubSchema, type ClubSchema } from './schemas';
+
+const RESERVED_SUBDOMAINS = [
+    'app', 'www', 'api', 'admin', 'mail', 'ftp',
+    'staging', 'dev', 'test', 'beta', 'demo',
+    'static', 'cdn', 'assets', 'img', 'images',
+    'ns1', 'ns2', 'dns', 'mx',
+];
+const SUBDOMAIN_REGEX = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
 import { CourtManager } from './court-manager';
 import { BookingQuotaDisplay } from './booking-quota-display';
 import { ClubQrCodeDialog } from './club-qr-code';
@@ -152,6 +160,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
     const [uploadingQr, setUploadingQr] = useState(false);
     const [priceListImageUrl, setPriceListImageUrl] = useState<string>(club?.price_list_image_url || '');
     const [uploadingPriceListImage, setUploadingPriceListImage] = useState(false);
+    const [subdomainStatus, setSubdomainStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'reserved' | 'invalid'>('idle');
 
     const form = useForm<ClubSchema>({
         resolver: zodResolver(clubSchema),
@@ -163,11 +172,29 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
             paymentQrUrl: club?.payment_qr_url ?? '', priceListHtml: club?.price_list_html ?? '',
             priceListImageUrl: club?.price_list_image_url ?? '', mapVideoUrl: club?.map_video_url ?? '',
             bookingPolicy: club?.booking_policy ?? 'Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0982.949.974',
+            customSubdomain: club?.custom_subdomain ?? '',
         },
     });
 
     const { fields: weekdayFields, append: appendWeekday, remove: removeWeekday } = useFieldArray({ control: form.control, name: "pricing.weekday" });
     const { fields: weekendFields, append: appendWeekend, remove: removeWeekend } = useFieldArray({ control: form.control, name: "pricing.weekend" });
+
+    const checkSubdomainAvailability = useCallback(async (value: string) => {
+        if (!value) { setSubdomainStatus('idle'); return; }
+        if (value.length > 63 || !SUBDOMAIN_REGEX.test(value)) { setSubdomainStatus('invalid'); return; }
+        if (RESERVED_SUBDOMAINS.includes(value)) { setSubdomainStatus('reserved'); return; }
+        setSubdomainStatus('checking');
+        const { data } = await supabase
+            .from('clubs')
+            .select('id')
+            .eq('custom_subdomain', value)
+            .maybeSingle();
+        if (data && data.id !== club?.id) {
+            setSubdomainStatus('taken');
+        } else {
+            setSubdomainStatus('available');
+        }
+    }, [supabase, club?.id]);
 
     const handleImageUpload = (files: FileList | null) => {
         if (!files || files.length === 0) return;
@@ -192,6 +219,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
             payment_qr_url: paymentQrUrl, price_list_html: values.priceListHtml,
             price_list_image_url: priceListImageUrl, map_video_url: values.mapVideoUrl,
             booking_policy: values.bookingPolicy,
+            custom_subdomain: values.customSubdomain || null,
         };
         if (isEditMode && club) {
             const { error } = await supabase.from('clubs').update(finalValues).eq('id', club.id);
@@ -245,6 +273,38 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                 <FormField control={form.control} name="servicesHtml" render={({ field }) => (<FormItem><FormLabel>Dịch vụ (HTML)</FormLabel><FormControl><Textarea {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="priceListHtml" render={({ field }) => (<FormItem><FormLabel>Bảng giá chi tiết (HTML)</FormLabel><FormControl><Textarea {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="bookingPolicy" render={({ field }) => (<FormItem><FormLabel>Chính sách đặt sân (Hiển thị ngay dưới tiêu đề)</FormLabel><FormControl><Input {...field} placeholder="VD: Khách vui lòng đặt 2 tiếng..." /></FormControl><FormDescriptionComponent>Thông báo ngắn gọn cho khách khi đặt sân.</FormDescriptionComponent><FormMessage /></FormItem>)} />
+                <div className="space-y-2 border p-4 rounded-lg bg-muted/20">
+                    <FormLabel className="text-base font-bold flex items-center gap-2"><Globe className="h-4 w-4" /> Subdomain riêng</FormLabel>
+                    <FormField control={form.control} name="customSubdomain" render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    placeholder="vd: caulonglinhdam"
+                                    onChange={(e) => {
+                                        const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+                                        field.onChange(val);
+                                        checkSubdomainAvailability(val);
+                                    }}
+                                />
+                            </FormControl>
+                            {field.value && (
+                                <div className="text-xs space-y-1">
+                                    <p className="text-muted-foreground">
+                                        URL: <span className="font-mono font-medium text-primary">{field.value}.sportbooking.online</span>
+                                    </p>
+                                    {subdomainStatus === 'checking' && <p className="text-muted-foreground">Đang kiểm tra...</p>}
+                                    {subdomainStatus === 'available' && <p className="text-emerald-600">✓ Subdomain khả dụng</p>}
+                                    {subdomainStatus === 'taken' && <p className="text-destructive">✗ Subdomain đã được sử dụng</p>}
+                                    {subdomainStatus === 'reserved' && <p className="text-destructive">✗ Subdomain này là từ khóa hệ thống, không thể sử dụng</p>}
+                                    {subdomainStatus === 'invalid' && <p className="text-destructive">✗ Subdomain không hợp lệ (chỉ chữ thường, số, dấu gạch ngang)</p>}
+                                </div>
+                            )}
+                            <FormDescriptionComponent>Để trống nếu không muốn dùng subdomain riêng.</FormDescriptionComponent>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                </div>
                 <div className="space-y-4 border p-4 rounded-lg bg-muted/20"><FormLabel className="text-base font-bold">Hình ảnh Bảng giá</FormLabel>
                     {priceListImageUrl ? (<div className="relative group w-full max-w-sm aspect-video border-2 border-primary/20 rounded-xl overflow-hidden shadow-md"><Image src={priceListImageUrl} alt="Price List" fill className="object-contain p-2 bg-white" /><Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100" onClick={() => setPriceListImageUrl('')}><Trash2 className="h-4 w-4" /></Button></div>)
                     : (<label className="flex flex-col items-center justify-center w-full max-w-sm h-32 border-2 border-dashed rounded-xl cursor-pointer hover:bg-secondary/50"><UploadCloud className="w-8 h-8 mb-2 text-primary/60" /><p className="text-sm font-medium">Tải lên ảnh Bảng giá</p><input type="file" className="hidden" accept="image/*" onChange={uploadSingleImage(setPriceListImageUrl, setUploadingPriceListImage, 'price-list')} disabled={uploadingPriceListImage} /></label>)}
@@ -364,7 +424,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                         </div>
                     </div>
                 </div>
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || uploadingFiles.length > 0}>{form.formState.isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}</Button>
+                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || uploadingFiles.length > 0 || subdomainStatus === 'taken' || subdomainStatus === 'reserved' || subdomainStatus === 'checking'}>{form.formState.isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}</Button>
             </form></Form>
         </DialogContent></Dialog>
     );

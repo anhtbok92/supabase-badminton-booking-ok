@@ -71,6 +71,11 @@ export const clubSchema = z.object({
     priceListImageUrl: z.string().optional(),
     mapVideoUrl: z.string().optional(),
     bookingPolicy: z.string().optional(),
+    customSubdomain: z.string()
+        .regex(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/, 'Subdomain chỉ chứa chữ thường, số và dấu gạch ngang, không bắt đầu/kết thúc bằng dấu gạch ngang')
+        .max(63, 'Subdomain tối đa 63 ký tự')
+        .optional()
+        .or(z.literal('')),
 });
 export type ClubSchema = z.infer<typeof clubSchema>;
 

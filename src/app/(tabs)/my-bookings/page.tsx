@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 
 import { useUser, useSupabaseQuery } from '@/supabase';
+import { useTenant } from '@/hooks/use-tenant';
 import type { UserBooking, Court } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -183,11 +184,18 @@ function GroupedBookingCard({ group }: { group: { id: string; clubName: string; 
 
 function LoggedInBookingsView() {
     const { user } = useUser();
+    const tenant = useTenant();
 
     const { data: bookings, loading } = useSupabaseQuery<UserBooking>(
         'bookings',
-        q => q.eq('user_id', user!.id),
-        { deps: [user?.id] }
+        q => {
+            let query = q.eq('user_id', user!.id);
+            if (tenant) {
+                query = query.eq('club_id', tenant.clubId);
+            }
+            return query;
+        },
+        { deps: [user?.id, tenant?.clubId] }
     );
 
     const groupedBookings = useMemo(() => {

@@ -1,72 +1,114 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { extractSubdomain, isReservedSubdomain, serializeTenantContext } from '@/lib/tenant';
+import { createMiddlewareSupabaseClient } from '@/supabase/middleware';
 
-export function middleware(request: NextRequest) {
+const BASE_DOMAIN = 'sportbooking.online';
+const LOCALHOST_BASE = 'localhost:3000';
+
+const PUBLIC_ROUTES = [
+  '/', '/privacy', '/terms', '/splash',
+  '/register-club', '/register-owner',
+  '/bai-viet', '/robots.txt', '/sitemap.xml',
+];
+
+function isPublicRoute(path: string): boolean {
+  return PUBLIC_ROUTES.includes(path) || path.startsWith('/bai-viet/');
+}
+
+export async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   const path = request.nextUrl.pathname;
-  
-  // Danh sách các route công khai (Landing Page, Privacy, Terms, Register, Blog)
-  const isPublicRoute = 
-    path === '/' || 
-    path === '/privacy' || 
-    path === '/terms' || 
-    path === '/splash' || 
-    path === '/register-club' || 
-    path === '/register-owner' ||
-    path === '/bai-viet' ||
-    path.startsWith('/bai-viet/') ||
-    path === '/robots.txt' ||
-    path === '/sitemap.xml';
 
-  // Localhost: Cho phép tất cả routes ở môi trường dev
-  if (hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+  // Determine which base domain to use (localhost vs production)
+  const isLocalhost = hostname.includes('localhost') || hostname.includes('127.0.0.1');
+  const baseDomain = isLocalhost ? LOCALHOST_BASE : BASE_DOMAIN;
+
+  // Extract subdomain from hostname
+  const subdomain = extractSubdomain(hostname, baseDomain);
+
+  // --- No subdomain or reserved subdomain: use existing routing logic ---
+  if (!subdomain || isReservedSubdomain(subdomain)) {
+    return handleExistingRouting(request, hostname, path, isLocalhost);
+  }
+
+  // --- Club subdomain detected: resolve tenant ---
+  const supabase = createMiddlewareSupabaseClient();
+  const { data: club, error } = await supabase
+    .from('clubs')
+    .select('id, name')
+    .eq('custom_subdomain', subdomain)
+    .eq('is_active', true)
+    .single();
+
+  if (error || !club) {
+    // Unknown subdomain → redirect to app.sportbooking.online
+    return NextResponse.redirect(
+      isLocalhost
+        ? new URL('/', `http://${LOCALHOST_BASE}`)
+        : new URL('/', `https://app.${BASE_DOMAIN}`)
+    );
+  }
+
+  // Set tenant context header and rewrite to same path
+  const tenantContext = serializeTenantContext({
+    clubId: club.id,
+    clubName: club.name,
+    subdomain,
+  });
+
+  const url = request.nextUrl.clone();
+  // Rewrite root to splash for tenant subdomains (same as app.sportbooking.online)
+  if (url.pathname === '/') {
+    url.pathname = '/splash';
+  }
+
+  const response = NextResponse.rewrite(url);
+  response.headers.set('x-tenant-context', tenantContext);
+  return response;
+}
+
+/**
+ * Original routing logic for requests without a club subdomain.
+ */
+function handleExistingRouting(
+  request: NextRequest,
+  hostname: string,
+  path: string,
+  isLocalhost: boolean,
+): NextResponse {
+  // Localhost: allow all routes in dev
+  if (isLocalhost) {
     return NextResponse.next();
   }
-  
-  // Vercel domain: Chỉ hiển thị landing page ở root
-  // Không có subdomain nên app routes vẫn accessible trực tiếp
+
+  // Vercel preview domain
   if (hostname === 'sportbookingonline.vercel.app') {
-    // Chỉ landing page ở root
-    if (path === '/') {
-      return NextResponse.next();
-    }
-    // Các routes khác (app) vẫn hoạt động bình thường
     return NextResponse.next();
   }
-  
-  // Production domain chính: sportbooking.online
+
+  // Production main domain: sportbooking.online / www
   if (hostname === 'sportbooking.online' || hostname === 'www.sportbooking.online') {
-    // Cho phép truy cập các trang công khai
-    if (isPublicRoute) {
+    if (isPublicRoute(path)) {
       return NextResponse.next();
     }
-    
-    // Redirect tất cả routes khác về landing page
     if (!path.startsWith('/_next') && !path.startsWith('/api')) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
-  
-  // Subdomain app (app.sportbooking.online)
+
+  // app.sportbooking.online
   if (hostname === 'app.sportbooking.online') {
-    // Nếu truy cập root, redirect về splash screen
     if (path === '/') {
       return NextResponse.redirect(new URL('/splash', request.url));
     }
   }
-  
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon\\.ico|favicon\\.png|robots\\.txt|sitemap\\.xml|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$|.*\\.jfif$).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.png|robots\\.txt|sitemap\\.xml|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$|.*\\.jfif$).*)',
   ],
 };

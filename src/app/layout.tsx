@@ -6,6 +6,8 @@ import { SupabaseProvider } from '@/supabase';
 import { ThemeProvider } from '@/components/theme-provider';
 import { getSeoMetadata } from '@/lib/seo';
 import { SeoHead } from '@/components/seo-head';
+import { TenantProvider } from '@/components/tenant-provider';
+import { getTenantContext } from '@/lib/tenant';
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -40,11 +42,13 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const tenant = await getTenantContext();
+
   return (
     <html lang="vi" suppressHydrationWarning>
       <head>
@@ -61,7 +65,9 @@ export default function RootLayout({
       <body className={cn('font-body antialiased')}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <SupabaseProvider>
-            {children}
+            <TenantProvider tenant={tenant}>
+              {children}
+            </TenantProvider>
             <Toaster />
           </SupabaseProvider>
         </ThemeProvider>

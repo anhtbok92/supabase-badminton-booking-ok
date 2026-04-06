@@ -34,16 +34,23 @@ import { UserGuideGenerator } from './user-guide-generator';
 import { SeoManager } from './seo-manager';
 import { BlogAiWriter } from './blog-ai-writer';
 import { PromoSettingsManager } from './promo-settings-manager';
+import { useTenant } from '@/hooks/use-tenant';
 
 export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
     const supabase = useSupabase();
+    const tenant = useTenant();
     const isAdmin = userProfile.role === 'admin';
     const isClubOwner = userProfile.role === 'club_owner';
     const isStaff = userProfile.role === 'staff';
+    const isTenantScoped = !!tenant && !isAdmin;
     const [managedClubName, setManagedClubName] = useState<string>('');
     const [isClubNameLoading, setIsClubNameLoading] = useState(false);
 
     useEffect(() => {
+        if (tenant && !isAdmin) {
+            setManagedClubName(tenant.clubName);
+            return;
+        }
         if ((isClubOwner || isStaff) && userProfile.managed_club_ids && userProfile.managed_club_ids.length > 0) {
             setIsClubNameLoading(true);
             const fetchClubName = async () => {
@@ -59,7 +66,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
             };
             fetchClubName();
         }
-    }, [isClubOwner, isStaff, userProfile.managed_club_ids, supabase]);
+    }, [isClubOwner, isStaff, isAdmin, tenant, userProfile.managed_club_ids, supabase]);
 
 
     const [activeView, setActiveView] = useState(() => isStaff ? 'schedule' : 'stats');
@@ -70,7 +77,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         { id: 'schedule', label: 'Lịch sân', icon: CalendarClock, roles: ['admin', 'club_owner', 'staff'] },
         { id: 'fixedBookings', label: 'Lịch cố định', icon: CalendarDays, roles: ['admin', 'club_owner', 'staff'] },
         { id: 'bookings', label: 'Quản lý Lịch đặt', icon: CalendarDays, roles: ['admin', 'club_owner', 'staff'] },
-        { id: 'clubs', label: 'Quản lý Câu lạc bộ', icon: Building, roles: ['admin', 'club_owner'] },
+        ...(!isTenantScoped ? [{ id: 'clubs', label: 'Quản lý Câu lạc bộ', icon: Building, roles: ['admin', 'club_owner'] }] : []),
         { id: 'staff', label: 'Quản lý Nhân viên', icon: Users, roles: ['admin', 'club_owner'] },
         { id: 'subscriptionDashboard', label: 'Thống kê Gói đăng ký', icon: CreditCard, roles: ['admin'] },
         { id: 'subscriptions', label: 'Quản lý Gói đăng ký', icon: CreditCard, roles: ['admin'] },
@@ -110,7 +117,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                             <Image src="/favicon.png" alt="Logo" width={44} height={44} className="object-cover scale-90" />
                         </div>
                         <div className="flex flex-col min-w-0">
-                            <span className="text-[10px] uppercase font-black tracking-[0.1em] text-primary leading-none mb-1">Sport Booking</span>
+                            <span className="text-[10px] uppercase font-black tracking-[0.1em] text-primary leading-none mb-1">{isTenantScoped ? tenant!.clubName : 'Sport Booking'}</span>
                             {!isAdmin ? (
                                 isClubNameLoading ? (
                                     <Skeleton className="h-4 w-24 mt-0.5" />
