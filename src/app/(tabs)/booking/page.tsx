@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
@@ -368,11 +368,9 @@ function ClubCardSkeleton() {
 
 import { cn } from '@/lib/utils';
 import { useTenant } from '@/hooks/use-tenant';
-import { useRouter } from 'next/navigation';
 
 export default function BookingTabPage() {
   const tenant = useTenant();
-  const router = useRouter();
   const { data: clubs, loading: clubsLoading } = useSupabaseQuery<Club>('clubs');
   const { data: clubTypes, loading: typesLoading } = useSupabaseQuery<ClubType>('club_types');
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
@@ -380,31 +378,16 @@ export default function BookingTabPage() {
   const [activeClubType, setActiveClubType] = useState('Tất cả');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // When tenant context is present, skip club selection and go directly to the club's booking page
-  const tenantClub = useMemo(() => {
-    if (!tenant || !clubs) return null;
-    return clubs.find(c => c.id === tenant.clubId) ?? null;
-  }, [tenant, clubs]);
-
-  useEffect(() => {
-    if (tenantClub) {
-      const slug = tenantClub.slug || tenantClub.id;
-      router.replace(`/dat-san/${slug}`);
-    }
-  }, [tenantClub, router]);
-
-  // Show loading while redirecting to tenant club's booking page
-  if (tenant && !tenantClub) {
-    return (
-      <div className="px-4 py-8">
-        <Skeleton className="h-8 w-48 mb-4" />
-        <Skeleton className="h-64 w-full rounded-xl" />
-      </div>
-    );
-  }
-
+  // When tenant context is present, show only the tenant's club
   const filteredClubs = useMemo(() => {
     if (!clubs) return [];
+
+    // Tenant mode: show only the tenant's club
+    if (tenant) {
+      return clubs.filter(c => c.id === tenant.clubId && (c.is_active ?? true));
+    }
+
+    // Normal mode: apply search and type filters
     const lowercasedSearchTerm = searchTerm.toLowerCase();
     return clubs.filter(club => {
       const isVisible = club.is_active ?? true;
@@ -414,7 +397,7 @@ export default function BookingTabPage() {
         club.address.toLowerCase().includes(lowercasedSearchTerm);
       return isVisible && typeMatch && searchMatch;
     });
-  }, [clubs, activeClubType, searchTerm]);
+  }, [clubs, activeClubType, searchTerm, tenant]);
 
   const handleCardClick = (club: Club) => {
     setSelectedClub(club);
@@ -433,14 +416,16 @@ export default function BookingTabPage() {
   return (
     <>
       <BookingGreeting />
-      <SearchAndFilter
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        activeType={activeClubType}
-        onTypeChange={setActiveClubType}
-        clubTypes={clubTypes}
-        loading={typesLoading}
-      />
+      {!tenant && (
+        <SearchAndFilter
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          activeType={activeClubType}
+          onTypeChange={setActiveClubType}
+          clubTypes={clubTypes}
+          loading={typesLoading}
+        />
+      )}
       <div className="px-4 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {clubsLoading && Array.from({ length: 3 }).map((_, i) => <ClubCardSkeleton key={i} />)}

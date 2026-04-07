@@ -291,7 +291,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                             {field.value && (
                                 <div className="text-xs space-y-1">
                                     <p className="text-muted-foreground">
-                                        URL: <span className="font-mono font-medium text-primary">{field.value}.sportbooking.online</span>
+                                        URL: <a href={`https://${field.value}.sportbooking.online`} target="_blank" rel="noopener noreferrer" className="font-mono font-medium text-primary underline hover:text-primary/80">{field.value}.sportbooking.online</a>
                                     </p>
                                     {subdomainStatus === 'checking' && <p className="text-muted-foreground">Đang kiểm tra...</p>}
                                     {subdomainStatus === 'available' && <p className="text-emerald-600">✓ Subdomain khả dụng</p>}
