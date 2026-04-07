@@ -181,11 +181,11 @@ function BookingGreeting() {
         <>
           <h2 className="text-2xl font-bold leading-tight font-headline">Khám phá & Đặt sân</h2>
           <p className="text-muted-foreground mt-1">Đăng nhập để có trải nghiệm đặt sân tốt nhất.</p>
-          <div className='flex gap-2 mt-4'>
-            <Button asChild variant="outline" className='rounded-xl'>
+          <div className='flex gap-2 mt-3'>
+            <Button asChild variant="outline" size="sm" className='rounded-xl text-xs'>
               <Link href="/login">Đăng nhập</Link>
             </Button>
-            <Button asChild className='rounded-xl'>
+            <Button asChild size="sm" className='rounded-xl text-xs'>
               <Link href="/login">Đăng ký</Link>
             </Button>
           </div>
@@ -213,17 +213,17 @@ function SearchAndFilter({
   const sortedClubTypes = useMemo(() => clubTypes?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0)), [clubTypes]);
 
   return (
-    <div className="px-4 py-4 space-y-4">
+    <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm px-4 py-3 space-y-3 border-b border-zinc-100">
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
         <Input
           placeholder="Tìm theo tên hoặc địa chỉ..."
-          className="pl-12 rounded-2xl h-14 text-base border-zinc-200 shadow-sm focus:ring-primary/20 transition-all font-body"
+          className="pl-10 rounded-xl h-10 text-sm border-zinc-200 shadow-sm focus:ring-primary/20 transition-all font-body"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
-      <div className="flex gap-2.5 overflow-x-auto -mx-4 px-4 pb-2 hide-scrollbar">
+      <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1 hide-scrollbar">
         <Button
           className={cn(
             "shrink-0 rounded-full h-9 px-5 text-xs font-bold uppercase tracking-wider transition-all border-2",
@@ -285,7 +285,7 @@ function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (
 
   return (
     <Card
-      className="overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group rounded-3xl border border-zinc-100 bg-white"
+      className="overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group rounded-xl border border-zinc-100 bg-white"
       onClick={() => onCardClick(club)}
     >
       <div className="relative w-full aspect-[16/10] overflow-hidden">
@@ -314,15 +314,27 @@ function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (
         )}
       </div>
 
-      <CardContent className="p-5">
-        <h3 className="text-slate-900 font-headline text-lg font-black uppercase italic leading-tight mb-2 line-clamp-2 drop-shadow-sm min-h-[3rem]">
+      <CardContent className="p-4">
+        <h3 className="text-slate-900 font-headline font-black uppercase italic leading-tight mb-2 line-clamp-2 drop-shadow-sm min-h-[1.5rem]" style={{ fontSize: '15px' }}>
             {club.name}
         </h3>
-        <div className="flex items-start gap-2 mb-4">
-            <div className="bg-primary/10 p-1.5 rounded-lg shrink-0 mt-0.5">
-                <MapPin className="h-4 w-4 text-primary" />
+        <div className="space-y-1 mb-3">
+          <div className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="text-xs text-slate-500 font-medium line-clamp-1">{club.address}</span>
+          </div>
+          {club.phone && (
+            <div className="flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5 text-primary shrink-0" />
+                <span className="text-xs text-slate-500 font-medium">{club.phone}</span>
             </div>
-            <span className="text-xs text-slate-500 font-medium line-clamp-2 leading-relaxed">{club.address}</span>
+          )}
+          {club.operating_hours && (
+            <div className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5 text-primary shrink-0" />
+                <span className="text-xs text-slate-500 font-medium line-clamp-1">{club.operating_hours}</span>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-zinc-50">
