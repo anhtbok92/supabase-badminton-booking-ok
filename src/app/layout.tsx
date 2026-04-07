@@ -48,6 +48,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const tenant = await getTenantContext();
+  // Debug: log tenant context to verify middleware is passing it correctly
+  if (tenant) {
+    console.log('[RootLayout] Tenant context detected:', tenant.subdomain, tenant.clubId);
+  }
 
   return (
     <html lang="vi" suppressHydrationWarning>

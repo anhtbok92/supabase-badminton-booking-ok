@@ -416,6 +416,10 @@ export default function BookingTabPage() {
   return (
     <>
       <BookingGreeting />
+      {/* TODO: Remove debug banner after confirming tenant filtering works */}
+      <div className="px-4 py-2 bg-yellow-100 text-yellow-800 text-xs font-mono">
+        {tenant ? `✅ Tenant: ${tenant.subdomain} | Club: ${tenant.clubId}` : '❌ No tenant context'}
+      </div>
       {!tenant && (
         <SearchAndFilter
           searchTerm={searchTerm}
