@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { createClient } from '@supabase/supabase-js';
 
 export interface TenantContext {
   clubId: string;
@@ -7,6 +8,7 @@ export interface TenantContext {
 }
 
 const TENANT_HEADER = 'x-tenant-context';
+const BASE_DOMAIN = 'sportbooking.online';
 
 const RESERVED_SUBDOMAINS = [
   'app', 'www', 'api', 'admin', 'mail', 'ftp',
@@ -56,13 +58,42 @@ export function deserializeTenantContext(headerValue: string): TenantContext | n
 
 /**
  * Read the TenantContext from request headers (server-side only).
- * Returns null if no tenant context is present or if it's invalid.
+ * First tries the x-tenant-context header set by middleware.
+ * Falls back to extracting subdomain from the host header and querying the database.
  */
 export async function getTenantContext(): Promise<TenantContext | null> {
   const headerStore = await headers();
+
+  // Try middleware-injected header first
   const value = headerStore.get(TENANT_HEADER);
-  if (!value) return null;
-  return deserializeTenantContext(value);
+  if (value) {
+    const ctx = deserializeTenantContext(value);
+    if (ctx) return ctx;
+  }
+
+  // Fallback: resolve from host header directly
+  const host = headerStore.get('host') || '';
+  const subdomain = extractSubdomain(host, BASE_DOMAIN);
+  if (!subdomain || isReservedSubdomain(subdomain)) return null;
+
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+    const { data: club } = await supabase
+      .from('clubs')
+      .select('id, name')
+      .eq('custom_subdomain', subdomain)
+      .eq('is_active', true)
+      .single();
+
+    if (!club) return null;
+
+    return { clubId: club.id, clubName: club.name, subdomain };
+  } catch {
+    return null;
+  }
 }
 
 /**
