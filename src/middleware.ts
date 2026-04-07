@@ -27,8 +27,6 @@ export async function middleware(request: NextRequest) {
   // Extract subdomain from hostname
   const subdomain = extractSubdomain(hostname, baseDomain);
 
-  console.log('[Middleware]', { hostname, path, baseDomain, subdomain });
-
   // --- No subdomain or reserved subdomain: use existing routing logic ---
   if (!subdomain || isReservedSubdomain(subdomain)) {
     return handleExistingRouting(request, hostname, path, isLocalhost);
