@@ -1,5 +1,4 @@
 import { headers } from 'next/headers';
-import { createClient } from '@supabase/supabase-js';
 
 export interface TenantContext {
   clubId: string;
@@ -77,6 +76,7 @@ export async function getTenantContext(): Promise<TenantContext | null> {
   if (!subdomain || isReservedSubdomain(subdomain)) return null;
 
   try {
+    const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
