@@ -63,8 +63,13 @@ export async function middleware(request: NextRequest) {
     url.pathname = '/splash';
   }
 
-  const response = NextResponse.rewrite(url);
-  response.headers.set('x-tenant-context', tenantContext);
+  // Set tenant context as a request header so server components can read it via headers()
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-tenant-context', tenantContext);
+
+  const response = NextResponse.rewrite(url, {
+    request: { headers: requestHeaders },
+  });
   return response;
 }
 
