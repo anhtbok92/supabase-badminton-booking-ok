@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, Pencil, Lock, Unlock, Key, Trash2 } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Pencil, Lock, Unlock, Key, Trash2, Copy, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
@@ -25,28 +25,58 @@ function ClubOwnerFormDialog({ isOpen, setIsOpen, owner, allClubs, onSuccess }: 
     const supabase = useSupabase();
     const { toast } = useToast();
     const isEditMode = !!owner;
+    const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string } | null>(null);
     const form = useForm<ClubOwnerSchema | ClubOwnerEditSchema>({ resolver: zodResolver(isEditMode ? clubOwnerEditSchema : clubOwnerSchema), defaultValues: { email: owner?.email || '', password: '', managedClubIds: owner?.managed_club_ids || [] } });
+
+    const copyCredentials = (email: string, password: string) => {
+        navigator.clipboard.writeText(`Tài khoản: ${email}\nMật khẩu: ${password}`);
+        toast({ title: 'Đã copy', description: 'Thông tin đăng nhập đã được copy.' });
+    };
 
     const onSubmit = async (values: ClubOwnerSchema | ClubOwnerEditSchema) => {
         try {
             if (isEditMode && owner) {
                 const { error } = await supabase.from('users').update({ email: values.email, managed_club_ids: values.managedClubIds || [] }).eq('id', owner.id);
                 if (error) throw error;
+                toast({ title: "Thành công", description: 'Đã cập nhật chủ club.' }); setIsOpen(false); onSuccess?.();
             } else {
+                const password = (values as ClubOwnerSchema).password;
                 const response = await fetch('/api/admin/create-user', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: values.email, password: (values as ClubOwnerSchema).password, role: 'club_owner', managedClubIds: values.managedClubIds || [] }),
+                    body: JSON.stringify({ email: values.email, password, role: 'club_owner', managedClubIds: values.managedClubIds || [] }),
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Thao tác thất bại.');
+                setCreatedCredentials({ email: values.email, password });
+                onSuccess?.();
             }
-            toast({ title: "Thành công", description: `Đã ${isEditMode ? 'cập nhật' : 'tạo'} chủ club.` }); setIsOpen(false); onSuccess?.();
         } catch (error: any) {
             let message = error.message || 'Thao tác thất bại.';
             if (message.includes('already been registered')) message = 'Email này đã được sử dụng.';
             toast({ title: "Lỗi", description: message, variant: "destructive" });
         }
     };
+
+    if (createdCredentials) {
+        return (
+            <Dialog open={isOpen} onOpenChange={setIsOpen}><DialogContent>
+                <DialogHeader><DialogTitle>Tạo chủ club thành công</DialogTitle></DialogHeader>
+                <div className="space-y-3 py-2">
+                    <div className="bg-muted p-4 rounded-lg space-y-2 font-mono text-sm">
+                        <div>Tài khoản: <span className="font-bold">{createdCredentials.email}</span></div>
+                        <div>Mật khẩu: <span className="font-bold">{createdCredentials.password}</span></div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Hãy copy và gửi thông tin này cho chủ club. Mật khẩu không thể xem lại sau khi đóng.</p>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" className="gap-2" onClick={() => copyCredentials(createdCredentials.email, createdCredentials.password)}>
+                        <Copy className="h-4 w-4" /> Copy thông tin
+                    </Button>
+                    <Button onClick={() => setIsOpen(false)}>Đóng</Button>
+                </DialogFooter>
+            </DialogContent></Dialog>
+        );
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}><DialogContent><DialogHeader><DialogTitle>{isEditMode ? 'Chỉnh sửa Chủ Club' : 'Tạo Chủ Club mới'}</DialogTitle></DialogHeader>
@@ -68,6 +98,10 @@ export function ClubOwnerManager() {
     const [selectedOwner, setSelectedOwner] = useState<UserProfile | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<UserProfile | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [resetCredentials, setResetCredentials] = useState<{ email: string; password: string } | null>(null);
+    const [resetTarget, setResetTarget] = useState<UserProfile | null>(null);
+    const [resetPassword, setResetPassword] = useState('');
+    const [isResetting, setIsResetting] = useState(false);
     const { toast } = useToast();
 
     const handleToggleLock = async (owner: UserProfile) => {
@@ -76,9 +110,29 @@ export function ClubOwnerManager() {
         if (error) { toast({ title: "Lỗi", variant: "destructive" }); } else { toast({ title: "Thành công", description: `Đã ${newLockedStatus ? 'khóa' : 'mở khóa'} tài khoản ${owner.email}.` }); refetch(); }
     };
 
-    const handleSendResetEmail = async (email: string) => {
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
-        if (error) { toast({ title: "Lỗi", variant: "destructive" }); } else { toast({ title: "Đã gửi email", description: `Email đặt lại mật khẩu đã được gửi đến ${email}.` }); }
+    const handleResetPassword = async () => {
+        if (!resetTarget || !resetPassword) return;
+        setIsResetting(true);
+        try {
+            const response = await fetch('/api/admin/reset-password', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: resetTarget.id, password: resetPassword }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error);
+            setResetCredentials({ email: resetTarget.email!, password: resetPassword });
+            setResetTarget(null);
+            setResetPassword('');
+        } catch (error: any) {
+            toast({ title: "Lỗi", description: error.message || 'Không thể đặt lại mật khẩu.', variant: "destructive" });
+        } finally {
+            setIsResetting(false);
+        }
+    };
+
+    const copyCredentials = (email: string, password: string) => {
+        navigator.clipboard.writeText(`Tài khoản: ${email}\nMật khẩu: ${password}`);
+        toast({ title: 'Đã copy', description: 'Thông tin đăng nhập đã được copy.' });
     };
 
     const handleDeleteOwner = async () => {
@@ -121,7 +175,7 @@ export function ClubOwnerManager() {
                                         <DropdownMenu><DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                                             <DropdownMenuContent align="end"><DropdownMenuLabel>Tùy chọn tài khoản</DropdownMenuLabel><DropdownMenuSeparator />
                                                 <DropdownMenuItem onClick={() => handleToggleLock(owner)}>{isLocked ? <><Unlock className="mr-2 h-4 w-4" /> Mở khóa</> : <><Lock className="mr-2 h-4 w-4" /> Khóa tài khoản</>}</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleSendResetEmail(owner.email!)}><Key className="mr-2 h-4 w-4" /> Gửi email đặt lại mật khẩu</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => { setResetTarget(owner); setResetPassword(''); }}><Key className="mr-2 h-4 w-4" /> Đặt lại mật khẩu</DropdownMenuItem>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteTarget(owner)}><Trash2 className="mr-2 h-4 w-4" /> Xóa chủ club</DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -150,6 +204,38 @@ export function ClubOwnerManager() {
                         <Button variant="destructive" onClick={handleDeleteOwner} disabled={isDeleting}>
                             {isDeleting ? 'Đang xóa...' : 'Xóa chủ club'}
                         </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={!!resetTarget} onOpenChange={(open) => { if (!open) { setResetTarget(null); setResetPassword(''); } }}>
+                <DialogContent>
+                    <DialogHeader><DialogTitle>Đặt lại mật khẩu</DialogTitle><DialogDescription>Nhập mật khẩu mới cho {resetTarget?.email}</DialogDescription></DialogHeader>
+                    <Input type="text" placeholder="Nhập mật khẩu mới..." value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} />
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => { setResetTarget(null); setResetPassword(''); }}>Hủy</Button>
+                        <Button onClick={handleResetPassword} disabled={!resetPassword || resetPassword.length < 6 || isResetting}>
+                            {isResetting ? 'Đang xử lý...' : 'Đặt lại'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={!!resetCredentials} onOpenChange={(open) => !open && setResetCredentials(null)}>
+                <DialogContent>
+                    <DialogHeader><DialogTitle>Mật khẩu mới</DialogTitle></DialogHeader>
+                    <div className="space-y-3 py-2">
+                        <div className="bg-muted p-4 rounded-lg space-y-2 font-mono text-sm">
+                            <div>Tài khoản: <span className="font-bold">{resetCredentials?.email}</span></div>
+                            <div>Mật khẩu mới: <span className="font-bold">{resetCredentials?.password}</span></div>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Hãy copy và gửi mật khẩu mới cho chủ club. Không thể xem lại sau khi đóng.</p>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" className="gap-2" onClick={() => resetCredentials && copyCredentials(resetCredentials.email, resetCredentials.password)}>
+                            <Copy className="h-4 w-4" /> Copy thông tin
+                        </Button>
+                        <Button onClick={() => setResetCredentials(null)}>Đóng</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

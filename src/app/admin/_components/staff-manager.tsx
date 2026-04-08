@@ -14,8 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, Pencil, Lock, Unlock, Key } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { MoreHorizontal, PlusCircle, Pencil, Lock, Unlock, Key, Copy } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -25,28 +25,58 @@ function StaffFormDialog({ isOpen, setIsOpen, staff, allClubs, onSuccess }: { is
     const supabase = useSupabase();
     const { toast } = useToast();
     const isEditMode = !!staff;
+    const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string } | null>(null);
     const form = useForm<StaffSchema | StaffEditSchema>({ resolver: zodResolver(isEditMode ? staffEditSchema : staffSchema), defaultValues: { email: staff?.email || '', password: '', managedClubIds: staff?.managed_club_ids || [] } });
+
+    const copyCredentials = (email: string, password: string) => {
+        navigator.clipboard.writeText(`Tài khoản: ${email}\nMật khẩu: ${password}`);
+        toast({ title: 'Đã copy', description: 'Thông tin đăng nhập đã được copy.' });
+    };
 
     const onSubmit = async (values: StaffSchema | StaffEditSchema) => {
         try {
             if (isEditMode && staff) {
                 const { error } = await supabase.from('users').update({ email: values.email, managed_club_ids: values.managedClubIds || [] }).eq('id', staff.id);
                 if (error) throw error;
+                toast({ title: "Thành công", description: 'Đã cập nhật nhân viên.' }); setIsOpen(false); onSuccess?.();
             } else {
+                const password = (values as StaffSchema).password;
                 const response = await fetch('/api/admin/create-user', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: values.email, password: (values as StaffSchema).password, role: 'staff', managedClubIds: values.managedClubIds || [] }),
+                    body: JSON.stringify({ email: values.email, password, role: 'staff', managedClubIds: values.managedClubIds || [] }),
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Thao tác thất bại.');
+                setCreatedCredentials({ email: values.email, password });
+                onSuccess?.();
             }
-            toast({ title: "Thành công", description: `Đã ${isEditMode ? 'cập nhật' : 'tạo'} nhân viên.` }); setIsOpen(false); onSuccess?.();
         } catch (error: any) {
             let message = error.message || 'Thao tác thất bại.';
             if (message.includes('already been registered')) message = 'Email này đã được sử dụng.';
             toast({ title: "Lỗi", description: message, variant: "destructive" });
         }
     };
+
+    if (createdCredentials) {
+        return (
+            <Dialog open={isOpen} onOpenChange={setIsOpen}><DialogContent>
+                <DialogHeader><DialogTitle>Tạo nhân viên thành công</DialogTitle></DialogHeader>
+                <div className="space-y-3 py-2">
+                    <div className="bg-muted p-4 rounded-lg space-y-2 font-mono text-sm">
+                        <div>Tài khoản: <span className="font-bold">{createdCredentials.email}</span></div>
+                        <div>Mật khẩu: <span className="font-bold">{createdCredentials.password}</span></div>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Hãy copy và gửi thông tin này cho nhân viên. Mật khẩu không thể xem lại sau khi đóng.</p>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" className="gap-2" onClick={() => copyCredentials(createdCredentials.email, createdCredentials.password)}>
+                        <Copy className="h-4 w-4" /> Copy thông tin
+                    </Button>
+                    <Button onClick={() => setIsOpen(false)}>Đóng</Button>
+                </DialogFooter>
+            </DialogContent></Dialog>
+        );
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}><DialogContent><DialogHeader><DialogTitle>{isEditMode ? 'Chỉnh sửa Nhân viên' : 'Tạo Nhân viên mới'}</DialogTitle></DialogHeader>
@@ -77,6 +107,10 @@ export function StaffManager({ userProfile }: { userProfile: UserProfile }) {
     }, [clubs, isAdmin, userProfile.managed_club_ids]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedStaff, setSelectedStaff] = useState<UserProfile | null>(null);
+    const [resetCredentials, setResetCredentials] = useState<{ email: string; password: string } | null>(null);
+    const [resetTarget, setResetTarget] = useState<UserProfile | null>(null);
+    const [resetPassword, setResetPassword] = useState('');
+    const [isResetting, setIsResetting] = useState(false);
     const { toast } = useToast();
 
     const handleToggleLock = async (staff: UserProfile) => {
@@ -85,10 +119,29 @@ export function StaffManager({ userProfile }: { userProfile: UserProfile }) {
         if (error) { toast({ title: "Lỗi", variant: "destructive" }); } else { toast({ title: "Thành công", description: `Đã ${newLockedStatus ? 'khóa' : 'mở khóa'} tài khoản ${staff.email}.` }); refetch(); }
     };
 
-    const handleSendResetEmail = async (email: string) => {
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
-        if (error) { toast({ title: "Lỗi", description: "Không thể gửi email đặt lại mật khẩu.", variant: "destructive" }); }
-        else { toast({ title: "Đã gửi email", description: `Một email đặt lại mật khẩu đã được gửi đến ${email}.` }); }
+    const handleResetPassword = async () => {
+        if (!resetTarget || !resetPassword) return;
+        setIsResetting(true);
+        try {
+            const response = await fetch('/api/admin/reset-password', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: resetTarget.id, password: resetPassword }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error);
+            setResetCredentials({ email: resetTarget.email!, password: resetPassword });
+            setResetTarget(null);
+            setResetPassword('');
+        } catch (error: any) {
+            toast({ title: "Lỗi", description: error.message || 'Không thể đặt lại mật khẩu.', variant: "destructive" });
+        } finally {
+            setIsResetting(false);
+        }
+    };
+
+    const copyCredentials = (email: string, password: string) => {
+        navigator.clipboard.writeText(`Tài khoản: ${email}\nMật khẩu: ${password}`);
+        toast({ title: 'Đã copy', description: 'Thông tin đăng nhập đã được copy.' });
     };
 
     return (
@@ -110,7 +163,7 @@ export function StaffManager({ userProfile }: { userProfile: UserProfile }) {
                                         <DropdownMenu><DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                                             <DropdownMenuContent align="end"><DropdownMenuLabel>Tùy chọn tài khoản</DropdownMenuLabel><DropdownMenuSeparator />
                                                 <DropdownMenuItem onClick={() => handleToggleLock(staff)}>{isLocked ? <><Unlock className="mr-2 h-4 w-4" /> Mở khóa</> : <><Lock className="mr-2 h-4 w-4" /> Khóa tài khoản</>}</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleSendResetEmail(staff.email!)}><Key className="mr-2 h-4 w-4" /> Gửi email đặt lại mật khẩu</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => { setResetTarget(staff); setResetPassword(''); }}><Key className="mr-2 h-4 w-4" /> Đặt lại mật khẩu</DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div></TableCell>
@@ -122,6 +175,39 @@ export function StaffManager({ userProfile }: { userProfile: UserProfile }) {
                 </Table>
             </CardContent>
             {dialogOpen && <StaffFormDialog isOpen={dialogOpen} setIsOpen={setDialogOpen} staff={selectedStaff} allClubs={filteredClubs || []} onSuccess={refetch} />}
+
+            <Dialog open={!!resetTarget} onOpenChange={(open) => { if (!open) { setResetTarget(null); setResetPassword(''); } }}>
+                <DialogContent>
+                    <DialogHeader><DialogTitle>Đặt lại mật khẩu</DialogTitle></DialogHeader>
+                    <p className="text-sm text-muted-foreground">Nhập mật khẩu mới cho {resetTarget?.email}</p>
+                    <Input type="text" placeholder="Nhập mật khẩu mới..." value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} />
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => { setResetTarget(null); setResetPassword(''); }}>Hủy</Button>
+                        <Button onClick={handleResetPassword} disabled={!resetPassword || resetPassword.length < 6 || isResetting}>
+                            {isResetting ? 'Đang xử lý...' : 'Đặt lại'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={!!resetCredentials} onOpenChange={(open) => !open && setResetCredentials(null)}>
+                <DialogContent>
+                    <DialogHeader><DialogTitle>Mật khẩu mới</DialogTitle></DialogHeader>
+                    <div className="space-y-3 py-2">
+                        <div className="bg-muted p-4 rounded-lg space-y-2 font-mono text-sm">
+                            <div>Tài khoản: <span className="font-bold">{resetCredentials?.email}</span></div>
+                            <div>Mật khẩu mới: <span className="font-bold">{resetCredentials?.password}</span></div>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Hãy copy và gửi mật khẩu mới cho nhân viên. Không thể xem lại sau khi đóng.</p>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" className="gap-2" onClick={() => resetCredentials && copyCredentials(resetCredentials.email, resetCredentials.password)}>
+                            <Copy className="h-4 w-4" /> Copy thông tin
+                        </Button>
+                        <Button onClick={() => setResetCredentials(null)}>Đóng</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </Card>
     );
 }
