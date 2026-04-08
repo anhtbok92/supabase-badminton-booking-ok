@@ -107,6 +107,7 @@ export const clubTypeSchema = z.object({
     name: z.string().min(1, 'Tên loại không được để trống'),
     order: z.coerce.number().default(0),
     color: z.string().default('#00e640').optional(),
+    icon: z.string().optional().or(z.literal('')),
 });
 export type ClubTypeSchema = z.infer<typeof clubTypeSchema>;
 

@@ -3,11 +3,11 @@
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useUser, useSupabaseQuery, useSupabaseRow } from '@/supabase';
 import type { Club, UserProfile, ClubType } from '@/lib/types';
-import { MapPin, Phone, Clock, Map, Search, Star } from 'lucide-react';
+import { MapPin, Phone, Clock, Map, Search, Star, SlidersHorizontal } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
@@ -201,7 +201,9 @@ function SearchAndFilter({
   activeType,
   onTypeChange,
   clubTypes,
-  loading
+  loading,
+  onAdvancedSearchOpen,
+  hasAdvancedFilters,
 }: {
   searchTerm: string;
   onSearchChange: (value: string) => void;
@@ -209,26 +211,45 @@ function SearchAndFilter({
   onTypeChange: (type: string) => void;
   clubTypes: ClubType[] | null;
   loading: boolean;
+  onAdvancedSearchOpen: () => void;
+  hasAdvancedFilters: boolean;
 }) {
   const sortedClubTypes = useMemo(() => clubTypes?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0)), [clubTypes]);
 
   return (
-    <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm px-4 py-3 space-y-3 border-b border-zinc-100">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-        <Input
-          placeholder="Tìm theo tên hoặc địa chỉ..."
-          className="pl-10 rounded-xl h-10 text-sm border-zinc-200 shadow-sm focus:ring-primary/20 transition-all font-body"
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
+    <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm px-4 py-3 space-y-3 border-b border-zinc-100">
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+          <Input
+            placeholder="Tìm theo tên hoặc địa chỉ..."
+            className="pl-10 rounded-xl h-10 text-sm bg-white border-gray-300 shadow-sm focus:ring-primary/20 transition-all font-body"
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+        </div>
+        <Button
+          variant="outline"
+          size="icon"
+          className={cn(
+            "h-10 w-10 rounded-xl shrink-0 relative",
+            hasAdvancedFilters && "border-primary text-primary"
+          )}
+          onClick={onAdvancedSearchOpen}
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          {hasAdvancedFilters && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full" />
+          )}
+        </Button>
       </div>
       <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1 hide-scrollbar">
         <Button
+          variant="ghost"
           className={cn(
-            "shrink-0 rounded-full h-9 px-5 text-xs font-bold uppercase tracking-wider transition-all border-2",
+            "shrink-0 rounded-full h-9 px-5 text-xs font-bold uppercase tracking-wider transition-all border-2 hover:bg-white",
             activeType === 'Tất cả' 
-              ? "bg-primary border-primary text-[#00440a] shadow-md" 
+              ? "bg-white border-primary text-primary shadow-sm" 
               : "bg-white border-zinc-100 text-zinc-500 hover:border-zinc-200"
           )}
           onClick={() => onTypeChange('Tất cả')}
@@ -241,21 +262,24 @@ function SearchAndFilter({
           const typeColor = type.color || '#00e640';
           return (
             <Button
+              variant="ghost"
               key={type.id}
               onClick={() => onTypeChange(type.name)}
               className={cn(
-                "shrink-0 rounded-full h-9 px-5 text-xs font-bold uppercase tracking-wider transition-all border-2",
+                "shrink-0 rounded-full h-9 px-5 text-xs font-bold uppercase tracking-wider transition-all border-2 hover:bg-white",
                 isActive 
-                  ? "text-white shadow-md shadow-inner" 
+                  ? "bg-white font-black" 
                   : "bg-white border-zinc-100 text-zinc-500 hover:border-zinc-200"
               )}
               style={{
-                backgroundColor: isActive ? typeColor : undefined,
-                borderColor: isActive ? typeColor : undefined
+                borderColor: isActive ? typeColor : undefined,
+                color: isActive ? typeColor : undefined,
+                boxShadow: isActive ? `0 2px 8px ${typeColor}40` : undefined,
               }}
             >
-              <div className="flex items-center gap-2">
-                {!isActive && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: typeColor }} />}
+              <div className="flex items-center gap-1.5">
+                {type.icon && <span className="relative w-4 h-4 shrink-0"><Image src={type.icon} alt="" fill className="object-contain" /></span>}
+                {!type.icon && !isActive && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: typeColor }} />}
                 {type.name}
               </div>
             </Button>
@@ -300,8 +324,8 @@ function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (
         
         {/* Floating Category Badge */}
         <div 
-          className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-lg backdrop-blur-sm"
-          style={{ backgroundColor: `${typeColor}CC`, border: `1px solid ${typeColor}` }}
+          className="absolute top-4 left-4 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg backdrop-blur-md bg-white/90 flex items-center gap-1"
+          style={{ border: `2px solid ${typeColor}`, color: typeColor }}
         >
           {club.club_type || 'Thể thao'}
         </div>
@@ -343,7 +367,7 @@ function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (
             <p className="text-xl font-black text-primary italic leading-none">{priceRange} <span className="text-[10px] text-slate-400 font-bold uppercase not-italic">VND/H</span></p>
           </div>
           <Button 
-            className="rounded-xl bg-primary hover:bg-primary/90 text-[#00440a] shadow-md shadow-primary/20 active:scale-95 transition-all h-11 px-5 text-xs font-black uppercase tracking-widest" 
+            className="rounded-xl bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 active:scale-95 transition-all h-11 px-5 text-xs font-black uppercase tracking-widest" 
             onClick={(e) => { e.stopPropagation(); onCardClick(club); }}
           >
             Chi tiết
@@ -380,6 +404,39 @@ function ClubCardSkeleton() {
 
 import { cn } from '@/lib/utils';
 import { useTenant } from '@/hooks/use-tenant';
+import { AdvancedSearchSheet, type AdvancedFilters } from './_components/advanced-search';
+
+const EMPTY_FILTERS: AdvancedFilters = { province: '', district: '', openHour: '' };
+
+/** Check if club's operating_hours contains an opening time <= the target hour */
+function matchOpenHour(operatingHours: string | undefined, targetHour: string): boolean {
+  if (!operatingHours) return false;
+  // Extract all time patterns like "05:00", "6:00" from operating hours string
+  const times = operatingHours.match(/(\d{1,2}):(\d{2})/g);
+  if (!times || times.length === 0) return false;
+  // The first time found is typically the opening time
+  const openTime = times[0].padStart(5, '0'); // ensure "6:00" becomes "06:00"
+  return openTime <= targetHour;
+}
+
+/** Normalize Vietnamese text for matching (remove diacritics) */
+function normalizeVN(str: string): string {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D');
+}
+
+/** Check if address contains the location name (diacritics-insensitive) */
+function addressContains(address: string, location: string): boolean {
+  if (!location) return true;
+  // Try exact match first (with diacritics)
+  if (address.toLowerCase().includes(location.toLowerCase())) return true;
+  // Fallback: normalized match (without diacritics)
+  return normalizeVN(address).includes(normalizeVN(location));
+}
 
 export default function BookingTabPage() {
   const tenant = useTenant();
@@ -389,6 +446,10 @@ export default function BookingTabPage() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [activeClubType, setActiveClubType] = useState('Tất cả');
   const [searchTerm, setSearchTerm] = useState('');
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(EMPTY_FILTERS);
+
+  const hasAdvancedFilters = !!(advancedFilters.province || advancedFilters.district || advancedFilters.openHour);
 
   // When tenant context is present, show only the tenant's club
   const filteredClubs = useMemo(() => {
@@ -407,9 +468,15 @@ export default function BookingTabPage() {
       const searchMatch = lowercasedSearchTerm === '' ||
         club.name.toLowerCase().includes(lowercasedSearchTerm) ||
         club.address.toLowerCase().includes(lowercasedSearchTerm);
-      return isVisible && typeMatch && searchMatch;
+
+      // Advanced filters
+      const provinceMatch = addressContains(club.address, advancedFilters.province);
+      const districtMatch = addressContains(club.address, advancedFilters.district);
+      const hourMatch = !advancedFilters.openHour || matchOpenHour(club.operating_hours, advancedFilters.openHour);
+
+      return isVisible && typeMatch && searchMatch && provinceMatch && districtMatch && hourMatch;
     });
-  }, [clubs, activeClubType, searchTerm, tenant]);
+  }, [clubs, activeClubType, searchTerm, tenant, advancedFilters]);
 
   const handleCardClick = (club: Club) => {
     setSelectedClub(club);
@@ -426,7 +493,7 @@ export default function BookingTabPage() {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <BookingGreeting />
       {!tenant && (
         <SearchAndFilter
@@ -436,6 +503,8 @@ export default function BookingTabPage() {
           onTypeChange={setActiveClubType}
           clubTypes={clubTypes}
           loading={typesLoading}
+          onAdvancedSearchOpen={() => setAdvancedOpen(true)}
+          hasAdvancedFilters={hasAdvancedFilters}
         />
       )}
       <div className="px-4 pb-24">
@@ -459,6 +528,13 @@ export default function BookingTabPage() {
         isOpen={isSheetOpen}
         onOpenChange={handleSheetOpenChange}
       />
-    </>
+      <AdvancedSearchSheet
+        isOpen={advancedOpen}
+        onOpenChange={setAdvancedOpen}
+        filters={advancedFilters}
+        onFiltersChange={setAdvancedFilters}
+        onReset={() => setAdvancedFilters(EMPTY_FILTERS)}
+      />
+    </div>
   );
 }

@@ -114,6 +114,7 @@ export type ClubType = {
   id: string;
   name: string;
   color?: string;
+  icon?: string;
   order?: number;
   created_at?: string;
 };

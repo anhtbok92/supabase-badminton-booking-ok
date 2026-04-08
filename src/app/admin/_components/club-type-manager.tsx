@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSupabase, useSupabaseQuery } from '@/supabase';
@@ -12,9 +13,10 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormDescription as FormDescriptionComponent, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Trash2, PencilLine, X } from 'lucide-react';
+import { Trash2, PencilLine, X, UploadCloud } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { clubTypeSchema, type ClubTypeSchema } from './schemas';
+import { uploadFile } from '@/lib/upload';
 
 export function ClubTypeManager() {
     const supabase = useSupabase();
@@ -24,26 +26,47 @@ export function ClubTypeManager() {
     const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
     const [typeToDelete, setTypeToDelete] = useState<ClubType | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [iconUrl, setIconUrl] = useState<string>('');
+    const [uploadingIcon, setUploadingIcon] = useState(false);
     
-    const form = useForm<ClubTypeSchema>({ resolver: zodResolver(clubTypeSchema), defaultValues: { name: '', order: 0, color: '#00e640' } });
+    const form = useForm<ClubTypeSchema>({ resolver: zodResolver(clubTypeSchema), defaultValues: { name: '', order: 0, color: '#00e640', icon: '' } });
 
     const handleEdit = (type: ClubType) => {
         setEditingId(type.id);
+        setIconUrl(type.icon || '');
         form.reset({
             name: type.name,
             order: type.order || 0,
-            color: type.color || '#00e640'
+            color: type.color || '#00e640',
+            icon: type.icon || '',
         });
     };
 
     const handleCancelEdit = () => {
         setEditingId(null);
-        form.reset({ name: '', order: 0, color: '#00e640' });
+        setIconUrl('');
+        form.reset({ name: '', order: 0, color: '#00e640', icon: '' });
+    };
+
+    const handleIconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploadingIcon(true);
+        try {
+            const url = await uploadFile(supabase, 'club-type-icons', file);
+            setIconUrl(url);
+            form.setValue('icon', url);
+        } catch {
+            toast({ title: 'Lỗi tải icon', variant: 'destructive' });
+        } finally {
+            setUploadingIcon(false);
+        }
     };
 
     const onSubmit = async (values: ClubTypeSchema) => {
+        const submitValues = { ...values, icon: iconUrl || null };
         if (editingId) {
-            const { error } = await supabase.from('club_types').update(values).eq('id', editingId);
+            const { error } = await supabase.from('club_types').update(submitValues).eq('id', editingId);
             if (error) {
                 toast({ title: 'Lỗi', variant: 'destructive' });
             } else {
@@ -52,12 +75,13 @@ export function ClubTypeManager() {
                 refetch();
             }
         } else {
-            const { error } = await supabase.from('club_types').insert(values);
+            const { error } = await supabase.from('club_types').insert(submitValues);
             if (error) {
                 toast({ title: 'Lỗi', variant: 'destructive' });
             } else {
                 toast({ title: 'Thành công', description: 'Đã thêm loại câu lạc bộ mới.' });
                 form.reset();
+                setIconUrl('');
                 refetch();
             }
         }
@@ -89,6 +113,31 @@ export function ClubTypeManager() {
                             <FormField control={form.control} name="order" render={({ field }) => (<FormItem><FormLabel>Thứ tự</FormLabel><FormControl><Input type="number" {...field} className="bg-white" /></FormControl><FormMessage /></FormItem>)} />
                             <FormField control={form.control} name="color" render={({ field }) => (<FormItem><FormLabel>Màu hiển thị</FormLabel><FormControl><div className="flex items-center gap-2"><Input type="color" {...field} className="w-12 h-10 p-1 cursor-pointer bg-white" /><Input {...field} className="font-mono bg-white uppercase" /></div></FormControl><FormMessage /></FormItem>)} />
                         </div>
+                        <FormField control={form.control} name="icon" render={() => (
+                            <FormItem>
+                                <FormLabel>Icon (ảnh)</FormLabel>
+                                <FormControl>
+                                    <div className="flex items-center gap-3">
+                                        {iconUrl ? (
+                                            <div className="relative group w-12 h-12 rounded-lg overflow-hidden border bg-white shrink-0">
+                                                <Image src={iconUrl} alt="Icon" fill className="object-contain p-1" />
+                                                <button type="button" className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity" onClick={() => { setIconUrl(''); form.setValue('icon', ''); }}>
+                                                    <Trash2 className="h-4 w-4 text-white" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <label className="flex items-center justify-center w-12 h-12 border-2 border-dashed rounded-lg cursor-pointer hover:bg-secondary/50 bg-white shrink-0">
+                                                <UploadCloud className="w-5 h-5 text-muted-foreground" />
+                                                <input type="file" className="hidden" accept="image/*" onChange={handleIconUpload} disabled={uploadingIcon} />
+                                            </label>
+                                        )}
+                                        {uploadingIcon && <span className="text-xs text-primary animate-pulse">Đang tải...</span>}
+                                    </div>
+                                </FormControl>
+                                <FormDescriptionComponent>Upload ảnh icon cho loại CLB (PNG trong suốt khuyến nghị).</FormDescriptionComponent>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                             {editingId ? 'Lưu thay đổi' : 'Thêm Loại'}
                         </Button>
@@ -97,6 +146,7 @@ export function ClubTypeManager() {
                 <div><h3 className="font-semibold mb-4">Danh sách hiện tại</h3><div className="space-y-2">{typesLoading && <Skeleton className="h-10 w-full" />}{sortedClubTypes?.map(type => (
                     <div key={type.id} className="flex items-center justify-between p-3 bg-white border rounded-xl shadow-sm hover:border-primary/30 transition-all">
                         <div className="flex items-center gap-3">
+                            {type.icon && <div className="w-6 h-6 relative shrink-0"><Image src={type.icon} alt="" fill className="object-contain" /></div>}
                             <div className="w-4 h-4 rounded-full shadow-sm" style={{ backgroundColor: type.color || '#00e640' }} />
                             <div className="flex flex-col">
                                 <span className={cn("text-sm font-bold", editingId === type.id ? "text-primary" : "text-slate-700")}>{type.name}</span>
