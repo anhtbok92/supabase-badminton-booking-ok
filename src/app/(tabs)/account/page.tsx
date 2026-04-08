@@ -112,21 +112,21 @@ function LoggedInView({ user, userProfile }: { user: any; userProfile: UserProfi
   };
 
   return (
-    <div className="flex flex-col">
-      <header className="flex items-center p-4 justify-center relative sticky top-0 bg-background/80 backdrop-blur-md z-10">
-        <h2 className="text-lg font-bold">Tài khoản</h2>
+    <div className="flex flex-col min-h-screen bg-white">
+      <header className="flex items-center p-4 justify-center relative sticky top-0 bg-white/80 backdrop-blur-md z-10 border-b border-gray-100">
+        <h2 className="text-base font-bold font-headline">Tài khoản</h2>
       </header>
 
-      <section className="flex p-6 flex-col gap-4 items-center">
+      <section className="flex py-8 flex-col gap-3 items-center">
         <div className="relative">
-          <Avatar className="h-32 w-32 border-4 border-primary/20">
-            <AvatarImage src={`https://picsum.photos/seed/${user.id}/128/128`} alt="User Avatar" data-ai-hint="animal avatar" />
-            <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+          <Avatar className="h-24 w-24 border-4 border-primary/20 shadow-lg shadow-primary/10">
+            <AvatarImage src={`https://picsum.photos/seed/${user.id}/128/128`} alt="User Avatar" />
+            <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <p className="text-foreground text-2xl font-bold text-center">{userProfile?.phone || user.email?.split('@')[0]}</p>
-          <p className="text-muted-foreground text-base font-medium text-center">{user.email}</p>
+          <p className="text-xl font-bold text-center">{userProfile?.phone || user.email?.split('@')[0]}</p>
+          <p className="text-primary text-sm font-medium text-center">{user.email}</p>
         </div>
       </section>
 
@@ -171,15 +171,17 @@ function LoggedInView({ user, userProfile }: { user: any; userProfile: UserProfi
 // Logged Out View
 function LoggedOutView() {
   return (
-    <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center text-center h-[calc(100vh-8rem)]">
-      <Settings className="h-16 w-16 text-muted-foreground mb-4" />
+    <div className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center text-center px-6 bg-white">
+      <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+        <Settings className="h-10 w-10 text-primary" />
+      </div>
       <h2 className="text-2xl font-bold font-headline mb-2">Tài khoản</h2>
-      <p className="text-muted-foreground mb-6 max-w-xs">Đăng nhập hoặc tạo tài khoản để xem lịch sử đặt sân và nhận nhiều ưu đãi.</p>
-      <div className="flex w-full max-w-sm flex-col gap-3">
-        <Button asChild size="lg">
+      <p className="text-muted-foreground mb-8 max-w-xs text-sm">Đăng nhập hoặc tạo tài khoản để xem lịch sử đặt sân và nhận nhiều ưu đãi.</p>
+      <div className="flex w-full max-w-xs flex-col gap-3">
+        <Button asChild size="lg" className="h-12 rounded-xl text-white font-bold shadow-lg shadow-primary/30">
           <Link href="/login">Đăng nhập</Link>
         </Button>
-        <Button asChild variant="outline" size="lg">
+        <Button asChild variant="outline" size="lg" className="h-12 rounded-xl font-bold">
           <Link href="/login">Đăng ký</Link>
         </Button>
       </div>

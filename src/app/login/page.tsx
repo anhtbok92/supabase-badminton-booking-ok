@@ -5,17 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Feather, Phone, Lock, Eye, EyeOff, ChevronLeft } from 'lucide-react';
 
 import { useSupabase } from '@/supabase';
-import { phoneToEmail } from '@/lib/auth-utils';
+import { phoneToEmail, phonToLegacyEmail } from '@/lib/auth-utils';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -27,21 +21,19 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ChevronLeft } from 'lucide-react';
 
 const authSchema = z.object({
   phone: z.string().regex(/^[0-9]{10,11}$/, { message: 'Số điện thoại phải có 10-11 chữ số.' }),
-  password: z
-    .string()
-    .min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự.' }),
+  password: z.string().min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự.' }),
 });
 
 type AuthFormValues = z.infer<typeof authSchema>;
 
-function LoginForm() {
+function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const router = useRouter();
   const supabase = useSupabase();
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(authSchema),
@@ -51,169 +43,82 @@ function LoginForm() {
   const onSubmit = async (values: AuthFormValues) => {
     try {
       const email = phoneToEmail(values.phone);
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password: values.password,
-      });
 
-      if (error) {
-        let message = 'Đã có lỗi xảy ra. Vui lòng thử lại.';
-        if (error.message === 'Invalid login credentials') {
-          message = 'Số điện thoại hoặc mật khẩu không chính xác.';
+      if (mode === 'login') {
+        // Try new domain first, fallback to legacy domain for old accounts
+        let loginEmail = email;
+        let { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: values.password });
+        if (error && error.message === 'Invalid login credentials') {
+          loginEmail = phonToLegacyEmail(values.phone);
+          const retry = await supabase.auth.signInWithPassword({ email: loginEmail, password: values.password });
+          error = retry.error;
         }
-        toast({
-          title: 'Đăng nhập thất bại',
-          description: message,
-          variant: 'destructive',
-        });
-        return;
+        if (error) {
+          const message = error.message === 'Invalid login credentials'
+            ? 'Số điện thoại hoặc mật khẩu không chính xác.'
+            : 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+          toast({ title: 'Đăng nhập thất bại', description: message, variant: 'destructive' });
+          return;
+        }
+        toast({ title: 'Đăng nhập thành công!' });
+      } else {
+        const { data, error } = await supabase.auth.signUp({ email, password: values.password });
+        if (error) {
+          const message = error.message?.includes('already registered')
+            ? 'Số điện thoại này đã được sử dụng.'
+            : 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+          toast({ title: 'Đăng ký thất bại', description: message, variant: 'destructive' });
+          return;
+        }
+        if (data.user) {
+          await supabase.from('users').insert({ id: data.user.id, email, phone: values.phone, role: 'customer' });
+        }
+        toast({ title: 'Đăng ký thành công!' });
       }
-
-      toast({ title: 'Đăng nhập thành công!' });
       router.push('/');
-    } catch (error: any) {
-      console.error(error);
-      toast({
-        title: 'Đăng nhập thất bại',
-        description: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
-        variant: 'destructive',
-      });
+    } catch {
+      toast({ title: 'Lỗi', description: 'Đã có lỗi xảy ra.', variant: 'destructive' });
     }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Số điện thoại</FormLabel>
-              <FormControl>
-                <Input placeholder="0912345678" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mật khẩu</FormLabel>
-              <FormControl>
-                <Input type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
-        </Button>
-      </form>
-    </Form>
-  );
-}
-
-function RegisterForm() {
-  const router = useRouter();
-  const supabase = useSupabase();
-  const { toast } = useToast();
-
-  const form = useForm<AuthFormValues>({
-    resolver: zodResolver(authSchema),
-    defaultValues: { phone: '', password: '' },
-  });
-
-  const onSubmit = async (values: AuthFormValues) => {
-    try {
-      const email = phoneToEmail(values.phone);
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password: values.password,
-      });
-
-      if (error) {
-        let message = 'Đã có lỗi xảy ra. Vui lòng thử lại.';
-        if (error.message?.includes('already registered')) {
-          message = 'Số điện thoại này đã được sử dụng.';
-        }
-        toast({
-          title: 'Đăng ký thất bại',
-          description: message,
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Insert user profile into users table
-      if (data.user) {
-        const { error: profileError } = await supabase.from('users').insert({
-          id: data.user.id,
-          email: email,
-          phone: values.phone,
-          role: 'customer',
-        });
-
-        if (profileError) {
-          console.error('Failed to create user profile:', profileError);
-        }
-      }
-
-      toast({ title: 'Đăng ký thành công!' });
-      router.push('/');
-    } catch (error: any) {
-      console.error(error);
-      toast({
-        title: 'Đăng ký thất bại',
-        description: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Số điện thoại</FormLabel>
-              <FormControl>
-                <Input placeholder="0912345678" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mật khẩu</FormLabel>
-              <FormControl>
-                <Input type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? 'Đang tạo tài khoản...' : 'Đăng ký'}
+        <FormField control={form.control} name="phone" render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-sm font-medium">Số điện thoại</FormLabel>
+            <FormControl>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="0912345678" className="pl-10 h-12 rounded-xl bg-white border-gray-200" {...field} />
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={form.control} name="password" render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-sm font-medium">Mật khẩu</FormLabel>
+            <FormControl>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  className="pl-10 pr-10 h-12 rounded-xl bg-white border-gray-200"
+                  {...field}
+                />
+                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <Button type="submit" className="w-full h-12 rounded-xl text-white font-bold text-base shadow-lg shadow-primary/30" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting
+            ? (mode === 'login' ? 'Đang đăng nhập...' : 'Đang tạo tài khoản...')
+            : (mode === 'login' ? 'Đăng nhập' : 'Đăng ký')}
         </Button>
       </form>
     </Form>
@@ -221,52 +126,43 @@ function RegisterForm() {
 }
 
 export default function LoginPage() {
-    const router = useRouter();
+  const router = useRouter();
+
   return (
-    <>
-        <header className="sticky top-0 z-40 w-full border-b bg-card">
-            <div className="container mx-auto flex h-16 items-center px-4">
-                <Button variant="ghost" size="icon" className="mr-2" onClick={() => router.back()}>
-                <ChevronLeft className="h-6 w-6" />
-                <span className="sr-only">Quay lại</span>
-                </Button>
-                <h1 className="text-lg font-semibold font-headline truncate">Đăng nhập / Đăng ký</h1>
-            </div>
-        </header>
-        <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-muted/40 p-4">
-            <Tabs defaultValue="login" className="w-full max-w-sm">
-                <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Đăng nhập</TabsTrigger>
-                <TabsTrigger value="register">Đăng ký</TabsTrigger>
-                </TabsList>
-                <TabsContent value="login">
-                <Card>
-                    <CardHeader>
-                    <CardTitle className="text-2xl font-headline">Chào mừng trở lại</CardTitle>
-                    <CardDescription>
-                        Nhập số điện thoại và mật khẩu của bạn để tiếp tục.
-                    </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                    <LoginForm />
-                    </CardContent>
-                </Card>
-                </TabsContent>
-                <TabsContent value="register">
-                <Card>
-                    <CardHeader>
-                    <CardTitle className="text-2xl font-headline">Tạo tài khoản</CardTitle>
-                    <CardDescription>
-                        Chỉ cần số điện thoại và mật khẩu để bắt đầu.
-                    </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                    <RegisterForm />
-                    </CardContent>
-                </Card>
-                </TabsContent>
-            </Tabs>
+    <div className="min-h-screen bg-white flex flex-col">
+      <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="flex h-14 items-center px-4">
+          <Button variant="ghost" size="icon" className="mr-2" onClick={() => router.back()}>
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-base font-bold font-headline">Đăng nhập / Đăng ký</h1>
         </div>
-    </>
+      </header>
+
+      <div className="flex-1 flex flex-col items-center px-6 pt-8 pb-12">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+            <Feather className="h-8 w-8 text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold font-headline text-center">Sport Booking</h2>
+          <p className="text-sm text-muted-foreground mt-1 text-center">Đặt sân thể thao nhanh chóng và tiện lợi</p>
+        </div>
+
+        <div className="w-full max-w-sm">
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 h-11 rounded-xl bg-gray-100 p-1">
+              <TabsTrigger value="login" className="rounded-lg text-sm font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Đăng nhập</TabsTrigger>
+              <TabsTrigger value="register" className="rounded-lg text-sm font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Đăng ký</TabsTrigger>
+            </TabsList>
+            <TabsContent value="login" className="mt-6">
+              <AuthForm mode="login" />
+            </TabsContent>
+            <TabsContent value="register" className="mt-6">
+              <AuthForm mode="register" />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    </div>
   );
 }
