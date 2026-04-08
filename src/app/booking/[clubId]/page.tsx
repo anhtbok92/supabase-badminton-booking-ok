@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format, getDay, addDays, isSameDay } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Info, ChevronLeft, ChevronRight, ShoppingCart, X, Calendar as CalendarIcon, ZoomIn, ZoomOut } from 'lucide-react';
-
-import { Calendar } from '@/components/ui/calendar';
+import dayjs from 'dayjs';
+import { Calendar as AntCalendar } from 'antd';
 
 import { timeSlots } from '@/lib/data';
 import type { Club, Court, SelectedSlot, SlotStatus, UserBooking } from '@/lib/types';
@@ -92,11 +92,19 @@ function HorizontalDatePicker({
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
 }) {
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
   const dates = useMemo(() => {
     const start = new Date();
     // Invalidate time part for correct comparison
     start.setHours(0, 0, 0, 0);
     return Array.from({ length: 365 }, (_, i) => addDays(start, i));
+  }, []);
+
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
   }, []);
 
   return (
@@ -105,29 +113,29 @@ function HorizontalDatePicker({
         <h3 className="text-sm font-bold text-primary px-1">
           {format(selectedDate, "'Tháng' M, yyyy", { locale: vi })}
         </h3>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-primary hover:bg-primary/10">
-              <CalendarIcon className="h-3.5 w-3.5" />
-              <span className="text-xs">Chọn ngày</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => date && onDateSelect(date)}
-              initialFocus
-              locale={vi}
-              disabled={(date) => {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const oneYearFromNow = addDays(today, 365);
-                return date < today || date > oneYearFromNow;
+        <Button variant="ghost" size="sm" className="h-7 gap-1.5 text-primary hover:bg-primary/10" onClick={() => setCalendarOpen(true)}>
+          <CalendarIcon className="h-3.5 w-3.5" />
+          <span className="text-xs">Chọn ngày</span>
+        </Button>
+        <Sheet open={calendarOpen} onOpenChange={setCalendarOpen}>
+          <SheetContent side="bottom" className="h-auto max-h-[70vh] rounded-t-2xl px-2 pb-6">
+            <SheetHeader className="pb-2">
+              <SheetTitle className="font-headline text-center">Chọn ngày</SheetTitle>
+              <SheetDescription className="text-center text-xs">Chọn ngày bạn muốn đặt sân</SheetDescription>
+            </SheetHeader>
+            <AntCalendar
+              fullscreen={false}
+              value={dayjs(selectedDate)}
+              disabledDate={(current) => {
+                return current.isBefore(dayjs(today), 'day') || current.isAfter(dayjs(today).add(365, 'day'), 'day');
+              }}
+              onSelect={(date) => {
+                onDateSelect(date.toDate());
+                setCalendarOpen(false);
               }}
             />
-          </PopoverContent>
-        </Popover>
+          </SheetContent>
+        </Sheet>
       </div>
       <ScrollArea className="w-full whitespace-nowrap">
         <div className="flex gap-2 pb-1">
@@ -260,6 +268,37 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
   const cellH = Math.round(64 * zoom);
   const courtColW = Math.round(Math.max(64, 96 * zoom));
   const timeFontSize = Math.max(8, Math.round(10 * zoom));
+
+  // Auto-scroll to current time slot when grid is ready
+  const gridScrollRef = useRef<HTMLDivElement>(null);
+  const hasScrolled = useRef(false);
+  useEffect(() => {
+    // Reset scroll flag when date changes
+    hasScrolled.current = false;
+  }, [date]);
+  useEffect(() => {
+    if (hasScrolled.current) return;
+    const now = new Date();
+    if (!isSameDay(date, now)) return;
+    if (!sortedCourts || sortedCourts.length === 0) return;
+
+    // Retry until viewport is available (grid rendered)
+    const attempt = () => {
+      const viewport = gridScrollRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+      if (viewport) {
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        const slotIndex = Math.floor(currentMinutes / 30);
+        const scrollTarget = Math.max(0, slotIndex * cellW - courtColW);
+        viewport.scrollLeft = scrollTarget;
+        hasScrolled.current = true;
+      }
+    };
+    // Try immediately, then retry after short delays
+    attempt();
+    const t1 = setTimeout(attempt, 200);
+    const t2 = setTimeout(attempt, 500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [date, cellW, courtColW, sortedCourts]);
 
   // Removed clearing selected slots on date change to support multi-day booking
 
@@ -458,7 +497,7 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
           <ZoomIn className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="text-[10px] text-muted-foreground w-8 text-right">{Math.round(zoom * 100)}%</span>
         </div>
-        <ScrollArea className="w-full h-[calc(100%-36px)] whitespace-nowrap">
+        <ScrollArea ref={gridScrollRef} className="w-full h-[calc(100%-36px)] whitespace-nowrap">
           <div className="inline-block min-w-full">
             {/* Sticky Header */}
             <div style={{ gridTemplateColumns: `${courtColW}px 1fr` }} className="grid sticky top-0 bg-background z-20">
@@ -471,12 +510,12 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
                       className="absolute font-bold text-muted-foreground flex flex-col items-center"
                       style={{
                         left: `${i * cellW}px`,
-                        transform: 'translateX(-50%)',
+                        transform: i === 0 ? 'translateX(0)' : 'translateX(-50%)',
                         width: `${Math.round(cellW / 2)}px`,
                         fontSize: `${timeFontSize}px`,
                       }}
                     >
-                      <div className="h-4 w-px bg-border mt-2"></div>
+                      {i > 0 ? <div className="h-4 w-px bg-border mt-2"></div> : <div className="h-4 w-px mt-2"></div>}
                       <span className="mt-1 leading-none">{time}</span>
                     </div>
                   ))}
