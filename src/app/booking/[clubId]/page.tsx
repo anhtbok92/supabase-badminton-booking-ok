@@ -253,7 +253,7 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
   const { data: bookedSlots, loading: bookingsLoading } = useSupabaseQuery<UserBooking>(
     'bookings',
     q => q.eq('date', dateStr).eq('club_id', clubId),
-    { deps: [dateStr, clubId] }
+    { deps: [dateStr, clubId], pollingInterval: 30000 }
   );
 
   const [selectedSlots, setSelectedSlots] = useState<SelectedSlot[]>([]);
