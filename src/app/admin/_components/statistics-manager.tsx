@@ -25,10 +25,11 @@ export function StatisticsManager({ userProfile }: { userProfile: UserProfile })
     const [selectedOwnerId, setSelectedOwnerId] = useState<string>('all');
 
     const { data: allBookings, loading: bookingsLoading } = useSupabaseQuery<UserBooking>('bookings', (q) => q.eq('status', 'Đã xác nhận'));
+    const { data: allUsers, loading: usersLoading } = useSupabaseQuery<UserProfile>('users', (q) => q.eq('role', 'customer'));
     const { data: clubs, loading: clubsLoading } = useSupabaseQuery<Club>('clubs');
     const { data: owners, loading: ownersLoading } = useSupabaseQuery<UserProfile>(userProfile.role === 'admin' ? 'users' : null, (q) => q.eq('role', 'club_owner'));
 
-    const loading = bookingsLoading || (userProfile.role === 'admin' && (clubsLoading || ownersLoading));
+    const loading = bookingsLoading || usersLoading || (userProfile.role === 'admin' && (clubsLoading || ownersLoading));
 
     const handleFilterChange = (value: string) => {
         setFilter(value);
@@ -52,7 +53,7 @@ export function StatisticsManager({ userProfile }: { userProfile: UserProfile })
                 bookingsToProcess = allBookings?.filter(b => ownerClubIds.includes(b.club_id)) ?? null;
             }
         } else { bookingsToProcess = allBookings?.filter(b => userProfile.managed_club_ids?.includes(b.club_id)) ?? null; }
-        if (!bookingsToProcess || !dateRange || !dateRange[0] || !dateRange[1]) return { totalRevenue: 0, totalBookings: 0, chartData: [], ownerRevenue: [] };
+        if (!bookingsToProcess || !dateRange || !dateRange[0] || !dateRange[1]) return { totalRevenue: 0, totalBookings: 0, chartData: [], ownerRevenue: [], topCustomers: [], topGuests: [] };
         const filteredBookings = bookingsToProcess.filter(b => {
             const bookingDate = dayjs(b.date + 'T00:00:00');
             return (bookingDate.isAfter(dateRange[0], 'day') || bookingDate.isSame(dateRange[0], 'day')) && (bookingDate.isBefore(dateRange[1], 'day') || bookingDate.isSame(dateRange[1], 'day'));
@@ -73,8 +74,44 @@ export function StatisticsManager({ userProfile }: { userProfile: UserProfile })
             filteredBookings.forEach(booking => { const ownerEmail = clubToOwnerMap.get(booking.club_id); if (ownerEmail) revenueByOwner.set(ownerEmail, (revenueByOwner.get(ownerEmail) || 0) + booking.total_price); });
             ownerRevenue = Array.from(revenueByOwner.entries()).map(([ownerEmail, revenue]) => ({ ownerEmail, revenue })).sort((a, b) => b.revenue - a.revenue);
         }
-        return { totalRevenue, totalBookings, chartData, ownerRevenue };
-    }, [allBookings, userProfile, dateRange, owners, clubs, selectedOwnerId]);
+
+        // Top registered customers
+        const customerCounts = new Map<string, { count: number; revenue: number; phone: string; name: string }>();
+        filteredBookings.forEach(b => {
+            if (b.user_id) {
+                const prev = customerCounts.get(b.user_id) || { count: 0, revenue: 0, phone: b.phone || '', name: b.name || '' };
+                customerCounts.set(b.user_id, {
+                    count: prev.count + 1,
+                    revenue: prev.revenue + b.total_price,
+                    phone: prev.phone || b.phone || '',
+                    name: prev.name || b.name || '',
+                });
+            }
+        });
+        const topCustomers = Array.from(customerCounts.entries())
+            .map(([userId, data]) => {
+                const user = allUsers?.find(u => u.id === userId);
+                const displayName = user?.phone || data.phone || user?.email?.split('@')[0] || data.name || 'Không rõ';
+                return { name: displayName, count: data.count, revenue: data.revenue };
+            })
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+
+        // Top guest customers (no user_id)
+        const guestCounts = new Map<string, { name: string; count: number; revenue: number }>();
+        filteredBookings.forEach(b => {
+            if (!b.user_id && b.phone) {
+                const prev = guestCounts.get(b.phone) || { name: b.name || '', count: 0, revenue: 0 };
+                guestCounts.set(b.phone, { name: prev.name || b.name || '', count: prev.count + 1, revenue: prev.revenue + b.total_price });
+            }
+        });
+        const topGuests = Array.from(guestCounts.entries())
+            .map(([phone, data]) => ({ phone, ...data }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
+
+        return { totalRevenue, totalBookings, chartData, ownerRevenue, topCustomers, topGuests };
+    }, [allBookings, userProfile, dateRange, owners, clubs, selectedOwnerId, allUsers]);
 
     const formatCurrency = (value: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     if (loading) return <Card><CardContent className="p-6"><Skeleton className="h-96 w-full" /></CardContent></Card>;
@@ -99,6 +136,26 @@ export function StatisticsManager({ userProfile }: { userProfile: UserProfile })
                     </ChartContainer>
                 </CardContent></Card>
                 {userProfile.role === 'admin' && stats.ownerRevenue.length > 0 && (<Card><CardHeader><CardTitle>Doanh thu theo Chủ Club</CardTitle></CardHeader><CardContent><Table><TableHeader><TableRow><TableHead>Chủ Club</TableHead><TableHead className="text-right">Doanh thu</TableHead></TableRow></TableHeader><TableBody>{stats.ownerRevenue.map(item => (<TableRow key={item.ownerEmail}><TableCell>{item.ownerEmail}</TableCell><TableCell className="text-right">{formatCurrency(item.revenue)}</TableCell></TableRow>))}</TableBody></Table></CardContent></Card>)}
+                <div className="grid gap-4 md:grid-cols-2">
+                    {stats.topCustomers.length > 0 && (
+                        <Card><CardHeader><CardTitle className="text-base">Top khách hàng đặt nhiều nhất</CardTitle><CardDescription>Khách đã đăng ký tài khoản</CardDescription></CardHeader><CardContent>
+                            <Table><TableHeader><TableRow><TableHead>#</TableHead><TableHead>Khách hàng</TableHead><TableHead className="text-center">Lượt đặt</TableHead><TableHead className="text-right">Doanh thu</TableHead></TableRow></TableHeader>
+                                <TableBody>{stats.topCustomers.map((c, i) => (
+                                    <TableRow key={i}><TableCell className="font-bold text-muted-foreground">{i + 1}</TableCell><TableCell className="font-medium">{c.name}</TableCell><TableCell className="text-center">{c.count}</TableCell><TableCell className="text-right">{formatCurrency(c.revenue)}</TableCell></TableRow>
+                                ))}</TableBody>
+                            </Table>
+                        </CardContent></Card>
+                    )}
+                    {stats.topGuests.length > 0 && (
+                        <Card><CardHeader><CardTitle className="text-base">Top khách vãng lai đặt nhiều nhất</CardTitle><CardDescription>Khách chưa đăng ký tài khoản</CardDescription></CardHeader><CardContent>
+                            <Table><TableHeader><TableRow><TableHead>#</TableHead><TableHead>Tên</TableHead><TableHead>SĐT</TableHead><TableHead className="text-center">Lượt đặt</TableHead><TableHead className="text-right">Doanh thu</TableHead></TableRow></TableHeader>
+                                <TableBody>{stats.topGuests.map((g, i) => (
+                                    <TableRow key={i}><TableCell className="font-bold text-muted-foreground">{i + 1}</TableCell><TableCell className="font-medium">{g.name || '—'}</TableCell><TableCell>{g.phone}</TableCell><TableCell className="text-center">{g.count}</TableCell><TableCell className="text-right">{formatCurrency(g.revenue)}</TableCell></TableRow>
+                                ))}</TableBody>
+                            </Table>
+                        </CardContent></Card>
+                    )}
+                </div>
             </CardContent>
         </Card>
     );

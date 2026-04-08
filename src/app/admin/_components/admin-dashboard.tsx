@@ -34,6 +34,8 @@ import { UserGuideGenerator } from './user-guide-generator';
 import { SeoManager } from './seo-manager';
 import { BlogAiWriter } from './blog-ai-writer';
 import { PromoSettingsManager } from './promo-settings-manager';
+import { CustomerManager } from './customer-manager';
+import { GuestManager } from './guest-manager';
 import { useTenant } from '@/hooks/use-tenant';
 
 export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
@@ -79,6 +81,8 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         { id: 'bookings', label: 'Quản lý Lịch đặt', icon: CalendarDays, roles: ['admin', 'club_owner', 'staff'] },
         ...(!isTenantScoped ? [{ id: 'clubs', label: 'Quản lý Câu lạc bộ', icon: Building, roles: ['admin', 'club_owner'] }] : []),
         { id: 'staff', label: 'Quản lý Nhân viên', icon: Users, roles: ['admin', 'club_owner'] },
+        { id: 'customers', label: 'Quản lý Khách hàng', icon: Users, roles: ['admin', 'club_owner'] },
+        { id: 'guests', label: 'Khách vãng lai', icon: Users, roles: ['admin', 'club_owner'] },
         { id: 'subscriptionDashboard', label: 'Thống kê Gói đăng ký', icon: CreditCard, roles: ['admin'] },
         { id: 'subscriptions', label: 'Quản lý Gói đăng ký', icon: CreditCard, roles: ['admin'] },
         { id: 'clubSubscriptions', label: 'Gói đăng ký CLB', icon: CreditCard, roles: ['admin'] },
@@ -230,6 +234,8 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                                 {activeView === 'fixedBookings' && <FixedBookingManager userProfile={userProfile} />}
                                 {activeView === 'clubs' && <ClubManager userProfile={userProfile} />}
                                 {activeView === 'staff' && (isAdmin || isClubOwner) && <StaffManager userProfile={userProfile} />}
+                                {(isAdmin || isClubOwner) && activeView === 'customers' && <CustomerManager userProfile={userProfile} />}
+                                {(isAdmin || isClubOwner) && activeView === 'guests' && <GuestManager userProfile={userProfile} />}
                                 {isAdmin && activeView === 'subscriptionDashboard' && <SubscriptionDashboard />}
                                 {isAdmin && activeView === 'subscriptions' && <SubscriptionPlanManager />}
                                 {isAdmin && activeView === 'clubSubscriptions' && <ClubSubscriptionManager />}
