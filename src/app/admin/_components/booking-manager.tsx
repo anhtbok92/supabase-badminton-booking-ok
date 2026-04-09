@@ -13,7 +13,8 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 dayjs.locale('vi');
 
 import { useSupabase, useSupabaseQuery } from '@/supabase';
-import type { UserBooking, Club, UserProfile } from '@/lib/types';
+import type { UserBooking, Club, Court, UserProfile } from '@/lib/types';
+import { filterBookingsByType } from '@/lib/event-utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,7 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Trash2, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, CheckCircle2, FileDown } from 'lucide-react';
+import { MoreHorizontal, Trash2, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, CheckCircle2, FileDown, Copy } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -63,6 +64,7 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
     const [viewerState, setViewerState] = useState<{ isOpen: boolean, urls: string[], startIndex: number }>({ isOpen: false, urls: [], startIndex: 0 });
 
     const [statusFilter, setStatusFilter] = useState('all');
+    const [bookingTypeFilter, setBookingTypeFilter] = useState<'all' | 'event' | 'visual'>('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(() => {
         return [dayjs().startOf('day'), dayjs().add(3, 'month').endOf('day')];
@@ -74,6 +76,7 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
     const [creationDateRange, setCreationDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
 
     const { data: allClubs } = useSupabaseQuery<Club>('clubs');
+    const { data: allCourts } = useSupabaseQuery<Court>('courts');
     const { data: owners, loading: ownersLoading } = useSupabaseQuery<UserProfile>(
         userProfile.role === 'admin' ? 'users' : null,
         (q) => q.eq('role', 'club_owner')
@@ -88,9 +91,13 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
             const prevBookingIds = new Set(prevBookingsRef.current.map(b => b.id));
             const newBookings = allBookings.filter(b => !prevBookingIds.has(b.id));
             newBookings.forEach(booking => {
-                if (booking.status === 'Chờ xác nhận') {
-                    const isRelevant = userProfile.role === 'admin' || (userProfile.role === 'club_owner' && userProfile.managed_club_ids?.includes(booking.club_id));
-                    if (isRelevant) { toast({ title: "Có lịch đặt mới!", description: `${booking.name} vừa đặt sân tại ${booking.club_name}.` }); }
+                const isRelevant = userProfile.role === 'admin' || (userProfile.role === 'club_owner' && userProfile.managed_club_ids?.includes(booking.club_id));
+                if (isRelevant) {
+                    if (booking.event_id && booking.phone !== 'Hệ thống') {
+                        toast({ title: "Có người đăng ký sự kiện!", description: `${booking.name} vừa đăng ký sự kiện tại ${booking.club_name}.` });
+                    } else if (booking.status === 'Chờ xác nhận') {
+                        toast({ title: "Có lịch đặt mới!", description: `${booking.name} vừa đặt sân tại ${booking.club_name}.` });
+                    }
                 }
             });
         }
@@ -128,8 +135,10 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
             const isDeletedMatch = !booking.is_deleted;
             return statusMatch && dateMatch && searchMatch && clubMatch && systemExcludeMatch && creationDateMatch && isDeletedMatch;
         });
-        return finalFiltered.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-    }, [allBookings, userProfile, statusFilter, dateRange, selectedOwnerId, owners, searchTerm, selectedClubId, creationDateRange]);
+        // Apply booking type filter
+        const typeFiltered = bookingTypeFilter === 'all' ? finalFiltered : filterBookingsByType(finalFiltered, bookingTypeFilter);
+        return typeFiltered.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    }, [allBookings, userProfile, statusFilter, dateRange, selectedOwnerId, owners, searchTerm, selectedClubId, creationDateRange, bookingTypeFilter]);
 
     const groupedBookings = useMemo(() => {
         const groups: Record<string, any> = {};
@@ -151,8 +160,8 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
             if (booking.created_at && (!g.latestCreatedAt || new Date(booking.created_at).getTime() > new Date(g.latestCreatedAt).getTime())) { g.latestCreatedAt = booking.created_at; }
             if (!g.slotsByDate[booking.date]) { g.slotsByDate[booking.date] = []; }
             booking.slots.forEach(s => {
-                if (!g.slotsByDate[booking.date].some((existing: any) => existing.time === s.time && existing.courtName === s.court_name)) {
-                    g.slotsByDate[booking.date].push({ time: s.time, courtName: s.court_name || '' });
+                if (!g.slotsByDate[booking.date].some((existing: any) => existing.time === s.time && existing.courtName === (s.court_name || ''))) {
+                    g.slotsByDate[booking.date].push({ time: s.time, courtName: s.court_name || '', court_id: s.court_id });
                 }
             });
         });
@@ -165,6 +174,19 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
     }, [filteredBookings]);
 
     const pageCount = Math.ceil(groupedBookings.length / rowsPerPage);
+
+    // Court name lookup for event bookings that may not have court_name in slots
+    const courtNameMap = useMemo(() => {
+        const map = new Map<string, string>();
+        allCourts?.forEach(c => map.set(c.id, c.name));
+        return map;
+    }, [allCourts]);
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text).then(() => {
+            toast({ title: 'Đã sao chép', description: text });
+        });
+    };
     const paginatedBookings = useMemo(() => {
         const startIndex = (page - 1) * rowsPerPage;
         return groupedBookings.slice(startIndex, startIndex + rowsPerPage);
@@ -175,6 +197,7 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
         const targetBooking = allBookings.find(b => b.id === highlightedBookingId);
         if (targetBooking) {
             if (statusFilter !== 'all') setStatusFilter('all');
+            if (bookingTypeFilter !== 'all') setBookingTypeFilter('all');
             if (searchTerm !== '') setSearchTerm('');
             if (selectedOwnerId !== 'all') setSelectedOwnerId('all');
             if (selectedClubId !== 'all') setSelectedClubId('all');
@@ -331,14 +354,15 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
             `;
 
             const container = document.createElement('div');
-            container.style.position = 'fixed';
+            container.style.position = 'absolute';
             container.style.left = '-9999px';
             container.style.top = '0';
+            container.style.width = '800px';
             container.innerHTML = invoiceHtml;
             document.body.appendChild(container);
 
             const invoiceEl = container.querySelector('#invoice-render') as HTMLElement;
-            const canvas = await html2canvas(invoiceEl, { scale: 2, useCORS: true, allowTaint: true });
+            const canvas = await html2canvas(invoiceEl, { scale: 2, useCORS: true, allowTaint: true, windowWidth: 900, windowHeight: 1200 });
             document.body.removeChild(container);
 
             const imgData = canvas.toDataURL('image/png');
@@ -363,6 +387,7 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
                     <div><CardTitle>Quản lý Lịch đặt</CardTitle><CardDescription>Xem, xác nhận hoặc hủy các lịch đặt sân.</CardDescription></div>
                     <div className="flex flex-col sm:flex-row flex-wrap gap-2">
                         <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Trạng thái" /></SelectTrigger><SelectContent><SelectItem value="all">Tất cả</SelectItem><SelectItem value="Chờ xác nhận">Chờ xác nhận</SelectItem><SelectItem value="Đã xác nhận">Đã xác nhận</SelectItem><SelectItem value="Đã hủy">Đã hủy</SelectItem></SelectContent></Select>
+                        <Select value={bookingTypeFilter} onValueChange={(v) => setBookingTypeFilter(v as 'all' | 'event' | 'visual')}><SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Loại đặt lịch" /></SelectTrigger><SelectContent><SelectItem value="all">Tất cả loại</SelectItem><SelectItem value="visual">Đặt lịch</SelectItem><SelectItem value="event">Sự kiện</SelectItem></SelectContent></Select>
                         <Input placeholder="Tìm theo tên hoặc SĐT..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full sm:w-[200px]" />
                         <AntdRegistry><ConfigProvider locale={viVN}>
                             <DatePicker.RangePicker value={dateRange} onChange={(dates) => setDateRange(dates as any)} format="DD/MM/YYYY" placeholder={['Từ ngày', 'Đến ngày']} className="w-full sm:w-auto h-10" allowClear={true} variant="outlined" />
@@ -377,22 +402,31 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
             <CardContent>
                 <div className="text-sm text-muted-foreground mb-4">Tổng: {groupedBookings.length} đơn đặt | Trang {page}/{pageCount || 1}</div>
                 <Table>
-                    <TableHeader><TableRow><TableHead>Mã đơn</TableHead><TableHead>Khách hàng</TableHead><TableHead>Ca đặt</TableHead><TableHead>Bằng chứng CK</TableHead><TableHead>Tổng tiền</TableHead><TableHead>Trạng thái</TableHead><TableHead>Ngày tạo</TableHead><TableHead className="text-right">Hành động</TableHead></TableRow></TableHeader>
+                    <TableHeader><TableRow><TableHead>Mã đơn</TableHead><TableHead>Loại</TableHead><TableHead>Khách hàng</TableHead><TableHead>Ca đặt</TableHead><TableHead>Bằng chứng CK</TableHead><TableHead>Tổng tiền</TableHead><TableHead>Trạng thái</TableHead><TableHead>Ngày tạo</TableHead><TableHead className="text-right">Hành động</TableHead></TableRow></TableHeader>
                     <TableBody>
-                        {loading && Array.from({ length: 3 }).map((_, i) => (<TableRow key={i}><TableCell colSpan={8}><Skeleton className="h-10 w-full" /></TableCell></TableRow>))}
+                        {loading && Array.from({ length: 3 }).map((_, i) => (<TableRow key={i}><TableCell colSpan={9}><Skeleton className="h-10 w-full" /></TableCell></TableRow>))}
                         {paginatedBookings.map((group: any) => {
                             const isHighlighted = highlightedBookingId && group.bookingIds.includes(highlightedBookingId);
+                            const isEventGroup = group.bookings.some((b: UserBooking) => !!b.event_id);
+                            const orderId = group.bookingGroupId || group.bookingIds[0]?.slice(0, 8) || '—';
                             return (
-                                <TableRow key={group.id} id={`booking-${group.id}`} className={cn(isHighlighted && "bg-primary/10 animate-pulse")}>
-                                    <TableCell><div className="text-xs font-mono text-muted-foreground">{group.bookingGroupId || group.bookingIds[0]?.slice(0, 8) || '—'}</div></TableCell>
+                                <TableRow key={group.id} id={`booking-${group.id}`} className={cn(isHighlighted && "bg-primary/10 animate-pulse", isEventGroup && "bg-purple-50 dark:bg-purple-950/20")}>
+                                    <TableCell>
+                                        <div className="flex items-center gap-1">
+                                            <span className="text-xs font-mono text-muted-foreground truncate max-w-[60px]" title={orderId}>{orderId.slice(0, 6)}</span>
+                                            <button onClick={() => copyToClipboard(orderId)} className="shrink-0 p-0.5 rounded hover:bg-muted transition-colors" title="Sao chép mã đơn"><Copy className="h-3 w-3 text-muted-foreground" /></button>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell><Badge variant="outline" className={cn(isEventGroup ? 'border-purple-500 text-purple-600 bg-purple-50' : 'border-blue-500 text-blue-600 bg-blue-50')}>{isEventGroup ? 'Sự kiện' : 'Đặt lịch'}</Badge></TableCell>
                                     <TableCell><div className="font-medium">{group.name}</div><div className="text-xs text-muted-foreground">{group.phone}</div></TableCell>
                                     <TableCell>
                                         <div className="text-xs space-y-1.5">
                                             {Object.entries(group.slotsByDate).map(([date, slots]: [string, any]) => {
                                                 const byCourtMap: Record<string, string[]> = {};
-                                                (slots as { time: string; courtName: string }[]).forEach((s) => {
-                                                    if (!byCourtMap[s.courtName]) byCourtMap[s.courtName] = [];
-                                                    byCourtMap[s.courtName].push(s.time);
+                                                (slots as { time: string; courtName: string; court_id?: string }[]).forEach((s: any) => {
+                                                    const cName = s.courtName || (s.court_id ? courtNameMap.get(s.court_id) : '') || '';
+                                                    if (!byCourtMap[cName]) byCourtMap[cName] = [];
+                                                    byCourtMap[cName].push(s.time);
                                                 });
                                                 const ranges = Object.entries(byCourtMap).map(([courtName, times]) => {
                                                     const sorted = times.sort();
@@ -411,7 +445,7 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
                                                         <div className="flex flex-wrap gap-1 mt-0.5">
                                                             {ranges.map((r, i) => (
                                                                 <span key={i} className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium">
-                                                                    {r.from}-{r.to} ({r.courtName})
+                                                                    {r.from}-{r.to}{r.courtName ? ` (${r.courtName})` : ''}
                                                                 </span>
                                                             ))}
                                                         </div>
@@ -447,7 +481,7 @@ export function BookingManager({ userProfile, highlightedBookingId, onHighlightC
                                 </TableRow>
                             );
                         })}
-                        {!loading && groupedBookings.length === 0 && (<TableRow><TableCell colSpan={8} className="h-24 text-center">Không có lịch đặt nào.</TableCell></TableRow>)}
+                        {!loading && groupedBookings.length === 0 && (<TableRow><TableCell colSpan={9} className="h-24 text-center">Không có lịch đặt nào.</TableCell></TableRow>)}
                     </TableBody>
                 </Table>
                 {pageCount > 1 && (

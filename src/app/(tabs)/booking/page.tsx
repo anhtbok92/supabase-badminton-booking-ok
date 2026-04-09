@@ -17,10 +17,12 @@ function ClubDetailSheet({
   club,
   isOpen,
   onOpenChange,
+  onBookNow,
 }: {
   club: Club | null;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onBookNow: (club: Club) => void;
 }) {
   if (!club) {
     return null;
@@ -146,11 +148,9 @@ function ClubDetailSheet({
               <p className="text-xl font-bold text-primary">{minPrice !== 'N/A' ? `${minPrice}đ` : 'Liên hệ'}<span className="text-sm font-normal text-muted-foreground"> /giờ</span></p>
             </div>
           </div>
-          <Link href={`/dat-san/${club.slug || club.id}`} className="w-full">
-            <Button className="w-full text-lg h-12 rounded-xl shadow-lg shadow-primary/30" size="lg" onClick={() => onOpenChange(false)}>
+          <Button className="w-full text-lg h-12 rounded-xl shadow-lg shadow-primary/30" size="lg" onClick={() => { onOpenChange(false); onBookNow(club); }}>
               Đặt ngay
             </Button>
-          </Link>
         </div>
       </SheetContent>
     </Sheet>
@@ -405,6 +405,7 @@ function ClubCardSkeleton() {
 import { cn } from '@/lib/utils';
 import { useTenant } from '@/hooks/use-tenant';
 import { AdvancedSearchSheet, type AdvancedFilters } from './_components/advanced-search';
+import { BookingTypeSelector } from './_components/booking-type-selector';
 
 const EMPTY_FILTERS: AdvancedFilters = { province: '', district: '', openHour: '' };
 
@@ -448,6 +449,7 @@ export default function BookingTabPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(EMPTY_FILTERS);
+  const [bookingTypeClub, setBookingTypeClub] = useState<Club | null>(null);
 
   const hasAdvancedFilters = !!(advancedFilters.province || advancedFilters.district || advancedFilters.openHour);
 
@@ -527,7 +529,15 @@ export default function BookingTabPage() {
         club={selectedClub}
         isOpen={isSheetOpen}
         onOpenChange={handleSheetOpenChange}
+        onBookNow={(club) => setBookingTypeClub(club)}
       />
+      {bookingTypeClub && (
+        <BookingTypeSelector
+          club={bookingTypeClub}
+          isOpen={!!bookingTypeClub}
+          onOpenChange={(open) => { if (!open) setBookingTypeClub(null); }}
+        />
+      )}
       <AdvancedSearchSheet
         isOpen={advancedOpen}
         onOpenChange={setAdvancedOpen}

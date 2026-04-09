@@ -66,6 +66,7 @@ export type UserBooking = {
   created_at?: string;
   is_deleted?: boolean;
   booking_group_id?: string;
+  event_id?: string;
 };
 
 export type SelectedSlot = {
@@ -134,6 +135,27 @@ export type BlogPost = {
   published_at?: string;
   created_at: string;
   updated_at: string;
+};
+
+// ============================================================
+// Event Booking Types
+// ============================================================
+
+export type Event = {
+  id: string;
+  club_id: string;
+  event_name: string;
+  event_date: string;
+  court_id?: string;
+  start_time: string;
+  end_time: string;
+  max_participants: number;
+  ticket_price: number;
+  activity_type?: string;
+  notes?: string;
+  status: 'active' | 'cancelled' | 'completed';
+  created_by?: string;
+  created_at?: string;
 };
 
 // ============================================================

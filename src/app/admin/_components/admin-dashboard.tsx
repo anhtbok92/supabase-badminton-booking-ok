@@ -36,6 +36,7 @@ import { BlogAiWriter } from './blog-ai-writer';
 import { PromoSettingsManager } from './promo-settings-manager';
 import { CustomerManager } from './customer-manager';
 import { GuestManager } from './guest-manager';
+import { EventManager } from './event-manager';
 import { useTenant } from '@/hooks/use-tenant';
 
 export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
@@ -79,6 +80,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         { id: 'schedule', label: 'Lịch sân', icon: CalendarClock, roles: ['admin', 'club_owner', 'staff'] },
         { id: 'fixedBookings', label: 'Lịch cố định', icon: CalendarDays, roles: ['admin', 'club_owner', 'staff'] },
         { id: 'bookings', label: 'Quản lý Lịch đặt', icon: CalendarDays, roles: ['admin', 'club_owner', 'staff'] },
+        { id: 'events', label: 'Sự kiện', icon: CalendarDays, roles: ['admin', 'club_owner'] },
         ...(!isTenantScoped ? [{ id: 'clubs', label: 'Quản lý Câu lạc bộ', icon: Building, roles: ['admin', 'club_owner'] }] : []),
         { id: 'staff', label: 'Quản lý Nhân viên', icon: Users, roles: ['admin', 'club_owner'] },
         { id: 'customers', label: 'Quản lý Khách hàng', icon: Users, roles: ['admin', 'club_owner'] },
@@ -236,6 +238,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                                 {activeView === 'staff' && (isAdmin || isClubOwner) && <StaffManager userProfile={userProfile} />}
                                 {(isAdmin || isClubOwner) && activeView === 'customers' && <CustomerManager userProfile={userProfile} />}
                                 {(isAdmin || isClubOwner) && activeView === 'guests' && <GuestManager userProfile={userProfile} />}
+                                {(isAdmin || isClubOwner) && activeView === 'events' && <EventManager userProfile={userProfile} />}
                                 {isAdmin && activeView === 'subscriptionDashboard' && <SubscriptionDashboard />}
                                 {isAdmin && activeView === 'subscriptions' && <SubscriptionPlanManager />}
                                 {isAdmin && activeView === 'clubSubscriptions' && <ClubSubscriptionManager />}

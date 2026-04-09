@@ -91,6 +91,19 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
         if (!dateBookings) return null;
         return dateBookings.find(b =>
             b.status !== 'Đã hủy' &&
+            !b.is_deleted &&
+            b.slots.some(s => s.court_id === courtId && s.time === time)
+        );
+    };
+
+    // Get all event participants for a given court+time slot
+    const getEventParticipants = (courtId: string, time: string) => {
+        if (!dateBookings) return [];
+        return dateBookings.filter(b =>
+            !!b.event_id &&
+            b.phone !== 'Hệ thống' &&
+            b.status !== 'Đã hủy' &&
+            !b.is_deleted &&
             b.slots.some(s => s.court_id === courtId && s.time === time)
         );
     };
@@ -106,7 +119,7 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
         setActionDialogOpen(true);
     };
 
-    const handleAction = async (action: 'Khóa' | 'Sự kiện') => {
+    const handleAction = async (action: 'Khóa') => {
         if (!selectedSlotData || !selectedClubId || !currentClub) return;
 
         try {
@@ -117,13 +130,13 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
                 slots: [{ court_id: selectedSlotData.courtId, time: selectedSlotData.time, court_name: selectedSlotData.courtName }],
                 total_price: 0,
                 status: action,
-                name: action === 'Khóa' ? 'LỊCH KHÓA' : 'SỰ KIỆN',
+                name: 'LỊCH KHÓA',
                 phone: 'Hệ thống',
             };
 
             const { error } = await supabase.from('bookings').insert(bookingData);
             if (error) throw error;
-            toast({ title: 'Thành công', description: `Đã ${action.toLowerCase()} khung giờ.` });
+            toast({ title: 'Thành công', description: `Đã khóa khung giờ.` });
             setActionDialogOpen(false);
             refetchScheduleBookings();
         } catch (error) {
@@ -174,12 +187,20 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
         endTime: string;
         type: 'Khóa' | 'Sự kiện' | 'Đã đặt' | 'Mở khóa';
         note: string;
+        eventName: string;
+        maxParticipants: number;
+        ticketPrice: number;
+        activityType: string;
     }>({
         courtId: '',
         startTime: '05:00',
         endTime: '22:00',
         type: 'Khóa',
-        note: ''
+        note: '',
+        eventName: '',
+        maxParticipants: 10,
+        ticketPrice: 0,
+        activityType: '',
     });
 
     const [isDragging, setIsDragging] = useState(false);
@@ -213,7 +234,11 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
                     startTime: timeSlots[realStart],
                     endTime: timeSlots[realEnd + 1] || timeSlots[48],
                     type: 'Khóa',
-                    note: ''
+                    note: '',
+                    eventName: '',
+                    maxParticipants: 10,
+                    ticketPrice: 0,
+                    activityType: '',
                 });
                 setBulkActionOpen(true);
             }
@@ -242,6 +267,11 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
         const selectedCourt = courts?.find(c => c.id === bulkConfig.courtId);
         if (!selectedCourt) {
             toast({ title: 'Lỗi', description: 'Vui lòng chọn sân.', variant: 'destructive' });
+            return;
+        }
+
+        if (bulkConfig.type === 'Sự kiện' && !bulkConfig.eventName.trim()) {
+            toast({ title: 'Lỗi', description: 'Vui lòng nhập tên sự kiện.', variant: 'destructive' });
             return;
         }
 
@@ -367,17 +397,53 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
                 }
 
             } else {
-                const bookingData = {
-                    club_id: selectedClubId,
-                    club_name: currentClub.name,
-                    date: format(date, 'yyyy-MM-dd'),
-                    slots: slotsToAdd,
-                    total_price: 0,
-                    status: bulkConfig.type,
-                    name: bulkConfig.type === 'Khóa' ? 'LỊCH KHÓA' : (bulkConfig.note || 'SỰ KIỆN'),
-                    phone: 'Hệ thống',
-                };
-                await supabase.from('bookings').insert(bookingData);
+                if (bulkConfig.type === 'Sự kiện') {
+                    // Create event record in events table
+                    const eventName = bulkConfig.eventName || bulkConfig.note || 'Sự kiện';
+                    const { data: eventData, error: eventError } = await supabase.from('events').insert({
+                        club_id: selectedClubId,
+                        event_name: eventName,
+                        event_date: format(date, 'yyyy-MM-dd'),
+                        court_id: bulkConfig.courtId,
+                        start_time: bulkConfig.startTime,
+                        end_time: bulkConfig.endTime,
+                        max_participants: bulkConfig.maxParticipants,
+                        ticket_price: bulkConfig.ticketPrice,
+                        activity_type: bulkConfig.activityType || undefined,
+                        notes: bulkConfig.note || undefined,
+                        status: 'active',
+                        created_by: userProfile.id,
+                    }).select('id').single();
+
+                    if (eventError) throw eventError;
+
+                    // Create a system booking to block the slots on the grid
+                    const bookingData = {
+                        club_id: selectedClubId,
+                        club_name: currentClub.name,
+                        date: format(date, 'yyyy-MM-dd'),
+                        slots: slotsToAdd,
+                        total_price: 0,
+                        status: 'Sự kiện',
+                        name: eventName,
+                        phone: 'Hệ thống',
+                        event_id: eventData.id,
+                    };
+                    await supabase.from('bookings').insert(bookingData);
+                } else {
+                    // Khóa
+                    const bookingData = {
+                        club_id: selectedClubId,
+                        club_name: currentClub.name,
+                        date: format(date, 'yyyy-MM-dd'),
+                        slots: slotsToAdd,
+                        total_price: 0,
+                        status: bulkConfig.type,
+                        name: 'LỊCH KHÓA',
+                        phone: 'Hệ thống',
+                    };
+                    await supabase.from('bookings').insert(bookingData);
+                }
             }
 
             toast({ title: 'Thành công', description: `Đã thiết lập ${bulkConfig.type.toLowerCase()} cho ${slotsToAdd.length} khung giờ.` });
@@ -434,8 +500,8 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
                                 if (courtSlots.length > 0) {
                                     acc[court.id] = {
                                         totalSlots: courtSlots.length,
-                                        customers: Array.from(new Set(courtSlots.filter(s => s.booking.name !== 'LỊCH KHÓA' && s.booking.name !== 'SỰ KIỆN').map(s => s.booking.name))),
-                                        hasSpecial: courtSlots.some(s => s.booking.status === 'Khóa' || s.booking.status === 'Sự kiện')
+                                        customers: Array.from(new Set(courtSlots.filter(s => s.booking.name !== 'LỊCH KHÓA' && s.booking.name !== 'SỰ KIỆN' && !s.booking.event_id).map(s => s.booking.name))),
+                                        hasSpecial: courtSlots.some(s => s.booking.status === 'Khóa' || s.booking.status === 'Sự kiện' || !!s.booking.event_id)
                                     };
                                 }
                                 return acc;
@@ -475,7 +541,9 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
 
                                                 if (booking) {
                                                     const isSystemLock = booking.status === 'Khóa';
-                                                    const isEvent = booking.status === 'Sự kiện';
+                                                    const isEvent = booking.status === 'Sự kiện' || !!booking.event_id;
+                                                    const eventParticipants = isEvent ? getEventParticipants(court.id, time) : [];
+                                                    const participantCount = eventParticipants.length;
                                                     return (
                                                         <div key={time} onMouseDown={() => handleMouseDown(court.id, idx)} onMouseEnter={() => handleMouseEnter(court.id, idx)}
                                                             onClick={() => { if (!isDragging && dragSelection === null) handleSlotClick(court.id, court.name, time, booking); }}
@@ -483,8 +551,20 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
                                                                 isSystemLock ? "bg-muted text-muted-foreground hover:bg-muted/80 shadow-inner" : isEvent ? "bg-event text-event-foreground hover:bg-event/90" : "bg-destructive/80 text-destructive-foreground hover:bg-destructive",
                                                                 isSelected && "ring-2 ring-inset ring-primary z-10 opacity-70")}>
                                                             <div className="flex flex-col h-full justify-between">
-                                                                <div><div className="font-bold truncate">{booking.name}</div><div className="truncate opacity-90 text-[10px]">{booking.phone}</div></div>
-                                                                <Badge variant="outline" className={cn("text-[10px] h-5 px-2 w-fit border-current scale-90 origin-left font-bold capitalize", (isSystemLock || isEvent) ? "bg-background/20" : "border-destructive-foreground/50 text-destructive-foreground")}>{booking.status}</Badge>
+                                                                {isEvent && participantCount > 0 ? (
+                                                                    <>
+                                                                        <div>
+                                                                            <div className="font-bold truncate flex items-center gap-1"><Users className="h-3 w-3 shrink-0" />{participantCount} người</div>
+                                                                            <div className="truncate opacity-90 text-[10px]">{eventParticipants.slice(0, 2).map(p => p.name).join(', ')}{participantCount > 2 ? '...' : ''}</div>
+                                                                        </div>
+                                                                        <Badge variant="outline" className="text-[10px] h-5 px-2 w-fit border-current scale-90 origin-left font-bold bg-background/20">Sự kiện</Badge>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <div><div className="font-bold truncate">{booking.name}</div><div className="truncate opacity-90 text-[10px]">{booking.phone}</div></div>
+                                                                        <Badge variant="outline" className={cn("text-[10px] h-5 px-2 w-fit border-current scale-90 origin-left font-bold capitalize", (isSystemLock || isEvent) ? "bg-background/20" : "border-destructive-foreground/50 text-destructive-foreground")}>{booking.status}</Badge>
+                                                                    </>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     );
@@ -524,7 +604,7 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
                         <div className="py-4 space-y-4">
                             <div className="rounded-lg border p-4 space-y-2 bg-muted/5">
                                 <div className="flex justify-between items-center text-sm"><span className="text-muted-foreground">Trạng thái:</span>
-                                    <Badge className={cn(selectedSlotData.booking.status === 'Khóa' ? "bg-muted text-muted-foreground" : selectedSlotData.booking.status === 'Sự kiện' ? "bg-event text-event-foreground" : "bg-destructive text-destructive-foreground")}>{selectedSlotData.booking.status}</Badge>
+                                    <Badge className={cn(selectedSlotData.booking.status === 'Khóa' ? "bg-muted text-muted-foreground" : (selectedSlotData.booking.status === 'Sự kiện' || selectedSlotData.booking.event_id) ? "bg-event text-event-foreground" : "bg-destructive text-destructive-foreground")}>{selectedSlotData.booking.event_id ? 'Sự kiện' : selectedSlotData.booking.status}</Badge>
                                 </div>
                                 <div className="flex justify-between items-center text-sm"><span className="text-muted-foreground">Thông tin:</span><span className="font-medium">{selectedSlotData.booking.name}</span></div>
                                 {selectedSlotData.booking.phone !== 'Hệ thống' && (<div className="flex justify-between items-center text-sm"><span className="text-muted-foreground">SĐT:</span><span className="font-medium">{selectedSlotData.booking.phone}</span></div>)}
@@ -536,7 +616,21 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
                     ) : (
                         <div className="py-6 flex flex-col gap-3">
                             <Button className="w-full h-12 text-base justify-start px-6" variant="outline" onClick={() => handleAction('Khóa')}><CalendarDays className="mr-3 h-5 w-5 text-muted-foreground" /><span>Khóa khung giờ (Bận)</span></Button>
-                            <Button className="w-full h-12 text-base justify-start px-6 bg-event hover:bg-event/90 text-event-foreground border-none" onClick={() => handleAction('Sự kiện')}><Newspaper className="mr-3 h-5 w-5" /><span>Đặt làm Sự kiện</span></Button>
+                            <Button className="w-full h-12 text-base justify-start px-6 bg-event hover:bg-event/90 text-event-foreground border-none" onClick={() => {
+                                setActionDialogOpen(false);
+                                setBulkConfig({
+                                    courtId: selectedSlotData!.courtId,
+                                    startTime: selectedSlotData!.time,
+                                    endTime: timeSlots[timeSlots.indexOf(selectedSlotData!.time) + 1] || selectedSlotData!.time,
+                                    type: 'Sự kiện',
+                                    note: '',
+                                    eventName: '',
+                                    maxParticipants: 10,
+                                    ticketPrice: 0,
+                                    activityType: '',
+                                });
+                                setBulkActionOpen(true);
+                            }}><Newspaper className="mr-3 h-5 w-5" /><span>Tạo Sự kiện</span></Button>
                         </div>
                     )}
                     <DialogFooter><DialogClose asChild><Button variant="ghost">Hủy</Button></DialogClose></DialogFooter>
@@ -572,7 +666,30 @@ export function ScheduleManager({ userProfile }: { userProfile: UserProfile }) {
                             </Select>
                         </div>
                         {bulkConfig.type === 'Đã đặt' && (<div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="note-booking" className="text-right">Tên KH</Label><Input id="note-booking" value={bulkConfig.note} onChange={(e) => setBulkConfig({ ...bulkConfig, note: e.target.value })} className="col-span-3" placeholder="Tên khách hàng (Mặc định: Khách vãng lai)" /></div>)}
-                        {bulkConfig.type === 'Sự kiện' && (<div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="note" className="text-right">Tên SK</Label><Input id="note" value={bulkConfig.note} onChange={(e) => setBulkConfig({ ...bulkConfig, note: e.target.value })} className="col-span-3" placeholder="Ví dụ: Giải đấu..." /></div>)}
+                        {bulkConfig.type === 'Sự kiện' && (
+                            <>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-right">Tên SK</Label>
+                                    <Input value={bulkConfig.eventName} onChange={(e) => setBulkConfig({ ...bulkConfig, eventName: e.target.value })} className="col-span-3" placeholder="VD: Giao lưu cầu lông cuối tuần" />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-right">Số người</Label>
+                                    <Input type="number" min={1} value={bulkConfig.maxParticipants} onChange={(e) => setBulkConfig({ ...bulkConfig, maxParticipants: Number(e.target.value) })} className="col-span-3" />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-right">Giá vé</Label>
+                                    <Input type="number" min={0} value={bulkConfig.ticketPrice} onChange={(e) => setBulkConfig({ ...bulkConfig, ticketPrice: Number(e.target.value) })} className="col-span-3" placeholder="0 = Miễn phí" />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-right">Thể loại</Label>
+                                    <Input value={bulkConfig.activityType} onChange={(e) => setBulkConfig({ ...bulkConfig, activityType: e.target.value })} className="col-span-3" placeholder="VD: Đánh đôi, Giao lưu" />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-right">Ghi chú</Label>
+                                    <Input value={bulkConfig.note} onChange={(e) => setBulkConfig({ ...bulkConfig, note: e.target.value })} className="col-span-3" placeholder="Ghi chú thêm (không bắt buộc)" />
+                                </div>
+                            </>
+                        )}
                     </div>
                     <DialogFooter><DialogClose asChild><Button variant="ghost">Hủy</Button></DialogClose><Button type="submit" onClick={handleBulkSubmit}>Xác nhận</Button></DialogFooter>
                 </DialogContent>

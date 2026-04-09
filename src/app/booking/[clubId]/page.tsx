@@ -315,7 +315,7 @@ export default function BookingPage({ clubIdProp }: { clubIdProp?: string } = {}
 
     if (booking) {
       if (booking.status === 'Khóa') return 'blocked';
-      if (booking.status === 'Sự kiện') return 'event';
+      if (booking.status === 'Sự kiện' || booking.event_id) return 'event';
       return 'booked';
     }
 

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bell, CheckCircle2, Clock } from 'lucide-react';
+import { Bell, CheckCircle2, Clock, CalendarDays } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function NotificationCenter({ userProfile }: { userProfile: UserProfile }) {
@@ -29,6 +29,7 @@ export function NotificationCenter({ userProfile }: { userProfile: UserProfile }
             filtered = allBookings.filter(b => userProfile.managed_club_ids?.includes(b.club_id));
         }
         return filtered
+            .filter(b => b.phone !== 'Hệ thống')
             .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
             .slice(0, 5);
     }, [allBookings, userProfile]);
@@ -37,7 +38,7 @@ export function NotificationCenter({ userProfile }: { userProfile: UserProfile }
         if (!relevantNotifications.length) return;
         const unread = relevantNotifications.filter(n => {
             const time = new Date(n.created_at || 0).getTime();
-            return time > lastSeenTime && n.status === 'Chờ xác nhận';
+            return time > lastSeenTime && (n.status === 'Chờ xác nhận' || (!!n.event_id && n.phone !== 'Hệ thống'));
         }).length;
         setUnreadCount(unread);
     }, [relevantNotifications, lastSeenTime]);
@@ -78,20 +79,23 @@ export function NotificationCenter({ userProfile }: { userProfile: UserProfile }
                                     onClick={() => handleNotiClick(noti.id)}
                                     className={cn(
                                         "flex flex-col gap-1 border-b p-4 hover:bg-muted/70 transition-colors cursor-pointer",
-                                        new Date(noti.created_at || 0).getTime() > lastSeenTime && noti.status === 'Chờ xác nhận' ? "bg-primary/10" : ""
+                                        new Date(noti.created_at || 0).getTime() > lastSeenTime && (noti.status === 'Chờ xác nhận' || (!!noti.event_id && noti.phone !== 'Hệ thống')) ? "bg-primary/10" : ""
                                     )}>
                                     <div className="flex items-start justify-between gap-2">
                                         <div className="space-y-0.5">
                                             <p className="text-sm font-bold leading-none">{noti.name}</p>
                                             <p className="text-xs text-muted-foreground">{noti.club_name}</p>
                                         </div>
-                                        {noti.status === 'Chờ xác nhận' ? (
+                                        {noti.event_id ? (
+                                            <CalendarDays className="h-3 w-3 text-purple-500" />
+                                        ) : noti.status === 'Chờ xác nhận' ? (
                                             <Clock className="h-3 w-3 text-yellow-500" />
                                         ) : (
                                             <CheckCircle2 className="h-3 w-3 text-green-500" />
                                         )}
                                     </div>
                                     <div className="flex items-center gap-2 mt-1">
+                                        {noti.event_id && <Badge variant="outline" className="text-[10px] h-4 px-1 border-purple-500 text-purple-600 bg-purple-50">Sự kiện</Badge>}
                                         <Badge variant="outline" className="text-[10px] h-4 px-1">{noti.slots.length} sân</Badge>
                                         <span className="text-[10px] text-muted-foreground">
                                             {new Intl.NumberFormat('vi-VN').format(noti.total_price)}đ

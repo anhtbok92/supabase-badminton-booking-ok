@@ -7,13 +7,13 @@ import { vi } from 'date-fns/locale';
 
 import { useUser, useSupabaseQuery } from '@/supabase';
 import { useTenant } from '@/hooks/use-tenant';
-import type { UserBooking, Court } from '@/lib/types';
+import type { UserBooking, Court, Event } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { CalendarCheck, Ticket } from 'lucide-react';
+import { CalendarCheck, Ticket, CalendarDays, MapPin } from 'lucide-react';
 
 
 function GuestThankYou() {
@@ -182,6 +182,58 @@ function GroupedBookingCard({ group }: { group: { id: string; clubName: string; 
     );
 }
 
+function EventBookingCard({ booking, eventName }: { booking: UserBooking; eventName?: string }) {
+    const formattedDate = format(new Date(booking.date + 'T00:00:00'), 'EEEE, dd/MM/yyyy', { locale: vi });
+    const formattedPrice = new Intl.NumberFormat('vi-VN').format(booking.total_price);
+
+    return (
+        <Card className="overflow-hidden shadow-sm border-primary/20">
+            <CardHeader>
+                <div className="flex justify-between items-start gap-2">
+                    <div>
+                        <CardTitle className="font-headline text-lg">{eventName || booking.club_name}</CardTitle>
+                        <CardDescription>
+                            <span className="font-mono text-xs text-muted-foreground">#{booking.id.slice(0, 8)}</span>
+                            <span className="mx-1">·</span>
+                            {booking.club_name}
+                        </CardDescription>
+                    </div>
+                    <Badge className="shrink-0 bg-primary text-primary-foreground hover:bg-primary/80">
+                        <CalendarDays className="h-3 w-3 mr-1" />
+                        Sự kiện
+                    </Badge>
+                </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <CalendarDays className="h-4 w-4 shrink-0 text-primary" />
+                        <span>{formattedDate}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <Ticket className="h-4 w-4 shrink-0 text-primary" />
+                        <span className="font-medium">{booking.total_price > 0 ? `${formattedPrice}đ` : 'Miễn phí'}</span>
+                    </div>
+                    {booking.slots?.[0]?.court_name && (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <MapPin className="h-4 w-4 shrink-0 text-primary" />
+                            <span>{booking.slots[0].court_name}</span>
+                        </div>
+                    )}
+                </div>
+            </CardContent>
+            <CardFooter className="flex gap-2 bg-muted/50 p-3">
+                <Button variant="ghost" className="flex-1" asChild>
+                    <Link href={`/su-kien/${booking.club_id}`}>Xem sự kiện</Link>
+                </Button>
+                <Button className="flex-1" asChild>
+                    <Link href="/booking">Xem các CLB</Link>
+                </Button>
+            </CardFooter>
+        </Card>
+    );
+}
+
 function LoggedInBookingsView() {
     const { user } = useUser();
     const tenant = useTenant();
@@ -198,11 +250,41 @@ function LoggedInBookingsView() {
         { deps: [user?.id, tenant?.clubId] }
     );
 
-    const groupedBookings = useMemo(() => {
+    // Collect event_ids from event bookings to fetch event names
+    const eventIds = useMemo(() => {
         if (!bookings) return [];
+        return [...new Set(bookings.filter(b => b.event_id && b.status === 'Sự kiện').map(b => b.event_id!))];
+    }, [bookings]);
+
+    const { data: events } = useSupabaseQuery<Event>(
+        eventIds.length > 0 ? 'events' : null,
+        q => q.in('id', eventIds),
+        { deps: [eventIds.join(',')] }
+    );
+
+    const eventNameMap = useMemo(() => {
+        const map: Record<string, string> = {};
+        events?.forEach(e => { map[e.id] = e.event_name; });
+        return map;
+    }, [events]);
+
+    // Separate event bookings from regular bookings
+    const { eventBookings, regularBookings } = useMemo(() => {
+        if (!bookings) return { eventBookings: [] as UserBooking[], regularBookings: [] as UserBooking[] };
+        const ev: UserBooking[] = [];
+        const reg: UserBooking[] = [];
+        bookings.forEach(b => {
+            if (b.is_deleted) return;
+            if (b.status === 'Sự kiện') ev.push(b);
+            else reg.push(b);
+        });
+        ev.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+        return { eventBookings: ev, regularBookings: reg };
+    }, [bookings]);
+
+    const groupedBookings = useMemo(() => {
         const groups: Record<string, any> = {};
-        bookings.forEach(booking => {
-            if (booking.is_deleted) return;
+        regularBookings.forEach(booking => {
             const createdAtStr = booking.created_at ? Math.floor(new Date(booking.created_at).getTime() / 1000).toString() : 'no-time';
             const key = booking.booking_group_id || `${booking.phone}-${booking.status}-${createdAtStr}`;
             if (!groups[key]) {
@@ -228,7 +310,7 @@ function LoggedInBookingsView() {
                 slotsByDate: Object.fromEntries(Object.entries(g.slotsByDate).map(([date, slots]: [string, any]) => [date, slots.sort((a: any, b: any) => a.time.localeCompare(b.time))]))
             }))
             .sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-    }, [bookings]);
+    }, [regularBookings]);
 
 
     return (
@@ -248,7 +330,10 @@ function LoggedInBookingsView() {
                 {groupedBookings.map((group: any) => (
                     <GroupedBookingCard key={group.id} group={group} />
                 ))}
-                {!loading && groupedBookings.length === 0 && (
+                {eventBookings.map((booking) => (
+                    <EventBookingCard key={booking.id} booking={booking} eventName={booking.event_id ? eventNameMap[booking.event_id] : undefined} />
+                ))}
+                {!loading && groupedBookings.length === 0 && eventBookings.length === 0 && (
                     <div className="flex flex-col items-center justify-center text-center pt-20">
                         <CalendarCheck className="h-16 w-16 text-muted-foreground mb-4" />
                         <h2 className="text-xl font-semibold">Bạn chưa có lịch đặt nào</h2>
