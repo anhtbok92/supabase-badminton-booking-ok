@@ -13,7 +13,10 @@ const PUBLIC_ROUTES = [
 ];
 
 function isPublicRoute(path: string): boolean {
-  return PUBLIC_ROUTES.includes(path) || path.startsWith('/bai-viet/');
+  return PUBLIC_ROUTES.includes(path)
+    || path.startsWith('/bai-viet/')
+    || path.startsWith('/san/')     // SEO club detail pages
+    || path.startsWith('/api/');     // API routes
 }
 
 export async function middleware(request: NextRequest) {
@@ -94,12 +97,18 @@ function handleExistingRouting(
 
   // Production main domain: sportbooking.online / www
   if (hostname === 'sportbooking.online' || hostname === 'www.sportbooking.online') {
-    if (isPublicRoute(path)) {
+    // Static assets and API always pass through
+    if (path.startsWith('/_next') || path.startsWith('/api')) {
       return NextResponse.next();
     }
-    if (!path.startsWith('/_next') && !path.startsWith('/api')) {
+    // Block only known app-only routes that shouldn't be on landing domain
+    const APP_ONLY_ROUTES = ['/login', '/booking', '/payment', '/admin', '/my-bookings', '/account', '/dat-san', '/su-kien', '/events'];
+    const isAppOnly = APP_ONLY_ROUTES.some(r => path === r || path.startsWith(r + '/'));
+    if (isAppOnly) {
       return NextResponse.redirect(new URL('/', request.url));
     }
+    // Everything else (landing, SEO pages, bai-viet, san/, [seoSlug]) → allow
+    return NextResponse.next();
   }
 
   // app.sportbooking.online
