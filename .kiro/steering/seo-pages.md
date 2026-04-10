@@ -51,8 +51,16 @@ Club tạo/edit (admin form)
 ### Fields mới trên bảng `clubs` (migration 018)
 - `city`, `district` — slug tỉnh/thành, quận/huyện (chọn từ dropdown)
 - `open_time`, `close_time` — giờ mở/đóng cửa (HH:mm)
-- `has_roof`, `has_lighting`, `has_parking` — boolean tiện ích
-- `indoor_outdoor` — enum: indoor / outdoor / both
+- `has_roof`, `has_lighting`, `has_parking` — boolean tiện ích (legacy, dùng dynamic amenities thay thế)
+- `indoor_outdoor` — enum: indoor / outdoor / both (legacy)
+
+### Bảng `amenity_types` (migration 019) — Tiện ích động
+- `name`, `slug`, `icon`, `order` — admin quản lý qua UI
+- Ví dụ: Mái che, Trong nhà, Đèn chiếu sáng, Bãi đỗ xe, WiFi, Điều hòa...
+
+### Bảng `club_amenities` (migration 019) — Junction table
+- `club_id` + `amenity_type_id` — many-to-many giữa clubs và amenity_types
+- Admin chọn tiện ích khi tạo/edit club
 
 ### Function `nearby_clubs(lat, lng, radius_km, sport_type)`
 - Haversine formula trong PostgreSQL

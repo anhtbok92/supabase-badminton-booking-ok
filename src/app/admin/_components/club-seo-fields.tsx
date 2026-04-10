@@ -1,18 +1,63 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { PROVINCES } from '@/lib/vietnam-locations';
+import { useSupabase, useSupabaseQuery } from '@/supabase';
+import type { AmenityType } from '@/lib/types';
 import { MapPin, Clock, Building2 } from 'lucide-react';
 import type { ClubSchema } from './schemas';
 
-export function ClubSeoFields({ form }: { form: UseFormReturn<ClubSchema> }) {
+type Props = {
+  form: UseFormReturn<ClubSchema>;
+  clubId?: string; // existing club id for loading saved amenities
+};
+
+export function ClubSeoFields({ form, clubId }: Props) {
+  const supabase = useSupabase();
   const selectedCity = form.watch('city');
   const selectedProvince = PROVINCES.find(p => p.slug === selectedCity);
+
+  // Fetch dynamic amenity types
+  const { data: amenityTypes } = useSupabaseQuery<AmenityType>(
+    'amenity_types',
+    (q) => q.order('order')
+  );
+
+  // Track selected amenity IDs
+  const [selectedAmenities, setSelectedAmenities] = useState<Set<string>>(new Set());
+
+  // Load existing club amenities
+  useEffect(() => {
+    if (!clubId) return;
+    supabase
+      .from('club_amenities')
+      .select('amenity_type_id')
+      .eq('club_id', clubId)
+      .then(({ data }) => {
+        if (data) setSelectedAmenities(new Set(data.map(r => r.amenity_type_id)));
+      });
+  }, [clubId, supabase]);
+
+  // Expose selected amenities so parent form can save them
+  // We store them on the form via a hidden field
+  useEffect(() => {
+    form.setValue('amenityIds', Array.from(selectedAmenities));
+  }, [selectedAmenities, form]);
+
+  const toggleAmenity = (id: string) => {
+    setSelectedAmenities(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -27,19 +72,12 @@ export function ClubSeoFields({ form }: { form: UseFormReturn<ClubSchema> }) {
             <FormItem>
               <FormLabel>Tỉnh / Thành phố</FormLabel>
               <Select
-                onValueChange={(val) => {
-                  field.onChange(val);
-                  form.setValue('district', '');
-                }}
+                onValueChange={(val) => { field.onChange(val); form.setValue('district', ''); }}
                 value={field.value || ''}
               >
-                <FormControl>
-                  <SelectTrigger><SelectValue placeholder="Chọn tỉnh/thành..." /></SelectTrigger>
-                </FormControl>
+                <FormControl><SelectTrigger><SelectValue placeholder="Chọn tỉnh/thành..." /></SelectTrigger></FormControl>
                 <SelectContent>
-                  {PROVINCES.map(p => (
-                    <SelectItem key={p.slug} value={p.slug}>{p.name}</SelectItem>
-                  ))}
+                  {PROVINCES.map(p => <SelectItem key={p.slug} value={p.slug}>{p.name}</SelectItem>)}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -49,13 +87,9 @@ export function ClubSeoFields({ form }: { form: UseFormReturn<ClubSchema> }) {
             <FormItem>
               <FormLabel>Quận / Huyện</FormLabel>
               <Select onValueChange={field.onChange} value={field.value || ''} disabled={!selectedCity}>
-                <FormControl>
-                  <SelectTrigger><SelectValue placeholder={selectedCity ? 'Chọn quận/huyện...' : 'Chọn tỉnh trước'} /></SelectTrigger>
-                </FormControl>
+                <FormControl><SelectTrigger><SelectValue placeholder={selectedCity ? 'Chọn quận/huyện...' : 'Chọn tỉnh trước'} /></SelectTrigger></FormControl>
                 <SelectContent>
-                  {selectedProvince?.districts.map(d => (
-                    <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>
-                  ))}
+                  {selectedProvince?.districts.map(d => <SelectItem key={d.slug} value={d.slug}>{d.name}</SelectItem>)}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -72,64 +106,43 @@ export function ClubSeoFields({ form }: { form: UseFormReturn<ClubSchema> }) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <FormField control={form.control} name="openTime" render={({ field }) => (
-            <FormItem>
-              <FormLabel>Giờ mở cửa</FormLabel>
-              <FormControl><Input placeholder="05:00" {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
+            <FormItem><FormLabel>Giờ mở cửa</FormLabel><FormControl><Input placeholder="05:00" {...field} /></FormControl><FormMessage /></FormItem>
           )} />
           <FormField control={form.control} name="closeTime" render={({ field }) => (
-            <FormItem>
-              <FormLabel>Giờ đóng cửa</FormLabel>
-              <FormControl><Input placeholder="23:00" {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
+            <FormItem><FormLabel>Giờ đóng cửa</FormLabel><FormControl><Input placeholder="23:00" {...field} /></FormControl><FormMessage /></FormItem>
           )} />
         </div>
       </div>
 
-      {/* Facilities Section */}
+      {/* Dynamic Amenities Section */}
       <div className="space-y-4 border p-4 rounded-lg bg-muted/20">
         <div className="flex items-center gap-2">
           <Building2 className="h-4 w-4 text-primary" />
           <span className="text-base font-bold">Tiện ích sân</span>
         </div>
-        <FormField control={form.control} name="indoorOutdoor" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Loại sân</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value || 'outdoor'}>
-              <FormControl>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="indoor">Trong nhà (Indoor)</SelectItem>
-                <SelectItem value="outdoor">Ngoài trời (Outdoor)</SelectItem>
-                <SelectItem value="both">Cả hai</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )} />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FormField control={form.control} name="hasRoof" render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-3">
-              <FormLabel className="text-sm">Có mái che</FormLabel>
-              <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-            </FormItem>
-          )} />
-          <FormField control={form.control} name="hasLighting" render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-3">
-              <FormLabel className="text-sm">Có đèn chiếu sáng</FormLabel>
-              <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-            </FormItem>
-          )} />
-          <FormField control={form.control} name="hasParking" render={({ field }) => (
-            <FormItem className="flex items-center justify-between rounded-lg border p-3">
-              <FormLabel className="text-sm">Có bãi đỗ xe</FormLabel>
-              <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-            </FormItem>
-          )} />
-        </div>
+        {amenityTypes && amenityTypes.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {amenityTypes.map(amenity => (
+              <label
+                key={amenity.id}
+                className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
+                  selectedAmenities.has(amenity.id) ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
+                }`}
+              >
+                <Checkbox
+                  checked={selectedAmenities.has(amenity.id)}
+                  onCheckedChange={() => toggleAmenity(amenity.id)}
+                />
+                <span className="text-sm">
+                  {amenity.icon && <span className="mr-1">{amenity.icon}</span>}
+                  {amenity.name}
+                </span>
+              </label>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">Chưa có tiện ích nào. Vào "Tiện ích sân" để thêm.</p>
+        )}
       </div>
 
       {/* Description */}

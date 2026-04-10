@@ -1,20 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { PROVINCES } from '@/lib/vietnam-locations';
 
-type ClubRow = {
-  club_type: string;
-  city: string | null;
-  district: string | null;
-  has_roof: boolean;
-  indoor_outdoor: string;
-  has_lighting: boolean;
-  has_parking: boolean;
-  open_time: string | null;
-  close_time: string | null;
-  latitude: number | null;
-  longitude: number | null;
-};
-
 type SeoPageInsert = {
   slug: string;
   page_type: string;
@@ -33,60 +19,69 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
 }> {
   const errors: string[] = [];
 
-  // 1. Fetch all active clubs with relevant fields
+  // 1. Fetch active clubs
   const { data: clubs, error: clubsErr } = await supabase
     .from('clubs')
-    .select('club_type, city, district, has_roof, indoor_outdoor, has_lighting, has_parking, open_time, close_time, latitude, longitude')
+    .select('id, club_type, city, district, open_time, close_time')
     .eq('is_active', true);
 
   if (clubsErr || !clubs) {
     return { generated: 0, removed: 0, errors: [`Failed to fetch clubs: ${clubsErr?.message}`] };
   }
 
-  // 2. Fetch club types from DB
-  const { data: clubTypes } = await supabase.from('club_types').select('name');
-  const typeNames = (clubTypes || []).map(t => t.name);
+  // 2. Fetch amenity types from DB
+  const { data: amenityTypes } = await supabase
+    .from('amenity_types')
+    .select('id, name, slug')
+    .order('order');
+  const amenityMap = new Map((amenityTypes || []).map(a => [a.id, a]));
 
-  // 3. Build all valid combinations
-  const pages: SeoPageInsert[] = [];
+  // 3. Fetch club_amenities junction
+  const { data: clubAmenities } = await supabase
+    .from('club_amenities')
+    .select('club_id, amenity_type_id');
 
-  // Helper to get display names
-  const getCityName = (slug: string) => PROVINCES.find(p => p.slug === slug)?.name || slug;
-  const getDistrictName = (citySlug: string, distSlug: string) => {
-    const prov = PROVINCES.find(p => p.slug === citySlug);
-    return prov?.districts.find(d => d.slug === distSlug)?.name || distSlug;
+  // Build club → amenity slugs map
+  const clubAmenityMap = new Map<string, string[]>();
+  for (const ca of clubAmenities || []) {
+    const amenity = amenityMap.get(ca.amenity_type_id);
+    if (!amenity) continue;
+    const list = clubAmenityMap.get(ca.club_id) || [];
+    list.push(amenity.slug);
+    clubAmenityMap.set(ca.club_id, list);
+  }
+
+  // Helpers
+  const getCityName = (s: string) => PROVINCES.find(p => p.slug === s)?.name || s;
+  const getDistrictName = (c: string, d: string) => {
+    const prov = PROVINCES.find(p => p.slug === c);
+    return prov?.districts.find(dd => dd.slug === d)?.name || d;
   };
-  const typeSlug = (name: string) => slugify(name);
 
-  // Collect unique combinations from actual data
+  // 4. Collect unique combinations
   const typeCityCombos = new Set<string>();
   const typeDistrictCombos = new Set<string>();
-  const amenityCombos = new Set<string>();
+  const amenityCombos = new Set<string>(); // type|amenitySlug|city
   const timeCombos = new Set<string>();
 
-  for (const club of clubs as ClubRow[]) {
+  for (const club of clubs) {
     if (!club.club_type) continue;
     const type = club.club_type;
 
-    // Type + City
     if (club.city) {
       typeCityCombos.add(`${type}|${club.city}`);
     }
-
-    // Type + District
     if (club.city && club.district) {
       typeDistrictCombos.add(`${type}|${club.city}|${club.district}`);
     }
-
-    // Amenities (only if club has the amenity AND city)
+    // Dynamic amenities
+    const clubAmenSlugs = clubAmenityMap.get(club.id) || [];
     if (club.city) {
-      if (club.has_roof) amenityCombos.add(`${type}|has_roof|${club.city}`);
-      if (club.indoor_outdoor === 'indoor') amenityCombos.add(`${type}|indoor|${club.city}`);
-      if (club.has_parking) amenityCombos.add(`${type}|has_parking|${club.city}`);
-      if (club.has_lighting) amenityCombos.add(`${type}|has_lighting|${club.city}`);
+      for (const amenSlug of clubAmenSlugs) {
+        amenityCombos.add(`${type}|${amenSlug}|${club.city}`);
+      }
     }
-
-    // Time-based (night = close >= 21:00, 24h)
+    // Time
     if (club.city && club.close_time) {
       if (club.close_time >= '21:00' || club.close_time === '00:00') {
         timeCombos.add(`${type}|night|${club.city}`);
@@ -94,24 +89,31 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
     }
   }
 
-  // --- Generate Type + City pages ---
+  // Amenity slug → name map for labels
+  const amenityNameMap = new Map<string, string>();
+  for (const a of amenityTypes || []) {
+    amenityNameMap.set(a.slug, a.name);
+  }
+
+  const pages: SeoPageInsert[] = [];
+
+  // --- Type + City ---
   for (const combo of typeCityCombos) {
     const [type, city] = combo.split('|');
     const cityName = getCityName(city);
-    const slug = `san-${typeSlug(type)}-${city}`;
+    const ts = slugify(type);
     pages.push({
-      slug,
+      slug: `san-${ts}-${city}`,
       page_type: 'type_city',
       title: `Sân ${type} ${cityName} - Đặt sân online | Sport Booking`,
-      meta_description: `Danh sách sân ${type} tại ${cityName}. Đặt sân online nhanh chóng, giá tốt nhất. Xem địa chỉ, giá và đánh giá.`,
+      meta_description: `Danh sách sân ${type} tại ${cityName}. Đặt sân online nhanh chóng, giá tốt nhất.`,
       h1_title: `Sân ${type} tại ${cityName}`,
       seo_content: buildSeoContent('type_city', type, cityName),
       filter_params: { club_type: type, city, city_name: cityName },
     });
-
-    // Also generate price page per type+city
+    // Price page
     pages.push({
-      slug: `san-${typeSlug(type)}-gia-re-${city}`,
+      slug: `san-${ts}-gia-re-${city}`,
       page_type: 'price',
       title: `Sân ${type} giá rẻ ${cityName} - Dưới 200k/giờ | Sport Booking`,
       meta_description: `Danh sách sân ${type} giá rẻ tại ${cityName}, giá dưới 200.000đ/giờ.`,
@@ -121,48 +123,45 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
     });
   }
 
-  // --- Generate Type + District pages ---
+  // --- Type + District ---
   for (const combo of typeDistrictCombos) {
     const [type, city, district] = combo.split('|');
     const districtName = getDistrictName(city, district);
     const cityName = getCityName(city);
-    const slug = `san-${typeSlug(type)}-${district}`;
     pages.push({
-      slug,
+      slug: `san-${slugify(type)}-${district}`,
       page_type: 'type_district',
       title: `Sân ${type} ${districtName} - Đặt sân online | Sport Booking`,
-      meta_description: `Danh sách sân ${type} tại ${districtName}, ${cityName}. Đặt sân online nhanh chóng.`,
+      meta_description: `Danh sách sân ${type} tại ${districtName}, ${cityName}.`,
       h1_title: `Sân ${type} tại ${districtName}`,
       seo_content: buildSeoContent('type_district', type, districtName, cityName),
       filter_params: { club_type: type, district, district_name: districtName, city, city_name: cityName },
     });
   }
 
-  // --- Generate Amenity pages ---
+  // --- Amenity (dynamic) ---
   for (const combo of amenityCombos) {
-    const [type, amenity, city] = combo.split('|');
+    const [type, amenSlug, city] = combo.split('|');
     const cityName = getCityName(city);
-    const amenityLabel = AMENITY_LABELS[amenity] || amenity;
-    const slug = `san-${typeSlug(type)}-${amenitySlug(amenity)}-${city}`;
+    const amenName = amenityNameMap.get(amenSlug) || amenSlug;
     pages.push({
-      slug,
+      slug: `san-${slugify(type)}-${amenSlug}-${city}`,
       page_type: 'amenity',
-      title: `Sân ${type} ${amenityLabel} ${cityName} | Sport Booking`,
-      meta_description: `Danh sách sân ${type} ${amenityLabel} tại ${cityName}.`,
-      h1_title: `Sân ${type} ${amenityLabel} tại ${cityName}`,
-      seo_content: buildSeoContent('amenity', type, cityName, amenityLabel),
-      filter_params: { club_type: type, amenity, city, city_name: cityName },
+      title: `Sân ${type} ${amenName.toLowerCase()} ${cityName} | Sport Booking`,
+      meta_description: `Danh sách sân ${type} ${amenName.toLowerCase()} tại ${cityName}.`,
+      h1_title: `Sân ${type} ${amenName.toLowerCase()} tại ${cityName}`,
+      seo_content: buildSeoContent('amenity', type, cityName, amenName.toLowerCase()),
+      filter_params: { club_type: type, amenity_slug: amenSlug, city, city_name: cityName },
     });
   }
 
-  // --- Generate Time pages ---
+  // --- Time ---
   for (const combo of timeCombos) {
     const [type, timeFilter, city] = combo.split('|');
     const cityName = getCityName(city);
     const timeLabel = timeFilter === 'night' ? 'mở đêm' : 'mở 24h';
-    const slug = `san-${typeSlug(type)}-${timeFilter === 'night' ? 'mo-dem' : 'mo-24h'}-${city}`;
     pages.push({
-      slug,
+      slug: `san-${slugify(type)}-${timeFilter === 'night' ? 'mo-dem' : 'mo-24h'}-${city}`,
       page_type: 'time',
       title: `Sân ${type} ${timeLabel} ${cityName} | Sport Booking`,
       meta_description: `Danh sách sân ${type} ${timeLabel} tại ${cityName}.`,
@@ -172,7 +171,7 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
     });
   }
 
-  // 4. Upsert all pages (insert or update on conflict)
+  // 5. Upsert all pages
   let generated = 0;
   for (const page of pages) {
     const { error } = await supabase
@@ -185,7 +184,7 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
     }
   }
 
-  // 5. Remove pages that no longer have matching clubs
+  // 6. Deactivate pages that no longer have matching clubs
   const validSlugs = pages.map(p => p.slug);
   const { data: existingPages } = await supabase
     .from('seo_landing_pages')
@@ -197,7 +196,6 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
     const toRemove = existingPages
       .filter(p => !validSlugs.includes(p.slug))
       .map(p => p.slug);
-
     if (toRemove.length > 0) {
       const { error } = await supabase
         .from('seo_landing_pages')
@@ -212,23 +210,6 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
 
 // --- Helpers ---
 
-const AMENITY_LABELS: Record<string, string> = {
-  has_roof: 'có mái che',
-  indoor: 'trong nhà',
-  has_parking: 'có bãi đỗ xe',
-  has_lighting: 'có đèn chiếu sáng',
-};
-
-function amenitySlug(amenity: string): string {
-  const map: Record<string, string> = {
-    has_roof: 'co-mai-che',
-    indoor: 'trong-nha',
-    has_parking: 'co-bai-do-xe',
-    has_lighting: 'co-den',
-  };
-  return map[amenity] || amenity;
-}
-
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -239,35 +220,26 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, '');
 }
 
-function buildSeoContent(
-  pageType: string,
-  sportType: string,
-  location: string,
-  extra?: string,
-): string {
+function buildSeoContent(pageType: string, sportType: string, location: string, extra?: string): string {
+  const s = sportType.toLowerCase();
   switch (pageType) {
     case 'type_city':
-      return `<p>${location} là một trong những khu vực có phong trào ${sportType.toLowerCase()} phát triển mạnh. Với nhiều sân từ cơ bản đến chuyên nghiệp, người chơi có thể dễ dàng tìm được sân phù hợp với nhu cầu và ngân sách.</p>`
-        + `<p>Sport Booking giúp bạn tìm và đặt sân ${sportType.toLowerCase()} tại ${location} một cách nhanh chóng và tiện lợi. Hệ thống hiển thị thông tin chi tiết về giá, vị trí, tiện ích và đánh giá từ người chơi khác.</p>`
-        + `<p>Hãy khám phá danh sách sân ${sportType.toLowerCase()} bên dưới và đặt sân ngay hôm nay!</p>`;
-
+      return `<p>${location} là một trong những khu vực có phong trào ${s} phát triển mạnh. Với nhiều sân từ cơ bản đến chuyên nghiệp, người chơi có thể dễ dàng tìm được sân phù hợp.</p>`
+        + `<p>Sport Booking giúp bạn tìm và đặt sân ${s} tại ${location} nhanh chóng và tiện lợi. Hệ thống hiển thị thông tin chi tiết về giá, vị trí, tiện ích và đánh giá.</p>`
+        + `<p>Hãy khám phá danh sách sân ${s} bên dưới và đặt sân ngay hôm nay!</p>`;
     case 'type_district':
-      return `<p>${location} thuộc ${extra || ''} là khu vực có nhu cầu chơi ${sportType.toLowerCase()} lớn. Khu vực này có nhiều sân chất lượng, phù hợp cho cả người mới và người chơi lâu năm.</p>`
-        + `<p>Tìm sân ${sportType.toLowerCase()} gần nhà tại ${location} và đặt sân ngay trên Sport Booking. Thông tin giá, địa chỉ và đánh giá luôn được cập nhật mới nhất.</p>`;
-
+      return `<p>${location} thuộc ${extra || ''} là khu vực có nhu cầu chơi ${s} lớn. Khu vực này có nhiều sân chất lượng, phù hợp cho cả người mới và người chơi lâu năm.</p>`
+        + `<p>Tìm sân ${s} gần nhà tại ${location} và đặt sân ngay trên Sport Booking.</p>`;
     case 'price':
-      return `<p>Tìm sân ${sportType.toLowerCase()} giá rẻ tại ${location} không khó nếu bạn biết cách. Sport Booking tổng hợp các sân có giá phải chăng, giúp bạn tiết kiệm chi phí mà vẫn được chơi tại những sân chất lượng.</p>`
-        + `<p>Giá sân ${sportType.toLowerCase()} tại ${location} dao động tùy theo vị trí, thời gian và tiện ích. Các sân giá rẻ thường có khung giờ ưu đãi vào buổi sáng sớm và trưa.</p>`;
-
+      return `<p>Tìm sân ${s} giá rẻ tại ${location} không khó. Sport Booking tổng hợp các sân có giá phải chăng, giúp bạn tiết kiệm chi phí mà vẫn được chơi tại những sân chất lượng.</p>`
+        + `<p>Giá sân ${s} tại ${location} dao động tùy theo vị trí, thời gian và tiện ích.</p>`;
     case 'amenity':
-      return `<p>Sân ${sportType.toLowerCase()} ${extra || ''} là lựa chọn lý tưởng cho người chơi tại ${location}. Với tiện ích này, bạn có thể chơi thoải mái trong mọi điều kiện.</p>`
-        + `<p>Sport Booking tổng hợp các sân ${sportType.toLowerCase()} ${extra || ''} tại ${location}, giúp bạn dễ dàng tìm và đặt sân phù hợp nhất.</p>`;
-
+      return `<p>Sân ${s} ${extra || ''} là lựa chọn lý tưởng cho người chơi tại ${location}. Với tiện ích này, bạn có thể chơi thoải mái trong mọi điều kiện.</p>`
+        + `<p>Sport Booking tổng hợp các sân ${s} ${extra || ''} tại ${location}, giúp bạn dễ dàng tìm và đặt sân phù hợp nhất.</p>`;
     case 'time':
-      return `<p>Bạn bận rộn ban ngày và chỉ có thể chơi ${sportType.toLowerCase()} vào buổi tối? ${location} có nhiều sân ${sportType.toLowerCase()} ${extra || ''}, phục vụ nhu cầu chơi thể thao mọi lúc.</p>`
-        + `<p>Hệ thống đèn chiếu sáng chuyên nghiệp đảm bảo chất lượng chơi không khác gì ban ngày. Tìm và đặt sân ngay trên Sport Booking.</p>`;
-
+      return `<p>Bạn bận rộn ban ngày? ${location} có nhiều sân ${s} ${extra || ''}, phục vụ nhu cầu chơi thể thao mọi lúc.</p>`
+        + `<p>Hệ thống đèn chiếu sáng chuyên nghiệp đảm bảo chất lượng chơi. Tìm và đặt sân ngay trên Sport Booking.</p>`;
     default:
-      return `<p>Tìm và đặt sân ${sportType.toLowerCase()} tại ${location} trên Sport Booking. Nhanh chóng, tiện lợi và chính xác.</p>`;
+      return `<p>Tìm và đặt sân ${s} tại ${location} trên Sport Booking. Nhanh chóng, tiện lợi và chính xác.</p>`;
   }
 }

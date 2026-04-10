@@ -86,6 +86,7 @@ export const clubSchema = z.object({
     hasLighting: z.boolean().default(true),
     hasParking: z.boolean().default(false),
     description: z.string().optional().or(z.literal('')),
+    amenityIds: z.array(z.string()).optional(),
 });
 export type ClubSchema = z.infer<typeof clubSchema>;
 

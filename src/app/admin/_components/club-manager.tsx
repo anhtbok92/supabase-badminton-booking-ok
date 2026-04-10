@@ -183,6 +183,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
             hasLighting: (club as any)?.has_lighting ?? true,
             hasParking: (club as any)?.has_parking ?? false,
             description: club?.description ?? '',
+            amenityIds: [],
         },
     });
 
@@ -243,9 +244,24 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
         if (isEditMode && club) {
             const { error } = await supabase.from('clubs').update(finalValues).eq('id', club.id);
             if (error) { toast({ title: 'Lỗi', variant: 'destructive' }); return; }
+            // Save amenities (admin only)
+            if (userRole === 'admin' && values.amenityIds) {
+                await supabase.from('club_amenities').delete().eq('club_id', club.id);
+                if (values.amenityIds.length > 0) {
+                    await supabase.from('club_amenities').insert(
+                        values.amenityIds.map(aid => ({ club_id: club.id, amenity_type_id: aid }))
+                    );
+                }
+            }
         } else {
-            const { error } = await supabase.from('clubs').insert(finalValues);
+            const { data: inserted, error } = await supabase.from('clubs').insert(finalValues).select('id').single();
             if (error) { toast({ title: 'Lỗi', variant: 'destructive' }); return; }
+            // Save amenities for new club (admin only)
+            if (userRole === 'admin' && inserted && values.amenityIds && values.amenityIds.length > 0) {
+                await supabase.from('club_amenities').insert(
+                    values.amenityIds.map(aid => ({ club_id: inserted.id, amenity_type_id: aid }))
+                );
+            }
         }
         toast({ title: 'Thành công', description: `Đã ${isEditMode ? 'cập nhật' : 'tạo'} câu lạc bộ.` }); setIsOpen(false); onSuccess?.();
         // Auto-regenerate SEO pages in background
@@ -296,7 +312,7 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                 <FormField control={form.control} name="bookingPolicy" render={({ field }) => (<FormItem><FormLabel>Chính sách đặt sân (Hiển thị ngay dưới tiêu đề)</FormLabel><FormControl><Input {...field} placeholder="VD: Khách vui lòng đặt 2 tiếng..." /></FormControl><FormDescriptionComponent>Thông báo ngắn gọn cho khách khi đặt sân.</FormDescriptionComponent><FormMessage /></FormItem>)} />
                 <div className="space-y-2 border p-4 rounded-lg bg-muted/20">
                     <FormLabel className="text-base font-bold flex items-center gap-2">📍 Thông tin SEO & Tiện ích</FormLabel>
-                    <ClubSeoFields form={form} />
+                    {canEdit ? <ClubSeoFields form={form} clubId={club?.id} /> : <p className="text-sm text-muted-foreground">Chỉ admin mới có thể chỉnh sửa thông tin SEO.</p>}
                 </div>
                 <div className="space-y-2 border p-4 rounded-lg bg-muted/20">
                     <FormLabel className="text-base font-bold flex items-center gap-2"><Globe className="h-4 w-4" /> Subdomain riêng</FormLabel>

@@ -129,6 +129,15 @@ export type ClubType = {
   created_at?: string;
 };
 
+export type AmenityType = {
+  id: string;
+  name: string;
+  slug: string;
+  icon?: string;
+  order?: number;
+  created_at?: string;
+};
+
 export type BlogPost = {
   id: string;
   title: string;

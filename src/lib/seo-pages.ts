@@ -67,21 +67,32 @@ export async function getClubsByFilter(params: Record<string, any>): Promise<Clu
   if (params.city) query = query.eq('city', params.city);
   if (params.district) query = query.eq('district', params.district);
 
-  if (params.amenity) {
-    const amenity = params.amenity;
-    if (amenity === 'has_roof') query = query.eq('has_roof', true);
-    if (amenity === 'indoor') query = query.eq('indoor_outdoor', 'indoor');
-    if (amenity === 'outdoor') query = query.eq('indoor_outdoor', 'outdoor');
-    if (amenity === 'has_lighting') query = query.eq('has_lighting', true);
-    if (amenity === 'has_parking') query = query.eq('has_parking', true);
-  }
-
   if (params.time_filter === '24h') {
     query = query.eq('open_time', '00:00').eq('close_time', '23:59');
   }
 
   const { data } = await query.order('name');
   let clubs = (data || []) as Club[];
+
+  // Filter by dynamic amenity via junction table
+  if (params.amenity_slug) {
+    // Get amenity type id by slug
+    const { data: amenityType } = await supabase
+      .from('amenity_types')
+      .select('id')
+      .eq('slug', params.amenity_slug)
+      .single();
+    if (amenityType) {
+      const { data: clubIds } = await supabase
+        .from('club_amenities')
+        .select('club_id')
+        .eq('amenity_type_id', amenityType.id);
+      const validIds = new Set((clubIds || []).map((r: any) => r.club_id));
+      clubs = clubs.filter(c => validIds.has(c.id));
+    } else {
+      clubs = []; // amenity not found
+    }
+  }
 
   // JS-side filtering for complex conditions
   if (params.max_price) {

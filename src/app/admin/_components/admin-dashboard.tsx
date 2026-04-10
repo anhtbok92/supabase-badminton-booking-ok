@@ -35,6 +35,7 @@ import { SeoManager } from './seo-manager';
 import { SeoPagesGenerator } from './seo-pages-generator';
 import { BlogAiWriter } from './blog-ai-writer';
 import { PromoSettingsManager } from './promo-settings-manager';
+import { AmenityTypeManager } from './amenity-type-manager';
 import { CustomerManager } from './customer-manager';
 import { GuestManager } from './guest-manager';
 import { EventManager } from './event-manager';
@@ -90,6 +91,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         { id: 'subscriptions', label: 'Quản lý Gói đăng ký', icon: CreditCard, roles: ['admin'] },
         { id: 'clubSubscriptions', label: 'Gói đăng ký CLB', icon: CreditCard, roles: ['admin'] },
         { id: 'clubTypes', label: 'Loại CLB', icon: Shapes, roles: ['admin'] },
+        { id: 'amenityTypes', label: 'Tiện ích sân', icon: Shapes, roles: ['admin'] },
         { id: 'news', label: 'Quản lý Tin tức', icon: Newspaper, roles: ['admin'] },
         { id: 'tags', label: 'Quản lý Tags', icon: Tags, roles: ['admin'] },
         { id: 'owners', label: 'Quản lý Chủ Club', icon: Users, roles: ['admin'] },
@@ -245,6 +247,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                                 {isAdmin && activeView === 'subscriptions' && <SubscriptionPlanManager />}
                                 {isAdmin && activeView === 'clubSubscriptions' && <ClubSubscriptionManager />}
                                 {isAdmin && activeView === 'clubTypes' && <ClubTypeManager />}
+                                {isAdmin && activeView === 'amenityTypes' && <AmenityTypeManager />}
                                 {isAdmin && activeView === 'news' && <NewsManager />}
                                 {isAdmin && activeView === 'tags' && <TagManager />}
                                 {isAdmin && activeView === 'owners' && <ClubOwnerManager />}
