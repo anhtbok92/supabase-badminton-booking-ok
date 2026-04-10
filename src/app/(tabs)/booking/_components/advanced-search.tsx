@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { VIETNAM_PROVINCES } from '@/lib/vietnam-locations';
+import { PROVINCES } from '@/lib/vietnam-locations';
 import { X } from 'lucide-react';
 
 export type AdvancedFilters = {
@@ -15,7 +15,7 @@ export type AdvancedFilters = {
 };
 
 const HOUR_OPTIONS = Array.from({ length: 19 }, (_, i) => {
-  const h = i + 5; // 05:00 to 23:00
+  const h = i + 5;
   return `${h.toString().padStart(2, '0')}:00`;
 });
 
@@ -32,11 +32,14 @@ export function AdvancedSearchSheet({
   onFiltersChange: (filters: AdvancedFilters) => void;
   onReset: () => void;
 }) {
-  const districts = useMemo(() => {
-    if (!filters.province) return [];
-    const province = VIETNAM_PROVINCES.find(p => p.name === filters.province);
-    return province?.districts || [];
+  const selectedProvince = useMemo(() => {
+    if (!filters.province) return null;
+    return PROVINCES.find(p => p.slug === filters.province || p.name === filters.province) || null;
   }, [filters.province]);
+
+  const districts = useMemo(() => {
+    return selectedProvince?.districts || [];
+  }, [selectedProvince]);
 
   const hasFilters = filters.province || filters.district || filters.openHour;
 
@@ -59,8 +62,8 @@ export function AdvancedSearchSheet({
             >
               <SelectTrigger><SelectValue placeholder="Chọn tỉnh thành..." /></SelectTrigger>
               <SelectContent>
-                {VIETNAM_PROVINCES.map(p => (
-                  <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>
+                {PROVINCES.map(p => (
+                  <SelectItem key={p.slug} value={p.name}>{p.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -76,7 +79,7 @@ export function AdvancedSearchSheet({
               <SelectTrigger><SelectValue placeholder={filters.province ? 'Chọn quận huyện...' : 'Chọn tỉnh thành trước'} /></SelectTrigger>
               <SelectContent>
                 {districts.map(d => (
-                  <SelectItem key={d} value={d}>{d}</SelectItem>
+                  <SelectItem key={d.slug} value={d.name}>{d.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -98,12 +101,7 @@ export function AdvancedSearchSheet({
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={onReset}
-              disabled={!hasFilters}
-            >
+            <Button variant="outline" className="flex-1" onClick={onReset} disabled={!hasFilters}>
               <X className="h-4 w-4 mr-1" /> Xóa bộ lọc
             </Button>
             <Button className="flex-1" onClick={() => onOpenChange(false)}>

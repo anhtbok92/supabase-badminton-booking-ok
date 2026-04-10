@@ -404,6 +404,7 @@ function ClubCardSkeleton() {
 
 import { cn } from '@/lib/utils';
 import { useTenant } from '@/hooks/use-tenant';
+import { PROVINCES } from '@/lib/vietnam-locations';
 import { AdvancedSearchSheet, type AdvancedFilters } from './_components/advanced-search';
 import { BookingTypeSelector } from './_components/booking-type-selector';
 
@@ -439,6 +440,31 @@ function addressContains(address: string, location: string): boolean {
   return normalizeVN(address).includes(normalizeVN(location));
 }
 
+/** Match club province — by city field (slug or name) or fallback to address */
+function matchProvince(club: Club, province: string): boolean {
+  if (!province) return true;
+  // Match by city field (name match since filter uses province name)
+  if ((club as any).city) {
+    const prov = PROVINCES.find(p => p.slug === (club as any).city);
+    if (prov && prov.name === province) return true;
+  }
+  // Fallback: address text match
+  return addressContains(club.address, province);
+}
+
+/** Match club district — by district field (slug or name) or fallback to address */
+function matchDistrict(club: Club, district: string): boolean {
+  if (!district) return true;
+  // Match by district field
+  if ((club as any).district && (club as any).city) {
+    const prov = PROVINCES.find(p => p.slug === (club as any).city);
+    const dist = prov?.districts.find(d => d.slug === (club as any).district);
+    if (dist && dist.name === district) return true;
+  }
+  // Fallback: address text match
+  return addressContains(club.address, district);
+}
+
 export default function BookingTabPage() {
   const tenant = useTenant();
   const { data: clubs, loading: clubsLoading } = useSupabaseQuery<Club>('clubs');
@@ -471,9 +497,9 @@ export default function BookingTabPage() {
         club.name.toLowerCase().includes(lowercasedSearchTerm) ||
         club.address.toLowerCase().includes(lowercasedSearchTerm);
 
-      // Advanced filters
-      const provinceMatch = addressContains(club.address, advancedFilters.province);
-      const districtMatch = addressContains(club.address, advancedFilters.district);
+      // Advanced filters — match by city/district field first, fallback to address text
+      const provinceMatch = matchProvince(club, advancedFilters.province);
+      const districtMatch = matchDistrict(club, advancedFilters.district);
       const hourMatch = !advancedFilters.openHour || matchOpenHour(club.operating_hours, advancedFilters.openHour);
 
       return isVisible && typeMatch && searchMatch && provinceMatch && districtMatch && hourMatch;
