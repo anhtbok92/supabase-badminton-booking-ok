@@ -25,6 +25,7 @@ type CrawledPlace = {
   operating_hours: string;
   description: string;
   amenities: string[];
+  number_of_courts?: number;
 };
 
 export function ClubCrawler() {
@@ -107,6 +108,7 @@ export function ClubCrawler() {
           club_type: clubType, city, district,
           description: p.description || `${p.name} - Sân ${clubType} tại ${p.address}.`,
           open_time: open, close_time: close,
+          number_of_courts: (p as any).number_of_courts || 5,
         };
       });
       const res = await fetch('/api/crawl/import-clubs', {
@@ -212,7 +214,7 @@ function PlaceCard({ place, isSelected, onToggle }: {
       className={`flex gap-4 p-4 border rounded-xl cursor-pointer transition-colors ${isSelected ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'}`}
       onClick={onToggle}
     >
-      <Checkbox checked={isSelected} onCheckedChange={onToggle} className="mt-1 shrink-0" />
+      <Checkbox checked={isSelected} onCheckedChange={onToggle} className="mt-1 shrink-0" onClick={(e) => e.stopPropagation()} />
       <div className="flex-1 min-w-0 space-y-1.5">
         <div className="flex items-start justify-between gap-2">
           <h4 className="font-bold text-sm">{place.name}</h4>

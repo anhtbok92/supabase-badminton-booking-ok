@@ -120,3 +120,6 @@ export function findDistrict(provinceSlug: string, districtSlug: string): Distri
   const province = findProvince(provinceSlug);
   return province?.districts.find(d => d.slug === districtSlug);
 }
+
+/** Alias for backward compatibility */
+export const VIETNAM_PROVINCES = PROVINCES;

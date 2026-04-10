@@ -5,7 +5,7 @@ import type { Club } from '@/lib/types';
 import { getMinPrice, formatVNPrice } from '@/lib/seo-pages';
 
 export function SeoClubCard({ club }: { club: Club }) {
-  const firstImage = club.image_urls?.[0] || `https://picsum.photos/seed/${club.id}/400/300`;
+  const firstImage = club.image_urls?.[0] || '/images/default-club-2.png';
   const minPrice = getMinPrice(club.pricing);
 
   const getPriceRange = (): string => {

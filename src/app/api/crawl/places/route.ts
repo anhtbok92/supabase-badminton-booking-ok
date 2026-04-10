@@ -14,6 +14,7 @@ const placeSchema = z.object({
     operating_hours: z.string().optional().default(''),
     description: z.string().optional().default(''),
     amenities: z.array(z.string()).optional().default([]),
+    number_of_courts: z.number().optional().default(5),
   })),
 });
 
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
 Yêu cầu QUAN TRỌNG:
 - Chỉ liệt kê các sân CÓ THẬT, ĐANG HOẠT ĐỘNG. Không bịa đặt.
 - Cung cấp thông tin chính xác nhất có thể dựa trên kiến thức của bạn.
-- Mỗi sân cần: tên đầy đủ, địa chỉ chi tiết, số điện thoại (nếu biết), tọa độ GPS (latitude/longitude chính xác), rating (1-5), giờ hoạt động, mô tả ngắn, tiện ích.
+- Mỗi sân cần: tên đầy đủ, địa chỉ chi tiết, số điện thoại (nếu biết), tọa độ GPS (latitude/longitude chính xác), rating (1-5), giờ hoạt động, mô tả ngắn, tiện ích, số lượng sân (number_of_courts, nếu không biết thì để 5).
 - Nếu không biết chính xác số điện thoại, để trống.
 - Tọa độ GPS phải chính xác cho khu vực ${location}.
 - Liệt kê tối đa 20 sân.

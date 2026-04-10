@@ -291,7 +291,7 @@ function SearchAndFilter({
 }
 
 function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (club: Club) => void; clubTypes: ClubType[] | null; }) {
-  const firstImageUrl = club.image_urls && club.image_urls.length > 0 ? club.image_urls[0] : `https://picsum.photos/seed/${club.id}/400/300`;
+  const firstImageUrl = club.image_urls && club.image_urls.length > 0 ? club.image_urls[0] : '/images/default-club-2.png';
   const clubTypeObj = clubTypes?.find(t => t.name === club.club_type);
   const typeColor = clubTypeObj?.color || '#00e640';
 

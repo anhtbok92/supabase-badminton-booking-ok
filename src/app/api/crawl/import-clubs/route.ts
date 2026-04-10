@@ -16,6 +16,7 @@ type ImportPlace = {
   description: string;
   open_time: string;
   close_time: string;
+  number_of_courts?: number;
 };
 
 /**
@@ -65,9 +66,10 @@ export async function POST(request: NextRequest) {
       description: place.description || `${place.name} - Sân ${place.club_type} tại ${place.address}`,
       open_time: place.open_time || '05:00',
       close_time: place.close_time || '22:00',
+      number_of_courts: place.number_of_courts || 5,
     };
 
-    // Check duplicate by name + address
+    // Check duplicate by name
     const { data: existing } = await supabase
       .from('clubs')
       .select('id')
@@ -79,10 +81,18 @@ export async function POST(request: NextRequest) {
       continue;
     }
 
-    const { error } = await supabase.from('clubs').insert(clubData);
-    if (error) {
-      results.push({ name: place.name, success: false, error: error.message });
+    const { data: inserted, error } = await supabase.from('clubs').insert(clubData).select('id').single();
+    if (error || !inserted) {
+      results.push({ name: place.name, success: false, error: error?.message || 'Insert failed' });
     } else {
+      // Create default courts
+      const numCourts = place.number_of_courts || 5;
+      const courts = Array.from({ length: numCourts }, (_, i) => ({
+        club_id: inserted.id,
+        name: `Sân ${i + 1}`,
+        order: i + 1,
+      }));
+      await supabase.from('courts').insert(courts);
       results.push({ name: place.name, success: true });
     }
   }
