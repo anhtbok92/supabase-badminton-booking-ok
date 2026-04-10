@@ -32,8 +32,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // SEO club detail pages
+  const { data: clubs } = await supabase
+    .from('clubs')
+    .select('slug, created_at')
+    .eq('is_active', true)
+    .not('slug', 'is', null);
+
+  const clubPages = (clubs || []).map(club => ({
+    url: `${baseUrl}/san/${club.slug}`,
+    lastModified: club.created_at ? new Date(club.created_at) : new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.9,
+  }));
+
+  // SEO listing pages
+  const { data: seoPages } = await supabase
+    .from('seo_landing_pages')
+    .select('slug, updated_at')
+    .eq('is_active', true);
+
+  const seoListingPages = (seoPages || []).map(page => ({
+    url: `${baseUrl}/${page.slug}`,
+    lastModified: page.updated_at ? new Date(page.updated_at) : new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
   return [
     ...staticPages,
     ...newsPages,
+    ...clubPages,
+    ...seoListingPages,
   ];
 }

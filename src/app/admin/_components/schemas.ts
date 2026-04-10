@@ -76,6 +76,16 @@ export const clubSchema = z.object({
         .max(63, 'Subdomain tối đa 63 ký tự')
         .optional()
         .or(z.literal('')),
+    // SEO / Facility fields
+    city: z.string().optional().or(z.literal('')),
+    district: z.string().optional().or(z.literal('')),
+    openTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Sai định dạng (HH:mm)').optional().or(z.literal('')),
+    closeTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Sai định dạng (HH:mm)').optional().or(z.literal('')),
+    hasRoof: z.boolean().default(false),
+    indoorOutdoor: z.enum(['indoor', 'outdoor', 'both']).default('outdoor'),
+    hasLighting: z.boolean().default(true),
+    hasParking: z.boolean().default(false),
+    description: z.string().optional().or(z.literal('')),
 });
 export type ClubSchema = z.infer<typeof clubSchema>;
 

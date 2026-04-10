@@ -8,7 +8,7 @@ import { useSupabase } from '@/supabase';
 import type { UserProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { LayoutDashboard, CalendarDays, Building, Newspaper, Tags, Users, Shapes, LogOut, Feather, CalendarClock, CreditCard, FileText, Search, PenTool, Gift } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, Building, Newspaper, Tags, Users, Shapes, LogOut, Feather, CalendarClock, CreditCard, FileText, Search, PenTool, Gift, Globe } from 'lucide-react';
 import {
     SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarTrigger, SidebarInset,
     SidebarMenu, SidebarMenuItem, SidebarMenuButton,
@@ -32,6 +32,7 @@ import { SubscriptionDashboard } from './subscription-dashboard';
 import { FixedBookingManager } from './fixed-booking-manager';
 import { UserGuideGenerator } from './user-guide-generator';
 import { SeoManager } from './seo-manager';
+import { SeoPagesGenerator } from './seo-pages-generator';
 import { BlogAiWriter } from './blog-ai-writer';
 import { PromoSettingsManager } from './promo-settings-manager';
 import { CustomerManager } from './customer-manager';
@@ -94,6 +95,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         { id: 'owners', label: 'Quản lý Chủ Club', icon: Users, roles: ['admin'] },
         { id: 'userGuide', label: 'Tài liệu Hướng dẫn', icon: FileText, roles: ['admin'] },
         { id: 'seo', label: 'Quản lý SEO', icon: Search, roles: ['admin'] },
+        { id: 'seoPages', label: 'SEO Landing Pages', icon: Globe, roles: ['admin'] },
         { id: 'blogAi', label: 'Blog AI Writer', icon: PenTool, roles: ['admin'] },
         { id: 'promo', label: 'Cấu hình Popup', icon: Gift, roles: ['admin'] },
     ];
@@ -248,6 +250,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                                 {isAdmin && activeView === 'owners' && <ClubOwnerManager />}
                                 {isAdmin && activeView === 'userGuide' && <UserGuideGenerator />}
                                 {isAdmin && activeView === 'seo' && <SeoManager />}
+                                {isAdmin && activeView === 'seoPages' && <SeoPagesGenerator />}
                                 {isAdmin && activeView === 'blogAi' && <BlogAiWriter />}
                                 {isAdmin && activeView === 'promo' && <PromoSettingsManager />}
                             </div>

@@ -39,6 +39,15 @@ export type Club = {
   subscription_status?: 'active' | 'expiring_soon' | 'expired';
   booking_policy?: string;
   custom_subdomain?: string | null;
+  // SEO facility fields
+  has_roof?: boolean;
+  indoor_outdoor?: 'indoor' | 'outdoor' | 'both';
+  has_lighting?: boolean;
+  has_parking?: boolean;
+  open_time?: string;
+  close_time?: string;
+  city?: string;
+  district?: string;
 };
 
 export type Court = {

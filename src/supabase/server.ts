@@ -29,3 +29,15 @@ export async function createClient() {
     }
   )
 }
+
+/**
+ * Create a Supabase client for build-time / static generation.
+ * Does NOT use cookies — safe to call from generateStaticParams, sitemap, etc.
+ */
+export function createStaticClient() {
+  const { createClient: createJsClient } = require('@supabase/supabase-js')
+  return createJsClient(
+    supabaseUrl || 'https://placeholder.supabase.co',
+    supabaseAnonKey || 'placeholder-anon-key'
+  )
+}

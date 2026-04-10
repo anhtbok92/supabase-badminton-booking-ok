@@ -37,6 +37,7 @@ import { ClubQrCodeDialog } from './club-qr-code';
 import dynamic from 'next/dynamic';
 
 const LocationPicker = dynamic(() => import('./location-picker').then(m => ({ default: m.LocationPicker })), { ssr: false, loading: () => <div className="h-[300px] rounded-lg border flex items-center justify-center text-muted-foreground text-sm">Đang tải bản đồ...</div> });
+import { ClubSeoFields } from './club-seo-fields';
 
 export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
     const supabase = useSupabase();
@@ -173,6 +174,15 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
             priceListImageUrl: club?.price_list_image_url ?? '', mapVideoUrl: club?.map_video_url ?? '',
             bookingPolicy: club?.booking_policy ?? 'Khách vui lòng đặt 2 tiếng, nếu đặt lẻ giờ vui lòng nhắn theo hotline 0982.949.974',
             customSubdomain: club?.custom_subdomain ?? '',
+            city: (club as any)?.city ?? '',
+            district: (club as any)?.district ?? '',
+            openTime: (club as any)?.open_time ?? '',
+            closeTime: (club as any)?.close_time ?? '',
+            hasRoof: (club as any)?.has_roof ?? false,
+            indoorOutdoor: (club as any)?.indoor_outdoor ?? 'outdoor',
+            hasLighting: (club as any)?.has_lighting ?? true,
+            hasParking: (club as any)?.has_parking ?? false,
+            description: club?.description ?? '',
         },
     });
 
@@ -220,6 +230,15 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
             price_list_image_url: priceListImageUrl, map_video_url: values.mapVideoUrl,
             booking_policy: values.bookingPolicy,
             custom_subdomain: values.customSubdomain || null,
+            city: values.city || null,
+            district: values.district || null,
+            open_time: values.openTime || null,
+            close_time: values.closeTime || null,
+            has_roof: values.hasRoof,
+            indoor_outdoor: values.indoorOutdoor,
+            has_lighting: values.hasLighting,
+            has_parking: values.hasParking,
+            description: values.description || null,
         };
         if (isEditMode && club) {
             const { error } = await supabase.from('clubs').update(finalValues).eq('id', club.id);
@@ -229,6 +248,8 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
             if (error) { toast({ title: 'Lỗi', variant: 'destructive' }); return; }
         }
         toast({ title: 'Thành công', description: `Đã ${isEditMode ? 'cập nhật' : 'tạo'} câu lạc bộ.` }); setIsOpen(false); onSuccess?.();
+        // Auto-regenerate SEO pages in background
+        fetch('/api/seo/generate-pages', { method: 'POST' }).catch(() => {});
     };
 
     const uploadSingleImage = (setter: (url: string) => void, setUploading: (v: boolean) => void, folder: string) => async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -273,6 +294,10 @@ function ClubFormDialog({ isOpen, setIsOpen, club, userRole, onSuccess }: { isOp
                 <FormField control={form.control} name="servicesHtml" render={({ field }) => (<FormItem><FormLabel>Dịch vụ (HTML)</FormLabel><FormControl><Textarea {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="priceListHtml" render={({ field }) => (<FormItem><FormLabel>Bảng giá chi tiết (HTML)</FormLabel><FormControl><Textarea {...field} rows={6} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="bookingPolicy" render={({ field }) => (<FormItem><FormLabel>Chính sách đặt sân (Hiển thị ngay dưới tiêu đề)</FormLabel><FormControl><Input {...field} placeholder="VD: Khách vui lòng đặt 2 tiếng..." /></FormControl><FormDescriptionComponent>Thông báo ngắn gọn cho khách khi đặt sân.</FormDescriptionComponent><FormMessage /></FormItem>)} />
+                <div className="space-y-2 border p-4 rounded-lg bg-muted/20">
+                    <FormLabel className="text-base font-bold flex items-center gap-2">📍 Thông tin SEO & Tiện ích</FormLabel>
+                    <ClubSeoFields form={form} />
+                </div>
                 <div className="space-y-2 border p-4 rounded-lg bg-muted/20">
                     <FormLabel className="text-base font-bold flex items-center gap-2"><Globe className="h-4 w-4" /> Subdomain riêng</FormLabel>
                     <FormField control={form.control} name="customSubdomain" render={({ field }) => (
