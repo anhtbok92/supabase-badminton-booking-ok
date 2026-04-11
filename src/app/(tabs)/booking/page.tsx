@@ -291,7 +291,7 @@ function SearchAndFilter({
 }
 
 function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (club: Club) => void; clubTypes: ClubType[] | null; }) {
-  const firstImageUrl = club.image_urls && club.image_urls.length > 0 ? club.image_urls[0] : '/images/default-club-2.png';
+  const firstImageUrl = club.image_urls && club.image_urls.length > 0 ? club.image_urls[0] : getDefaultClubImage(club.club_type);
   const clubTypeObj = clubTypes?.find(t => t.name === club.club_type);
   const typeColor = clubTypeObj?.color || '#00e640';
 
@@ -405,6 +405,7 @@ function ClubCardSkeleton() {
 import { cn } from '@/lib/utils';
 import { useTenant } from '@/hooks/use-tenant';
 import { PROVINCES } from '@/lib/vietnam-locations';
+import { getDefaultClubImage } from '@/lib/club-utils';
 import { AdvancedSearchSheet, type AdvancedFilters } from './_components/advanced-search';
 import { BookingTypeSelector } from './_components/booking-type-selector';
 

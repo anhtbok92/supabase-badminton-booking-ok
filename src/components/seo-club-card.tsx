@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { MapPin, Phone, Clock, Star } from 'lucide-react';
 import type { Club } from '@/lib/types';
 import { getMinPrice, formatVNPrice } from '@/lib/seo-pages';
+import { getDefaultClubImage } from '@/lib/club-utils';
 
 export function SeoClubCard({ club }: { club: Club }) {
-  const firstImage = club.image_urls?.[0] || '/images/default-club-2.png';
+  const firstImage = club.image_urls?.[0] || getDefaultClubImage(club.club_type);
   const minPrice = getMinPrice(club.pricing);
 
   const getPriceRange = (): string => {

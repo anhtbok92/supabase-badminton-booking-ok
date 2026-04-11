@@ -80,7 +80,7 @@ export default async function ClubDetailSeoPage({ params }: Props) {
       </header>
 
       <main className="max-w-4xl mx-auto">
-        <ClubImageGallery images={club.image_urls} clubName={club.name} />
+        <ClubImageGallery images={club.image_urls} clubName={club.name} clubType={club.club_type} />
         <ClubInfoSection club={club} />
 
         {/* Price + CTA */}
