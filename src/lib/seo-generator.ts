@@ -171,7 +171,38 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
     });
   }
 
-  // 5. Upsert all pages
+  // 5. Multiply pages with active prefix/suffix modifiers
+  const { data: modifiers } = await supabase
+    .from('seo_modifiers')
+    .select('type, label, slug')
+    .eq('is_active', true);
+
+  const basePages = [...pages];
+  for (const mod of modifiers || []) {
+    for (const base of basePages) {
+      const modSlug = mod.type === 'prefix'
+        ? `${mod.slug}-${base.slug}`
+        : `${base.slug}-${mod.slug}`;
+      const modTitle = mod.type === 'prefix'
+        ? base.title.replace(/^Sân/, `${mod.label} sân`)
+        : `${base.title.replace(/ \| Sport Booking$/, '')} ${mod.label} | Sport Booking`;
+      const modH1 = mod.type === 'prefix'
+        ? base.h1_title.replace(/^Sân/, `${mod.label} sân`)
+        : `${base.h1_title} ${mod.label}`;
+
+      pages.push({
+        slug: modSlug,
+        page_type: base.page_type,
+        title: modTitle,
+        meta_description: base.meta_description.replace(/^Danh sách sân/, mod.type === 'prefix' ? `Danh sách ${mod.label.toLowerCase()} sân` : `Danh sách sân`),
+        h1_title: modH1,
+        seo_content: base.seo_content,
+        filter_params: base.filter_params,
+      });
+    }
+  }
+
+  // 6. Upsert all pages
   let generated = 0;
   for (const page of pages) {
     const { error } = await supabase
@@ -184,7 +215,7 @@ export async function generateSeoPages(supabase: SupabaseClient): Promise<{
     }
   }
 
-  // 6. Deactivate pages that no longer have matching clubs
+  // 7. Deactivate pages that no longer have matching clubs
   const validSlugs = pages.map(p => p.slug);
   const { data: existingPages } = await supabase
     .from('seo_landing_pages')

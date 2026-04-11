@@ -33,6 +33,7 @@ import { FixedBookingManager } from './fixed-booking-manager';
 import { UserGuideGenerator } from './user-guide-generator';
 import { SeoManager } from './seo-manager';
 import { SeoPagesGenerator } from './seo-pages-generator';
+import { SeoModifierManager } from './seo-modifier-manager';
 import { BlogAiWriter } from './blog-ai-writer';
 import { PromoSettingsManager } from './promo-settings-manager';
 import { AmenityTypeManager } from './amenity-type-manager';
@@ -99,6 +100,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
         { id: 'userGuide', label: 'Tài liệu Hướng dẫn', icon: FileText, roles: ['admin'] },
         { id: 'seo', label: 'Quản lý SEO', icon: Search, roles: ['admin'] },
         { id: 'seoPages', label: 'SEO Landing Pages', icon: Globe, roles: ['admin'] },
+        { id: 'seoModifiers', label: 'SEO Prefix/Suffix', icon: Globe, roles: ['admin'] },
         { id: 'crawler', label: 'Crawler sân', icon: Search, roles: ['admin'] },
         { id: 'blogAi', label: 'Blog AI Writer', icon: PenTool, roles: ['admin'] },
         { id: 'promo', label: 'Cấu hình Popup', icon: Gift, roles: ['admin'] },
@@ -256,6 +258,7 @@ export function AdminDashboard({ userProfile }: { userProfile: UserProfile }) {
                                 {isAdmin && activeView === 'userGuide' && <UserGuideGenerator />}
                                 {isAdmin && activeView === 'seo' && <SeoManager />}
                                 {isAdmin && activeView === 'seoPages' && <SeoPagesGenerator />}
+                                {isAdmin && activeView === 'seoModifiers' && <SeoModifierManager />}
                                 {isAdmin && activeView === 'crawler' && <ClubCrawler />}
                                 {isAdmin && activeView === 'blogAi' && <BlogAiWriter />}
                                 {isAdmin && activeView === 'promo' && <PromoSettingsManager />}
