@@ -288,7 +288,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="bg-[var(--lp-bg-cta-box)] rounded-2xl p-8 md:p-20 text-center relative overflow-hidden border border-[var(--lp-border-light)] group">
               <div className="z-10 relative">
-                <h2 className="font-headline text-2xl sm:text-4xl md:text-6xl font-black italic uppercase mb-6 md:mb-8">Sẵn sàng để <span className="text-[var(--lp-accent)]">LÀM CHỦ</span> sân chơi?</h2>
+                <h2 className="font-headline text-2xl sm:text-4xl md:text-6xl font-black italic uppercase mb-6 md:mb-8">Sẵn sàng để <span className="text-[var(--lp-accent)]">BỨT PHÁ</span> DOANH THU?</h2>
                 <p className="text-[var(--lp-text-muted)] text-base md:text-xl mb-8 md:mb-12 max-w-2xl mx-auto">Chuyển đổi số ngay hôm nay. Không cần thẻ tín dụng, đăng ký trong 1 phút.</p>
                 <button 
                   onClick={() => {
