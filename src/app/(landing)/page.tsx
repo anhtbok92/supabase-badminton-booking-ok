@@ -78,15 +78,15 @@ export default function LandingPage() {
             <div className="lg:col-span-12 xl:col-span-7 z-10 text-center xl:text-left">
               <div className="mb-6 inline-flex items-center gap-2 bg-[var(--lp-accent-light)] px-4 py-2 rounded-full">
                 <span className="w-2 h-2 rounded-full bg-[var(--lp-accent-bg)] animate-pulse"></span>
-                <span className="text-[var(--lp-accent)] text-xs font-bold uppercase tracking-widest">Đẳng Cấp Thể Thao Digital</span>
+                <span className="text-[var(--lp-accent)] text-xs font-bold uppercase tracking-widest">Nền Tảng Đặt Sân Thể Thao Chuyên Nghiệp</span>
               </div>
               <h1 className="font-headline text-6xl md:text-8xl font-black text-[var(--lp-text)] leading-[0.9] tracking-tighter mb-8 italic uppercase">
                 BỨT PHÁ<br />
-                <span className="text-transparent px-2" style={{ WebkitTextStroke: '1px var(--lp-hero-stroke)' }}>LÀM CHỦ</span><br />
-                SÂN CHƠI
+                <span className="text-transparent px-2" style={{ WebkitTextStroke: '1px var(--lp-hero-stroke)' }}>DOANH THU</span><br />
+                CHO CHỦ SÂN
               </h1>
               <p className="text-[var(--lp-text-secondary)] text-lg md:text-xl font-body mb-10 max-w-2xl mx-auto xl:mx-0 leading-relaxed">
-                Nền tảng đặt sân hiện đại số hàng đầu, kết nối cộng đồng vận động viên chuyên nghiệp. Quản lý thời gian, tối ưu hiệu suất và nâng tầm trải nghiệm thi đấu.
+                Nền tảng đặt sân hiện đại số hàng đầu, kết nối cộng đồng vận động viên. Giúp chủ sân quản lý thời gian, tối ưu hiệu suất, giúp người chơi đặt sân dưới 30s.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center xl:justify-start">
                 <a href="https://app.sportbooking.online/splash" className="px-10 py-5 bg-[var(--lp-accent-bg)] text-[#00440a] rounded-md font-headline font-black uppercase tracking-widest hover:scale-105 transition-all text-center">
@@ -313,7 +313,7 @@ export default function LandingPage() {
             <div className="space-y-8">
               <span className="text-2xl font-black italic text-[var(--lp-text)] uppercase font-headline">SPORT BOOKING</span>
               <p className="text-[var(--lp-text-muted)] text-sm leading-relaxed max-w-xs">
-                Kiến tạo cộng đồng thể thao văn minh và hiện đại thông qua công nghệ quản lý sân thông minh số 1 Việt Nam.
+                Nền tảng đặt sân thể thao thông tin hàng đầu Việt Nam.
               </p>
               <div className="flex gap-4">
                 <a href="#" className="w-10 h-10 rounded-full border border-[var(--lp-border)] flex items-center justify-center hover:border-[var(--lp-accent)] hover:text-[var(--lp-accent)] transition-all">
