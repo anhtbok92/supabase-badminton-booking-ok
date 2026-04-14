@@ -16,3 +16,20 @@ export function getDefaultClubImage(clubType?: string): string {
 
   return '/images/default-club-2.png';
 }
+
+import type { Club } from '@/lib/types';
+
+/** Get min price from club pricing */
+export function getMinPrice(pricing: Club['pricing']): number | null {
+  if (!pricing) return null;
+  const allPrices = [
+    ...(pricing.weekday || []).map(p => p.price),
+    ...(pricing.weekend || []).map(p => p.price),
+  ].filter(p => p > 0);
+  return allPrices.length > 0 ? Math.min(...allPrices) : null;
+}
+
+/** Format price to Vietnamese format */
+export function formatVNPrice(price: number): string {
+  return new Intl.NumberFormat('vi-VN').format(price);
+}

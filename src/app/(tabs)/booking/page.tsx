@@ -408,8 +408,19 @@ import { PROVINCES } from '@/lib/vietnam-locations';
 import { getDefaultClubImage } from '@/lib/club-utils';
 import { AdvancedSearchSheet, type AdvancedFilters } from './_components/advanced-search';
 import { BookingTypeSelector } from './_components/booking-type-selector';
+import { NearbyPrompt, type UserLocation } from './_components/nearby-prompt';
 
 const EMPTY_FILTERS: AdvancedFilters = { province: '', district: '', openHour: '' };
+
+/** Haversine distance in km between two lat/lng points */
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 /** Check if club's operating_hours contains an opening time <= the target hour */
 function matchOpenHour(operatingHours: string | undefined, targetHour: string): boolean {
@@ -477,6 +488,8 @@ export default function BookingTabPage() {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>(EMPTY_FILTERS);
   const [bookingTypeClub, setBookingTypeClub] = useState<Club | null>(null);
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
+  const [nearbyActive, setNearbyActive] = useState(true);
 
   const hasAdvancedFilters = !!(advancedFilters.province || advancedFilters.district || advancedFilters.openHour);
 
@@ -507,6 +520,16 @@ export default function BookingTabPage() {
     });
   }, [clubs, activeClubType, searchTerm, tenant, advancedFilters]);
 
+  // Sort by distance when user location is available
+  const sortedClubs = useMemo(() => {
+    if (!userLocation || !nearbyActive || !filteredClubs.length) return filteredClubs;
+    return [...filteredClubs].sort((a, b) => {
+      const distA = (a.latitude && a.longitude) ? haversineKm(userLocation.latitude, userLocation.longitude, a.latitude, a.longitude) : Infinity;
+      const distB = (b.latitude && b.longitude) ? haversineKm(userLocation.latitude, userLocation.longitude, b.latitude, b.longitude) : Infinity;
+      return distA - distB;
+    });
+  }, [filteredClubs, userLocation, nearbyActive]);
+
   const handleCardClick = (club: Club) => {
     setSelectedClub(club);
     setIsSheetOpen(true);
@@ -525,7 +548,9 @@ export default function BookingTabPage() {
     <div className="min-h-screen bg-white">
       <BookingGreeting />
       {!tenant && (
-        <SearchAndFilter
+        <>
+          <NearbyPrompt onLocationGranted={setUserLocation} />
+          <SearchAndFilter
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           activeType={activeClubType}
@@ -535,11 +560,31 @@ export default function BookingTabPage() {
           onAdvancedSearchOpen={() => setAdvancedOpen(true)}
           hasAdvancedFilters={hasAdvancedFilters}
         />
+        </>
       )}
       <div className="px-4 pb-24">
+        {userLocation && !clubsLoading && (
+          <div className="flex items-center justify-between mb-4 px-1 py-2">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
+              <p className="text-sm text-muted-foreground">
+                {nearbyActive
+                  ? <>Tìm thấy <span className="font-bold text-primary">{sortedClubs.length}</span> sân xung quanh bạn</>
+                  : <>Đang hiển thị <span className="font-bold text-foreground">tất cả</span> sân</>
+                }
+              </p>
+            </div>
+            <button
+              onClick={() => setNearbyActive(prev => !prev)}
+              className="text-xs font-bold text-primary hover:underline shrink-0"
+            >
+              {nearbyActive ? 'Xem tất cả' : 'Sân gần tôi'}
+            </button>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {clubsLoading && Array.from({ length: 3 }).map((_, i) => <ClubCardSkeleton key={i} />)}
-          {filteredClubs?.map((club) => (
+          {sortedClubs?.map((club) => (
             <ClubCard 
                 key={club.id} 
                 club={club} 
@@ -547,7 +592,7 @@ export default function BookingTabPage() {
                 clubTypes={clubTypes} 
             />
           ))}
-          {!clubsLoading && filteredClubs?.length === 0 && (
+          {!clubsLoading && sortedClubs?.length === 0 && (
             <p className="text-center text-muted-foreground col-span-full py-10">Không có câu lạc bộ nào phù hợp.</p>
           )}
         </div>

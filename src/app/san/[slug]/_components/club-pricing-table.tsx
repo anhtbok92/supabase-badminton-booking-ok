@@ -1,5 +1,5 @@
 import type { Pricing } from '@/lib/types';
-import { formatVNPrice } from '@/lib/seo-pages';
+import { formatVNPrice } from '@/lib/club-utils';
 
 export function ClubPricingTable({ pricing }: { pricing: Pricing }) {
   if (!pricing || (!pricing.weekday?.length && !pricing.weekend?.length)) return null;

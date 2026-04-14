@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { getClubBySlug, getAllClubSlugs, getMinPrice, formatVNPrice } from '@/lib/seo-pages';
+import { getClubBySlug, getAllClubSlugs } from '@/lib/seo-pages';
+import { getMinPrice, formatVNPrice } from '@/lib/club-utils';
 import { notFound } from 'next/navigation';
 import { ClubImageGallery } from './_components/club-image-gallery';
 import { ClubInfoSection } from './_components/club-info-section';

@@ -1,10 +1,10 @@
 import { MetadataRoute } from 'next';
-import { createClient } from '@/supabase/server';
+import { createStaticClient } from '@/supabase/server';
 
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const baseUrl = 'https://sportbooking.online';
 
   // Static pages from metadata table
@@ -59,10 +59,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  // Blog posts
+  const { data: blogPosts } = await supabase
+    .from('blog_posts')
+    .select('slug, published_at, updated_at')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false });
+
+  const blogPages = (blogPosts || []).map(post => ({
+    url: `${baseUrl}/bai-viet/${post.slug}`,
+    lastModified: post.updated_at ? new Date(post.updated_at) : post.published_at ? new Date(post.published_at) : new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  // Blog index page
+  const blogIndexPage = {
+    url: `${baseUrl}/bai-viet`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.8,
+  };
+
   return [
     ...staticPages,
     ...newsPages,
     ...clubPages,
     ...seoListingPages,
+    blogIndexPage,
+    ...blogPages,
   ];
 }

@@ -21,6 +21,8 @@ import FloatingContact from '@/components/floating-contact';
 import { useSupabase, useSupabaseQuery } from '@/supabase';
 import type { SubscriptionPlan } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SeoInternalLinks } from './_components/seo-internal-links';
+import { NearbyCourts } from './_components/nearby-courts';
 
 export default function LandingPage() {
   const supabase = useSupabase();
@@ -282,6 +284,12 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* Nearby Courts - Geolocation */}
+        <NearbyCourts />
+
+        {/* SEO Internal Links */}
+        <SeoInternalLinks />
 
         {/* Final CTA */}
         <section className="py-20 md:py-40 relative bg-[var(--lp-bg)]">
