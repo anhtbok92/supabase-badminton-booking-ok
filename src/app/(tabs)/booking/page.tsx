@@ -223,7 +223,7 @@ function SearchAndFilter({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
           <Input
             placeholder="Tìm theo tên hoặc địa chỉ..."
-            className="pl-10 rounded-xl h-10 text-sm bg-white border-gray-300 shadow-sm focus:ring-primary/20 transition-all font-body"
+            className="pl-10 rounded-xl h-10 text-base sm:text-sm bg-white border-gray-300 shadow-sm focus:ring-primary/20 transition-all font-body"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
