@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useUser, useSupabaseQuery, useSupabaseRow } from '@/supabase';
 import type { Club, UserProfile, ClubType } from '@/lib/types';
-import { MapPin, Phone, Clock, Map, Search, Star, SlidersHorizontal } from 'lucide-react';
+import { MapPin, Phone, Clock, Map, Search, Star, SlidersHorizontal, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
@@ -336,6 +336,17 @@ function ClubCard({ club, onCardClick, clubTypes }: { club: Club; onCardClick: (
             <span className="text-[11px] font-black text-slate-800">{club.rating.toFixed(1)}</span>
           </div>
         )}
+
+        {/* Verification Badge */}
+        <div className={cn(
+          "absolute bottom-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg backdrop-blur-md",
+          club.is_verified
+            ? "bg-emerald-500/90 text-white"
+            : "bg-amber-500/90 text-white"
+        )}>
+          {club.is_verified ? <ShieldCheck className="w-3 h-3" /> : <ShieldAlert className="w-3 h-3" />}
+          {club.is_verified ? 'Đã xác minh' : 'Chưa xác minh'}
+        </div>
       </div>
 
       <CardContent className="p-4">
@@ -520,14 +531,24 @@ export default function BookingTabPage() {
     });
   }, [clubs, activeClubType, searchTerm, tenant, advancedFilters]);
 
-  // Sort by distance when user location is available
+  // Sort: verified first, then by distance when user location is available
   const sortedClubs = useMemo(() => {
-    if (!userLocation || !nearbyActive || !filteredClubs.length) return filteredClubs;
-    return [...filteredClubs].sort((a, b) => {
-      const distA = (a.latitude && a.longitude) ? haversineKm(userLocation.latitude, userLocation.longitude, a.latitude, a.longitude) : Infinity;
-      const distB = (b.latitude && b.longitude) ? haversineKm(userLocation.latitude, userLocation.longitude, b.latitude, b.longitude) : Infinity;
-      return distA - distB;
+    const list = [...filteredClubs];
+    list.sort((a, b) => {
+      // Verified clubs first
+      const vA = a.is_verified ? 0 : 1;
+      const vB = b.is_verified ? 0 : 1;
+      if (vA !== vB) return vA - vB;
+
+      // Then by distance if location available
+      if (userLocation && nearbyActive) {
+        const distA = (a.latitude && a.longitude) ? haversineKm(userLocation.latitude, userLocation.longitude, a.latitude, a.longitude) : Infinity;
+        const distB = (b.latitude && b.longitude) ? haversineKm(userLocation.latitude, userLocation.longitude, b.latitude, b.longitude) : Infinity;
+        return distA - distB;
+      }
+      return 0;
     });
+    return list;
   }, [filteredClubs, userLocation, nearbyActive]);
 
   const handleCardClick = (club: Club) => {

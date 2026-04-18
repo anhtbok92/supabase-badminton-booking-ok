@@ -48,6 +48,7 @@ export type Club = {
   close_time?: string;
   city?: string;
   district?: string;
+  is_verified?: boolean;
 };
 
 export type Court = {

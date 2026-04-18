@@ -18,6 +18,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSupabase, useSupabaseQuery } from '@/supabase';
 import { filterEventsByClubAndDate, filterUpcomingEvents, isEventFull, getParticipantCount } from '@/lib/event-utils';
+import { UnverifiedClubAlert } from '@/components/unverified-club-alert';
 
 function HorizontalDatePicker({
   selectedDate,
@@ -322,6 +323,8 @@ export default function SuKienPage() {
       </div>
     );
   }
+
+  if (!club.is_verified) return <UnverifiedClubAlert club={club} />;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

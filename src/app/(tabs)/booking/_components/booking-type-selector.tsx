@@ -9,7 +9,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { CalendarDays, LayoutGrid } from 'lucide-react';
+import { CalendarDays, LayoutGrid, ShieldAlert, Phone } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export function BookingTypeSelector({
   club,
@@ -31,6 +32,45 @@ export function BookingTypeSelector({
     onOpenChange(false);
     router.push(`/su-kien/${club.slug || club.id}`);
   };
+
+  // Unverified club: show alert instead of booking options
+  if (!club.is_verified) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-sm rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg">Câu lạc bộ chưa xác minh</DialogTitle>
+            <DialogDescription className="text-center text-sm">
+              {club.name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 pt-2 pb-2">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 text-amber-600">
+              <ShieldAlert className="w-8 h-8" />
+            </div>
+            <p className="text-sm text-center text-muted-foreground leading-relaxed">
+              Câu lạc bộ này chưa được xác minh thông tin sân bãi. Vui lòng liên hệ trực tiếp chủ sân để đặt lịch.
+            </p>
+            {club.phone && (
+              <Button asChild className="w-full rounded-xl h-12 text-base gap-2">
+                <a href={`tel:${club.phone}`}>
+                  <Phone className="w-5 h-5" />
+                  Gọi {club.phone}
+                </a>
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              className="w-full rounded-xl"
+              onClick={() => onOpenChange(false)}
+            >
+              Đóng
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { MapPin, Phone, Clock, Star } from 'lucide-react';
+import { MapPin, Phone, Clock, Star, ShieldCheck, ShieldAlert } from 'lucide-react';
 import type { Club } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { getMinPrice, formatVNPrice, getDefaultClubImage } from '@/lib/club-utils';
 
 export function SeoClubCard({ club }: { club: Club }) {
@@ -46,6 +47,17 @@ export function SeoClubCard({ club }: { club: Club }) {
             <span className="text-[11px] font-black text-slate-800">{club.rating.toFixed(1)}</span>
           </div>
         )}
+
+        {/* Verification Badge */}
+        <div className={cn(
+          "absolute bottom-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg backdrop-blur-md",
+          club.is_verified
+            ? "bg-emerald-500/90 text-white"
+            : "bg-amber-500/90 text-white"
+        )}>
+          {club.is_verified ? <ShieldCheck className="w-3 h-3" /> : <ShieldAlert className="w-3 h-3" />}
+          {club.is_verified ? 'Đã xác minh' : 'Chưa xác minh'}
+        </div>
       </div>
       <div className="p-4">
         <h3 className="text-slate-900 font-headline font-black uppercase italic leading-tight mb-2 line-clamp-2 min-h-[1.5rem]" style={{ fontSize: '15px' }}>

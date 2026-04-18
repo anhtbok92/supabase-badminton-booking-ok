@@ -7,6 +7,7 @@ import type { Club } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import BookingPage from '@/app/booking/[clubId]/page';
+import { UnverifiedClubAlert } from '@/components/unverified-club-alert';
 
 export default function DatSanPage() {
   const params = useParams();
@@ -62,6 +63,8 @@ export default function DatSanPage() {
       <Button variant="link" onClick={() => router.push('/booking')}>Xem danh sách câu lạc bộ</Button>
     </div>
   );
+
+  if (!club.is_verified) return <UnverifiedClubAlert club={club} />;
 
   return <BookingPage clubIdProp={club.id} />;
 }

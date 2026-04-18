@@ -14,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlusCircle, Trash2, Pencil, UploadCloud, Copy, QrCode, Info, Star, Globe } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, UploadCloud, Copy, QrCode, Info, Star, Globe, ShieldCheck, ShieldAlert, Search } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -50,11 +50,34 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
     const { toast } = useToast();
     const isAdmin = userProfile.role === 'admin';
 
+    // Search & filter state
+    const [searchName, setSearchName] = useState('');
+    const [searchPhone, setSearchPhone] = useState('');
+    const [filterActive, setFilterActive] = useState<'all' | 'on' | 'off'>('all');
+    const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all');
+
     const clubs = useMemo(() => {
         if (!allClubs) return [];
-        if (userProfile.role === 'club_owner') return allClubs.filter(c => userProfile.managed_club_ids?.includes(c.id));
-        return allClubs;
-    }, [allClubs, userProfile]);
+        let list = allClubs;
+        if (userProfile.role === 'club_owner') list = list.filter(c => userProfile.managed_club_ids?.includes(c.id));
+
+        // Apply search filters
+        if (searchName) {
+            const term = searchName.toLowerCase();
+            list = list.filter(c => c.name.toLowerCase().includes(term));
+        }
+        if (searchPhone) {
+            list = list.filter(c => c.phone?.includes(searchPhone));
+        }
+        if (filterActive !== 'all') {
+            list = list.filter(c => filterActive === 'on' ? (c.is_active ?? true) : !(c.is_active ?? true));
+        }
+        if (filterVerified !== 'all') {
+            list = list.filter(c => filterVerified === 'verified' ? c.is_verified : !c.is_verified);
+        }
+
+        return list;
+    }, [allClubs, userProfile, searchName, searchPhone, filterActive, filterVerified]);
 
     const handleToggleActive = async (club: Club) => {
         if (!isAdmin) return;
@@ -62,6 +85,14 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
         const { error } = await supabase.from('clubs').update({ is_active: newIsActive }).eq('id', club.id);
         if (error) { toast({ title: 'Lỗi', description: 'Không thể cập nhật trạng thái.', variant: 'destructive' }); }
         else { toast({ title: 'Cập nhật thành công', description: `Câu lạc bộ "${club.name}" đã được ${newIsActive ? 'hiển thị' : 'ẩn'}.` }); refetch(); }
+    };
+
+    const handleToggleVerified = async (club: Club) => {
+        if (!isAdmin) return;
+        const newIsVerified = !club.is_verified;
+        const { error } = await supabase.from('clubs').update({ is_verified: newIsVerified }).eq('id', club.id);
+        if (error) { toast({ title: 'Lỗi', description: 'Không thể cập nhật trạng thái xác minh.', variant: 'destructive' }); }
+        else { toast({ title: 'Cập nhật thành công', description: `Câu lạc bộ "${club.name}" ${newIsVerified ? 'đã được xác minh' : 'đã bỏ xác minh'}.` }); refetch(); }
     };
 
     const confirmDelete = async () => {
@@ -90,15 +121,57 @@ export function ClubManager({ userProfile }: { userProfile: UserProfile }) {
                 {isAdmin && (<Button onClick={() => { setSelectedClub(undefined); setDialogOpen(true); }}><PlusCircle className="mr-2 h-4 w-4" /> Thêm Câu lạc bộ</Button>)}
             </div></CardHeader>
             <CardContent>
+                {/* Search & Filter Bar */}
+                {isAdmin && (
+                    <div className="flex flex-wrap gap-2 mb-4 p-3 bg-muted/30 rounded-lg border">
+                        <div className="relative flex-1 min-w-[150px]">
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input placeholder="Tìm theo tên..." className="pl-8 h-9" value={searchName} onChange={e => setSearchName(e.target.value)} />
+                        </div>
+                        <div className="relative min-w-[140px]">
+                            <Input placeholder="SĐT chủ sân..." className="h-9" value={searchPhone} onChange={e => setSearchPhone(e.target.value)} />
+                        </div>
+                        <Select value={filterActive} onValueChange={(v) => setFilterActive(v as any)}>
+                            <SelectTrigger className="w-[130px] h-9"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Tất cả</SelectItem>
+                                <SelectItem value="on">Đang hiện</SelectItem>
+                                <SelectItem value="off">Đang ẩn</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Select value={filterVerified} onValueChange={(v) => setFilterVerified(v as any)}>
+                            <SelectTrigger className="w-[150px] h-9"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Xác minh: Tất cả</SelectItem>
+                                <SelectItem value="verified">Đã xác minh</SelectItem>
+                                <SelectItem value="unverified">Chưa xác minh</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                )}
                 {loading && <div className="space-y-2">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}</div>}
                 {!loading && clubs && clubs.length > 0 ? (
                     <Accordion type="single" collapsible className="w-full">
                         {clubs.map(club => (
                             <AccordionItem key={club.id} value={club.id}>
                                 <div className="flex items-center">
-                                    <AccordionTrigger className="flex-grow">{club.name} <Badge variant="secondary" className="ml-2">{club.club_type}</Badge></AccordionTrigger>
+                                    <AccordionTrigger className="flex-grow">
+                                        {club.name}
+                                        <Badge variant="secondary" className="ml-2">{club.club_type}</Badge>
+                                        {club.is_verified
+                                            ? <Badge variant="outline" className="ml-1 border-emerald-500 text-emerald-600"><ShieldCheck className="h-3 w-3 mr-1" />Đã xác minh</Badge>
+                                            : <Badge variant="outline" className="ml-1 border-amber-500 text-amber-600"><ShieldAlert className="h-3 w-3 mr-1" />Chưa xác minh</Badge>
+                                        }
+                                    </AccordionTrigger>
                                     <div className="flex items-center space-x-2 pr-4">
-                                        <Switch checked={club.is_active ?? true} onCheckedChange={() => handleToggleActive(club)} onClick={(e) => e.stopPropagation()} disabled={!isAdmin} />
+                                        <div className="flex flex-col items-center gap-0.5" title="Hiển thị">
+                                            <Switch checked={club.is_active ?? true} onCheckedChange={() => handleToggleActive(club)} onClick={(e) => e.stopPropagation()} disabled={!isAdmin} />
+                                            <span className="text-[9px] text-muted-foreground">On/Off</span>
+                                        </div>
+                                        <div className="flex flex-col items-center gap-0.5" title="Xác minh">
+                                            <Switch checked={club.is_verified ?? false} onCheckedChange={() => handleToggleVerified(club)} onClick={(e) => e.stopPropagation()} disabled={!isAdmin} className="data-[state=checked]:bg-emerald-500" />
+                                            <span className="text-[9px] text-muted-foreground">Xác minh</span>
+                                        </div>
                                         <Button variant="ghost" size="icon" onClick={() => { setSelectedClub(club); setDialogOpen(true); }}><Pencil className="h-4 w-4" /></Button>
                                         <Button variant="ghost" size="icon" onClick={() => setQrClub(club)} title="Mã QR đặt sân"><QrCode className="h-4 w-4" /></Button>
                                         {isAdmin && <Button variant="ghost" size="icon" onClick={() => handleDuplicate(club)} title="Nhân bản"><Copy className="h-4 w-4" /></Button>}
